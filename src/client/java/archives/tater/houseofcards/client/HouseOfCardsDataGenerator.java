@@ -9,11 +9,15 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
 import net.minecraft.core.RegistrySetBuilder;
 
+import java.util.stream.Stream;
+
 public class HouseOfCardsDataGenerator implements DataGeneratorEntrypoint {
-	public static final DeckProvider TEST = new DeckProvider() {
+	public static final DeckProvider PLAYING_CARDS = new DeckProvider() {
 		@Override
-		protected void generate() {
-			deck(HouseOfCards.id("test"), "card1", "card2");
+		protected void generate(DeckOutput output) {
+			output.deck(HouseOfCards.id("playing_cards"), Stream.of("ace", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king").flatMap(number ->
+					Stream.of("spades", "hearts", "clubs", "diamonds").map(suit -> number + "_" + suit)
+			));
 		}
 
 		@Override
@@ -24,14 +28,13 @@ public class HouseOfCardsDataGenerator implements DataGeneratorEntrypoint {
 
 	@Override
 	public void buildRegistry(RegistrySetBuilder registryBuilder) {
-		registryBuilder.add(HouseOfCardsRegistries.CARD, TEST::bootstrapCards);
+		registryBuilder.add(HouseOfCardsRegistries.CARD, PLAYING_CARDS);
 	}
 
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		var pack = fabricDataGenerator.createPack();
 
-		pack.addProvider(TEST::registryProvider);
-		pack.addProvider(TEST::tagsProvider);
+		pack.addProvider(PLAYING_CARDS);
 	}
 }
