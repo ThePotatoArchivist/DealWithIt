@@ -44,6 +44,7 @@ public record DeckContents(
             ByteBufCodecs.map(Object2IntOpenHashMap::new, Card.STREAM_CODEC, ByteBufCodecs.INT), DeckContents::cards,
             DeckContents::new
     );
+    public static final String FILL = "item." + HouseOfCards.MOD_ID + ".card_box.fill";
 
     public DeckContents(Holder<Deck> deck) {
         this(deck, deck.value().cards());
@@ -56,6 +57,6 @@ public record DeckContents(
     @Override
     public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
         consumer.accept(deck.value().description().copy().withColor(TextColor.GRAY));
-        consumer.accept(Component.translatable("item." + HouseOfCards.MOD_ID + ".card_box.contents", cardCount(), deck.value().size()).withColor(TextColor.GRAY));
+        consumer.accept(Component.translatable(FILL, cardCount(), deck.value().size()).withColor(TextColor.GRAY));
     }
 }

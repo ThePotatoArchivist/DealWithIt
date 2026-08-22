@@ -7,6 +7,7 @@ import archives.tater.houseofcards.registry.HouseOfCardsRegistries;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider.TranslationBuilder;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -36,16 +37,21 @@ public abstract class DeckProvider implements RegistrySetBuilder.RegistryBootstr
 
     @Override
     public void run(BootstrapContext<Card> registry) {
-        generate((id) -> {
+        generate((id, translation) -> {
             var cards = new Object2IntLinkedOpenHashMap<Holder.Reference<Card>>(); // Linked only for datagen to stay in order
+            var cardTranslations = new HashMap<Holder.Reference<Card>, String>();
             decks.put(ResourceKey.create(HouseOfCardsRegistries.DECK, id), new UnbakedDeck(
                     Component.translatable(makeDescriptionId("deck", id)),
-                    cards
+                    translation,
+                    cards,
+                    cardTranslations
             ));
 
-            return (count, path) -> {
-                var card = id.withSuffix("/" + path);
-                cards.put(registry.register(ResourceKey.create(HouseOfCardsRegistries.CARD, card), new Card(Component.translatable(makeDescriptionId("card", card)))), count);
+            return (count, info) -> {
+                var cardId = id.withSuffix("/" + info.path);
+                var card = registry.register(ResourceKey.create(HouseOfCardsRegistries.CARD, cardId), new Card(Component.translatable(makeDescriptionId("card", cardId))));
+                cards.put(card, count);
+                cardTranslations.put(card, info.translation);
             };
         });
     }
@@ -70,43 +76,57 @@ public abstract class DeckProvider implements RegistrySetBuilder.RegistryBootstr
         };
     }
 
+    public void generateTranslations(TranslationBuilder translationBuilder) {
+        decks.forEach((key, unbaked) -> {
+            translationBuilder.add(makeDescriptionId("deck", key.identifier()), unbaked.translation);
+            unbaked.cardTranslations.forEach((card, translation) -> {
+                translationBuilder.add(makeDescriptionId("card", card.key().identifier()), translation);
+            });
+        });
+    }
+
+    public static CardInfo card(String path, String translation) {
+        return new CardInfo(path, translation);
+    }
+
     @FunctionalInterface
     public interface DeckOutput {
-        DeckBuilder deck(Identifier id);
+        DeckBuilder deck(Identifier id, String translation);
     }
 
     @FunctionalInterface
     public interface DeckBuilder {
-        void addCard(int count, String path);
+        void addCard(int count, CardInfo info);
 
-        default DeckBuilder card(int count, String path) {
-            addCard(count, path);
+        default DeckBuilder card(int count, CardInfo info) {
+            addCard(count, info);
             return this;
         }
 
-        default DeckBuilder card(String path) {
-            return card(1, path);
+        default DeckBuilder card(CardInfo info) {
+            return card(1, info);
         }
 
-        default DeckBuilder cards(int count, String... paths) {
-            for (var path : paths)
+        default DeckBuilder cards(int count, CardInfo... infos) {
+            for (var path : infos)
                 card(count, path);
             return this;
         }
 
-        default DeckBuilder cards(String... paths) {
-            return cards(1, paths);
+        default DeckBuilder cards(CardInfo... infos) {
+            return cards(1, infos);
         }
 
-        default DeckBuilder cards(int count, Stream<String> paths) {
-            paths.forEach(path -> card(count, path));
+        default DeckBuilder cards(int count, Stream<CardInfo> infos) {
+            infos.forEach(path -> card(count, path));
             return this;
         }
 
-        default DeckBuilder cards(Stream<String> paths) {
-            return cards(1, paths);
+        default DeckBuilder cards(Stream<CardInfo> infos) {
+            return cards(1, infos);
         }
     }
 
-    record UnbakedDeck(Component description, Object2IntMap<Holder.Reference<Card>> cards) {}
+    public record CardInfo(String path, String translation) {}
+    record UnbakedDeck(Component description, String translation, Object2IntMap<Holder.Reference<Card>> cards, Map<Holder.Reference<Card>, String> cardTranslations) {}
 }
