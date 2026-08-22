@@ -2,6 +2,7 @@ package archives.tater.houseofcards.component;
 
 import archives.tater.houseofcards.data.Card;
 import archives.tater.houseofcards.data.Deck;
+import archives.tater.houseofcards.registry.HouseOfCardsComponents;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -32,6 +33,7 @@ public record CardComponent(Holder<Deck> deck, Holder<Card> card) implements Too
 
     @Override
     public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
-        consumer.accept(card.value().description().copy().withColor(TextColor.GRAY));
+        if (components.get(HouseOfCardsComponents.FACE_DOWN) == null)
+            consumer.accept(card.value().description().copy().withColor(TextColor.GRAY));
     }
 }

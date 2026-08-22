@@ -6,7 +6,9 @@ import archives.tater.houseofcards.registry.HouseOfCardsComponents;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.sprite.SpriteGetter;
@@ -20,23 +22,26 @@ import java.util.function.Consumer;
 
 public class CardSpecialRenderer implements SpecialModelRenderer<CardComponent> {
     private final SpriteGetter sprites;
+    private final boolean bothBack;
 
-    public CardSpecialRenderer(SpriteGetter sprites) {
+    public CardSpecialRenderer(SpriteGetter sprites, boolean bothBack) {
         this.sprites = sprites;
+        this.bothBack = bothBack;
     }
 
     @Override
     public void submit(@Nullable CardComponent argument, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         if (argument == null) return;
 
-        final var cardSprite = sprites.get(HouseOfCardsAtlases.CARD_MAPPER.apply(argument.card().unwrapKey().orElseThrow().identifier()));
         final var backSprite = sprites.get(HouseOfCardsAtlases.DECK_BACK_MAPPER.apply(argument.deck().unwrapKey().orElseThrow().identifier()));
+        final var cardSprite = sprites.get(HouseOfCardsAtlases.CARD_MAPPER.apply(argument.card().unwrapKey().orElseThrow().identifier()));
+        final var frontSprite = bothBack ? backSprite : cardSprite;
 
         submitNodeCollector.submitCustomGeometry(poseStack, HouseOfCardsAtlases.CARDS_RENDER_TYPE, (pose, buffer) -> {
-            vertex(buffer, pose, lightCoords, overlayCoords, 0, 0, cardSprite.getU0(), cardSprite.getV1(), 1);
-            vertex(buffer, pose, lightCoords, overlayCoords, 1, 0, cardSprite.getU1(), cardSprite.getV1(), 1);
-            vertex(buffer, pose, lightCoords, overlayCoords, 1, 1, cardSprite.getU1(), cardSprite.getV0(), 1);
-            vertex(buffer, pose, lightCoords, overlayCoords, 0, 1, cardSprite.getU0(), cardSprite.getV0(), 1);
+            vertex(buffer, pose, lightCoords, overlayCoords, 0, 0, frontSprite.getU0(), frontSprite.getV1(), 1);
+            vertex(buffer, pose, lightCoords, overlayCoords, 1, 0, frontSprite.getU1(), frontSprite.getV1(), 1);
+            vertex(buffer, pose, lightCoords, overlayCoords, 1, 1, frontSprite.getU1(), frontSprite.getV0(), 1);
+            vertex(buffer, pose, lightCoords, overlayCoords, 0, 1, frontSprite.getU0(), frontSprite.getV0(), 1);
 
             vertex(buffer, pose, lightCoords, overlayCoords, 1, 0, backSprite.getU0(), backSprite.getV1(), -1);
             vertex(buffer, pose, lightCoords, overlayCoords, 0, 0, backSprite.getU1(), backSprite.getV1(), -1);
@@ -67,12 +72,14 @@ public class CardSpecialRenderer implements SpecialModelRenderer<CardComponent> 
         return stack.get(HouseOfCardsComponents.CARD);
     }
 
-    public record Unbaked() implements SpecialModelRenderer.Unbaked<CardComponent> {
-        public static final MapCodec<Unbaked> CODEC = MapCodec.unit(new Unbaked());
+    public record Unbaked(boolean bothBack) implements SpecialModelRenderer.Unbaked<CardComponent> {
+        public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Codec.BOOL.fieldOf("both_back").forGetter(Unbaked::bothBack)
+        ).apply(instance, Unbaked::new));
 
         @Override
         public SpecialModelRenderer<CardComponent> bake(BakingContext context) {
-            return new CardSpecialRenderer(context.sprites());
+            return new CardSpecialRenderer(context.sprites(), bothBack);
         }
 
         @Override

@@ -1,8 +1,16 @@
 package archives.tater.houseofcards.registry;
 
+import archives.tater.houseofcards.data.Card;
+
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.item.v1.ItemClickBehaviorCallback;
+import net.fabricmc.fabric.api.util.EventResult;
+
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.Item;
 
 import java.util.function.Function;
@@ -21,6 +29,21 @@ public interface HouseOfCardsItems {
     }
 
     static void init() {
+        ItemClickBehaviorCallback.EVENT.register((hoveredItem, hoveredSlot, itemHeldByCursor, slotHeldByCursor, clickAction, player) -> {
+            if (clickAction != ClickAction.SECONDARY || !hoveredItem.is(HouseOfCardsItemTags.FLIPPABLE) || !itemHeldByCursor.isEmpty()) return EventResult.PASS;
 
+            Card.flip(hoveredItem, player);
+
+            return EventResult.DENY;
+        });
+
+        UseItemCallback.EVENT.register((player, level, hand) -> {
+            var stack = player.getItemInHand(hand);
+            if (!stack.is(HouseOfCardsItemTags.FLIPPABLE)) return InteractionResult.PASS;
+
+            Card.flip(stack, player);
+
+            return InteractionResult.SUCCESS;
+        });
     }
 }

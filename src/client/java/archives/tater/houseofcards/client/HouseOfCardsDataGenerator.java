@@ -3,6 +3,7 @@ package archives.tater.houseofcards.client;
 import archives.tater.houseofcards.HouseOfCards;
 import archives.tater.houseofcards.client.datagen.DeckProvider;
 import archives.tater.houseofcards.client.datagen.ModAtlasProvider;
+import archives.tater.houseofcards.client.datagen.ModItemTagProvider;
 import archives.tater.houseofcards.client.datagen.ModModelProvider;
 import archives.tater.houseofcards.component.DeckContents;
 import archives.tater.houseofcards.registry.HouseOfCardsItems;
@@ -51,8 +52,10 @@ public class HouseOfCardsDataGenerator implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		var pack = fabricDataGenerator.createPack();
 
-		pack.addProvider(ModAtlasProvider::new);
 		pack.addProvider(PLAYING_CARDS);
+		pack.addProvider(ModItemTagProvider::new);
+
+		pack.addProvider(ModAtlasProvider::new);
 		pack.addProvider(ModModelProvider::new);
 		pack.addProvider((output, registriesFuture) -> new FabricLanguageProvider(output, registriesFuture) {
 			@Override
