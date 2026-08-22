@@ -1,9 +1,9 @@
 package archives.tater.dealwithit.data;
 
 import archives.tater.dealwithit.registry.DealWithItRegistries;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -11,6 +11,8 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
+
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 public record Deck(
         Component description,

@@ -5,6 +5,9 @@ import archives.tater.dealwithit.DealWithIt;
 
 import archives.tater.dealwithit.data.Deck;
 import archives.tater.dealwithit.data.DeckType;
+import archives.tater.dealwithit.registry.DealWithItComponents;
+import archives.tater.dealwithit.registry.DealWithItItems;
+
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,6 +19,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipProvider;
 
@@ -59,5 +63,11 @@ public record DeckContents(
     public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
         consumer.accept(deck.value().description().copy().withColor(TextColor.GRAY));
         consumer.accept(Component.translatable(FILL, cardCount(), deck.value().size()).withColor(TextColor.GRAY));
+    }
+
+    public static ItemStack createStack(Holder<Deck> deck) {
+        var stack = DealWithItItems.CARD_BOX.getDefaultInstance();
+        stack.set(DealWithItComponents.DECK_CONTENTS, new DeckContents(deck));
+        return stack;
     }
 }

@@ -5,7 +5,6 @@ import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.component.CardComponent;
 import archives.tater.dealwithit.registry.DealWithItBlockEntities;
 import archives.tater.dealwithit.registry.DealWithItComponents;
-import archives.tater.dealwithit.registry.DealWithItItems;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -118,8 +117,7 @@ public class CardStackBlockEntity extends BlockEntity {
         ).apply(instance, CardInstance::new));
 
         public ItemStack toStack(boolean flip) {
-            var stack = DealWithItItems.CARD.getDefaultInstance();
-            stack.set(DealWithItComponents.CARD, card);
+            var stack = CardComponent.createStack(card);
             if (flip ^ faceDown) stack.set(DealWithItComponents.FACE_DOWN, Unit.INSTANCE);
             return stack;
         }

@@ -28,6 +28,7 @@ public class DealWithIt implements ModInitializer {
 		DealWithItBlockEntities.init();
 		DealWithItBlocks.init();
 		DealWithItItems.init();
+		DealWithItCreativeTabs.init();
 	}
 
 	public static Identifier id(String path) {
