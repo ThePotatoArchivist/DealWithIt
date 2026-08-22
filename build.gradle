@@ -18,7 +18,7 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"houseofcards" {
+		"dealwithit" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}

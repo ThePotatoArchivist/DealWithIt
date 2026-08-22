@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "dealwithit:block/card_stack"
+    }
+  }
+}

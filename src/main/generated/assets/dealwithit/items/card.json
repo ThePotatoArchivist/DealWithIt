@@ -1,0 +1,62 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:special",
+          "base": "minecraft:item/generated",
+          "model": {
+            "type": "dealwithit:card",
+            "both_back": true
+          }
+        },
+        "when": "thirdperson_lefthand"
+      },
+      {
+        "model": {
+          "type": "minecraft:special",
+          "base": "minecraft:item/generated",
+          "model": {
+            "type": "dealwithit:card",
+            "both_back": true
+          }
+        },
+        "when": "thirdperson_righthand"
+      },
+      {
+        "model": {
+          "type": "minecraft:special",
+          "base": "minecraft:item/generated",
+          "model": {
+            "type": "dealwithit:card",
+            "both_back": true
+          }
+        },
+        "when": "on_shelf"
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:condition",
+      "component": "dealwithit:face_down",
+      "on_false": {
+        "type": "minecraft:special",
+        "base": "minecraft:item/generated",
+        "model": {
+          "type": "dealwithit:card",
+          "both_back": false
+        }
+      },
+      "on_true": {
+        "type": "minecraft:special",
+        "base": "minecraft:item/generated",
+        "model": {
+          "type": "dealwithit:card",
+          "both_back": true
+        }
+      },
+      "property": "minecraft:has_component"
+    },
+    "property": "minecraft:display_context"
+  }
+}

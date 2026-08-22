@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"id": "houseofcards",
+	"id": "dealwithit",
 	"version": "${version}",
-	"name": "HouseOfCards",
+	"name": "DealWithIt",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
 		"Me!"
@@ -12,23 +12,23 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/houseofcards/icon.png",
+	"icon": "assets/dealwithit/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"archives.tater.houseofcards.HouseOfCards"
+			"archives.tater.dealwithit.DealWithIt"
 		],
 		"client": [
-			"archives.tater.houseofcards.client.HouseOfCardsClient"
+			"archives.tater.dealwithit.client.DealWithItClient"
 		],
 		"fabric-datagen": [
-			"archives.tater.houseofcards.client.HouseOfCardsDataGenerator"
+			"archives.tater.dealwithit.client.DealWithItDataGenerator"
 		]
 	},
 	"mixins": [
-		"houseofcards.mixins.json",
+		"dealwithit.mixins.json",
 		{
-			"config": "houseofcards.client.mixins.json",
+			"config": "dealwithit.client.mixins.json",
 			"environment": "client"
 		}
 	],
