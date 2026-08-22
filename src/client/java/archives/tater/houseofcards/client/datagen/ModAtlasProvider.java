@@ -26,8 +26,7 @@ public class ModAtlasProvider extends FabricCodecDataProvider<List<SpriteSource>
 
     @Override
     protected void configure(BiConsumer<Identifier, List<SpriteSource>> provider, HolderLookup.Provider registryLookup) {
-        accept(provider, HouseOfCardsAtlases.CARD, List.of(new DirectoryLister(HouseOfCards.MOD_ID + "/card", HouseOfCards.MOD_ID + "/card/")));
-        accept(provider, HouseOfCardsAtlases.DECK_BACK, List.of(new DirectoryLister(HouseOfCards.MOD_ID + "/deck_back", HouseOfCards.MOD_ID + "/deck_back/")));
+        accept(provider, HouseOfCardsAtlases.CARDS, List.of(new DirectoryLister(HouseOfCards.MOD_ID, HouseOfCards.MOD_ID + "/")));
     }
 
     private static void accept(BiConsumer<Identifier, List<SpriteSource>> provider, AtlasConfig atlas, List<SpriteSource> sources) {

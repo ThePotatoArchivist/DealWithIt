@@ -1,9 +1,0 @@
-{
-  "sources": [
-    {
-      "type": "minecraft:directory",
-      "prefix": "houseofcards/deck_back/",
-      "source": "houseofcards/deck_back"
-    }
-  ]
-}
