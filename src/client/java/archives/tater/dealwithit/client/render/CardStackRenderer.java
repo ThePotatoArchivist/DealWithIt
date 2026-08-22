@@ -44,7 +44,7 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
     public void submit(CardStackRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         poseStack.pushPose();
 
-        poseStack.translate(0.5f, 0, 0.5f);
+        poseStack.translate(0.5f, (state.blockPos.getX() + state.blockPos.getZ()) % 2 == 0 ? 0 : 1f / 256, 0.5f);
         poseStack.mulPose(Axis.YP.rotation(PI));
 
         for (int i = 0; i < state.cards.size(); i++) {
