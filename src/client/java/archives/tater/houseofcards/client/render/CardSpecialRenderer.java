@@ -33,30 +33,30 @@ public class CardSpecialRenderer implements SpecialModelRenderer<CardComponent> 
     public void submit(@Nullable CardComponent argument, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         if (argument == null) return;
 
-        renderCard(argument, bothBack, sprites, poseStack, submitNodeCollector, lightCoords, overlayCoords);
+        renderCard(argument, bothBack, sprites, poseStack, submitNodeCollector, -1, lightCoords, overlayCoords);
     }
 
-    public static void renderCard(CardComponent card, boolean bothBack, SpriteGetter sprites, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords) {
+    public static void renderCard(CardComponent card, boolean bothBack, SpriteGetter sprites, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int color, int lightCoords, int overlayCoords) {
         final var backSprite = sprites.get(HouseOfCardsAtlases.DECK_BACK_MAPPER.apply(card.deck().unwrapKey().orElseThrow().identifier()));
         final var cardSprite = sprites.get(HouseOfCardsAtlases.CARD_MAPPER.apply(card.card().unwrapKey().orElseThrow().identifier()));
         final var frontSprite = bothBack ? backSprite : cardSprite;
 
         submitNodeCollector.submitCustomGeometry(poseStack, HouseOfCardsAtlases.CARDS_RENDER_TYPE, (pose, buffer) -> {
-            vertex(buffer, pose, lightCoords, overlayCoords, 0, 0, frontSprite.getU0(), frontSprite.getV1(), 1);
-            vertex(buffer, pose, lightCoords, overlayCoords, 1, 0, frontSprite.getU1(), frontSprite.getV1(), 1);
-            vertex(buffer, pose, lightCoords, overlayCoords, 1, 1, frontSprite.getU1(), frontSprite.getV0(), 1);
-            vertex(buffer, pose, lightCoords, overlayCoords, 0, 1, frontSprite.getU0(), frontSprite.getV0(), 1);
+            vertex(buffer, pose, color, lightCoords, overlayCoords, 0, 0, frontSprite.getU0(), frontSprite.getV1(), 1);
+            vertex(buffer, pose, color, lightCoords, overlayCoords, 1, 0, frontSprite.getU1(), frontSprite.getV1(), 1);
+            vertex(buffer, pose, color, lightCoords, overlayCoords, 1, 1, frontSprite.getU1(), frontSprite.getV0(), 1);
+            vertex(buffer, pose, color, lightCoords, overlayCoords, 0, 1, frontSprite.getU0(), frontSprite.getV0(), 1);
 
-            vertex(buffer, pose, lightCoords, overlayCoords, 1, 0, backSprite.getU0(), backSprite.getV1(), -1);
-            vertex(buffer, pose, lightCoords, overlayCoords, 0, 0, backSprite.getU1(), backSprite.getV1(), -1);
-            vertex(buffer, pose, lightCoords, overlayCoords, 0, 1, backSprite.getU1(), backSprite.getV0(), -1);
-            vertex(buffer, pose, lightCoords, overlayCoords, 1, 1, backSprite.getU0(), backSprite.getV0(), -1);
+            vertex(buffer, pose, color, lightCoords, overlayCoords, 1, 0, backSprite.getU0(), backSprite.getV1(), -1);
+            vertex(buffer, pose, color, lightCoords, overlayCoords, 0, 0, backSprite.getU1(), backSprite.getV1(), -1);
+            vertex(buffer, pose, color, lightCoords, overlayCoords, 0, 1, backSprite.getU1(), backSprite.getV0(), -1);
+            vertex(buffer, pose, color, lightCoords, overlayCoords, 1, 1, backSprite.getU0(), backSprite.getV0(), -1);
         });
     }
 
-    private static void vertex(final VertexConsumer builder, final PoseStack.Pose pose, final int lightCoords, final int overlayCoords, final float x, final float y, final float u, final float v, final float normalZ) {
+    private static void vertex(final VertexConsumer builder, final PoseStack.Pose pose, final int color, final int lightCoords, final int overlayCoords, final float x, final float y, final float u, final float v, final float normalZ) {
         builder.addVertex(pose, x, y, 0.5f)
-            .setColor(-1)
+            .setColor(color)
             .setUv(u, v)
             .setOverlay(overlayCoords)
             .setLight(lightCoords)

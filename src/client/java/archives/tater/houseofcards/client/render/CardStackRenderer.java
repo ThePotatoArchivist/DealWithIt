@@ -22,6 +22,7 @@ import static net.minecraft.util.Mth.HALF_PI;
 import static net.minecraft.util.Mth.PI;
 
 public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEntity, CardStackRenderer.CardStackRenderState> {
+
     private final SpriteGetter sprites;
 
     public CardStackRenderer(BlockEntityRendererProvider.Context context) {
@@ -46,7 +47,9 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
         poseStack.translate(0.5f, 0, 0.5f);
         poseStack.mulPose(Axis.YP.rotation(PI));
 
-        for (var instance : state.cards) {
+        for (int i = 0; i < state.cards.size(); i++) {
+            var instance = state.cards.get(i);
+
             poseStack.translate(0, 1f / CardStackBlockEntity.FULL_HEIGHT, 0);
 
             poseStack.pushPose();
@@ -54,7 +57,16 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
             poseStack.mulPose(Axis.XN.rotation(HALF_PI));
             poseStack.translate(-0.5f, -0.5f, -0.5f);
 
-            CardSpecialRenderer.renderCard(instance.card(), instance.faceDown(), sprites, poseStack, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY);
+            CardSpecialRenderer.renderCard(
+                    instance.card(),
+                    instance.faceDown(),
+                    sprites,
+                    poseStack,
+                    submitNodeCollector,
+                    i + 1 >= state.cards.size() ? -1 : i % 2 == 0 ? 0xdddddd : 0xbbbbbb,
+                    state.lightCoords,
+                    OverlayTexture.NO_OVERLAY
+            );
 
             poseStack.popPose();
         }
