@@ -1,5 +1,10 @@
-package archives.tater.houseofcards;
+package archives.tater.houseofcards.component;
 
+import archives.tater.houseofcards.data.Card;
+import archives.tater.houseofcards.data.Deck;
+import archives.tater.houseofcards.HouseOfCards;
+
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -18,14 +23,21 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import java.util.function.Consumer;
 
+import static java.util.function.Function.identity;
+
 public record DeckContents(
         Holder<Deck> deck,
         Object2IntMap<Holder<Card>> cards
 ) implements TooltipProvider {
-    public static final Codec<DeckContents> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final Codec<DeckContents> FULL_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Deck.CODEC.fieldOf("deck").forGetter(DeckContents::deck),
             Deck.CARDS_CODEC.fieldOf("cards").forGetter(DeckContents::cards)
     ).apply(instance, DeckContents::new));
+
+    public static final Codec<DeckContents> CODEC = Codec.either(FULL_CODEC, Deck.CODEC).xmap(
+            either -> either.map(identity(), DeckContents::new),
+            contents -> contents.cards.equals(contents.deck.value().cards()) ? Either.right(contents.deck) : Either.left(contents)
+    );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DeckContents> STREAM_CODEC = StreamCodec.composite(
             Deck.STREAM_CODEC, DeckContents::deck,

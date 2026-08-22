@@ -1,7 +1,7 @@
 package archives.tater.houseofcards.client.datagen;
 
-import archives.tater.houseofcards.Card;
-import archives.tater.houseofcards.Deck;
+import archives.tater.houseofcards.data.Card;
+import archives.tater.houseofcards.data.Deck;
 import archives.tater.houseofcards.registry.HouseOfCardsRegistries;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;

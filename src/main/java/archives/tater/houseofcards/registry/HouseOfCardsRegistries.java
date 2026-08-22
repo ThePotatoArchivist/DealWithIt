@@ -1,7 +1,7 @@
 package archives.tater.houseofcards.registry;
 
-import archives.tater.houseofcards.Card;
-import archives.tater.houseofcards.Deck;
+import archives.tater.houseofcards.data.Card;
+import archives.tater.houseofcards.data.Deck;
 import archives.tater.houseofcards.HouseOfCards;
 
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;

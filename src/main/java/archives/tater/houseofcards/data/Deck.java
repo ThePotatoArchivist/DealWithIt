@@ -1,4 +1,4 @@
-package archives.tater.houseofcards;
+package archives.tater.houseofcards.data;
 
 import archives.tater.houseofcards.registry.HouseOfCardsRegistries;
 

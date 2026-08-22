@@ -1,11 +1,10 @@
 package archives.tater.houseofcards.registry;
 
-import archives.tater.houseofcards.Card;
-import archives.tater.houseofcards.DeckContents;
 import archives.tater.houseofcards.HouseOfCards;
+import archives.tater.houseofcards.component.CardComponent;
+import archives.tater.houseofcards.component.DeckContents;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -33,7 +32,7 @@ public interface HouseOfCardsComponents {
         );
     }
 
-    DataComponentType<Holder<Card>> CARD = createCached("card", Card.CODEC, Card.STREAM_CODEC);
+    DataComponentType<CardComponent> CARD = createCached("card", CardComponent.CODEC, CardComponent.STREAM_CODEC);
     DataComponentType<DeckContents> DECK_CONTENTS = createCached("deck_contents", DeckContents.CODEC, DeckContents.STREAM_CODEC);
 
     static void init() {
