@@ -1,7 +1,9 @@
 package archives.tater.houseofcards.registry;
 
+import archives.tater.houseofcards.block.CardStackBlock;
 import archives.tater.houseofcards.data.Card;
 
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.item.v1.ItemClickBehaviorCallback;
 import net.fabricmc.fabric.api.util.EventResult;
@@ -38,12 +40,24 @@ public interface HouseOfCardsItems {
         });
 
         UseItemCallback.EVENT.register((player, level, hand) -> {
+            if (player.isSpectator()) return InteractionResult.PASS;
+
             var stack = player.getItemInHand(hand);
             if (!stack.is(HouseOfCardsItemTags.FLIPPABLE)) return InteractionResult.PASS;
 
             Card.flip(stack, player);
 
             return InteractionResult.SUCCESS;
+        });
+
+        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
+            if (player.isSpectator()) return InteractionResult.PASS;
+            if (level.getBlockState(hitResult.getBlockPos()).is(HouseOfCardsBlocks.CARD_STACK)) return InteractionResult.PASS;
+
+            var stack = player.getItemInHand(hand);
+            if (!stack.has(HouseOfCardsComponents.CARD)) return InteractionResult.PASS;
+
+            return CardStackBlock.place(player, hand, stack, hitResult) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         });
     }
 }

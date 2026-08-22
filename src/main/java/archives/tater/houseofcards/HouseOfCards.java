@@ -1,8 +1,6 @@
 package archives.tater.houseofcards;
 
-import archives.tater.houseofcards.registry.HouseOfCardsComponents;
-import archives.tater.houseofcards.registry.HouseOfCardsItems;
-import archives.tater.houseofcards.registry.HouseOfCardsRegistries;
+import archives.tater.houseofcards.registry.*;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -27,6 +25,8 @@ public class HouseOfCards implements ModInitializer {
 
 		HouseOfCardsRegistries.init();
 		HouseOfCardsComponents.init();
+		HouseOfCardsBlockEntities.init();
+		HouseOfCardsBlocks.init();
 		HouseOfCardsItems.init();
 	}
 

@@ -1,6 +1,7 @@
 package archives.tater.houseofcards.client.datagen;
 
 import archives.tater.houseofcards.client.render.CardSpecialRenderer;
+import archives.tater.houseofcards.registry.HouseOfCardsBlocks;
 import archives.tater.houseofcards.registry.HouseOfCardsComponents;
 import archives.tater.houseofcards.registry.HouseOfCardsItems;
 
@@ -24,7 +25,7 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockModelGenerators blockModelGenerators) {
-
+        blockModelGenerators.createParticleOnlyBlock(HouseOfCardsBlocks.CARD_STACK);
     }
 
     @Override

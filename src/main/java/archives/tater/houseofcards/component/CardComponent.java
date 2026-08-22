@@ -5,6 +5,7 @@ import archives.tater.houseofcards.data.Deck;
 import archives.tater.houseofcards.registry.HouseOfCardsComponents;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentGetter;
@@ -20,10 +21,12 @@ import java.util.function.Consumer;
 
 public record CardComponent(Holder<Deck> deck, Holder<Card> card) implements TooltipProvider {
 
-    public static final Codec<CardComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<CardComponent> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Deck.CODEC.fieldOf("deck").forGetter(CardComponent::deck),
             Card.CODEC.fieldOf("card").forGetter(CardComponent::card)
     ).apply(instance, CardComponent::new));
+
+    public static final Codec<CardComponent> CODEC = MAP_CODEC.codec();
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CardComponent> STREAM_CODEC = StreamCodec.composite(
             Deck.STREAM_CODEC, CardComponent::deck,

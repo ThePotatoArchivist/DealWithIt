@@ -26,11 +26,14 @@ public record Card(Component description) {
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Card>> STREAM_CODEC = ByteBufCodecs.holderRegistry(HouseOfCardsRegistries.CARD);
 
     public static void flip(ItemStack stack, Player player) {
+        flip(stack);
+        player.playSound(SoundEvents.BOOK_PAGE_TURN);
+    }
+
+    public static void flip(ItemStack stack) {
         if (stack.has(HouseOfCardsComponents.FACE_DOWN))
             stack.remove(HouseOfCardsComponents.FACE_DOWN);
         else
             stack.set(HouseOfCardsComponents.FACE_DOWN, Unit.INSTANCE);
-
-        player.playSound(SoundEvents.BOOK_PAGE_TURN);
     }
 }

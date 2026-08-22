@@ -33,8 +33,12 @@ public class CardSpecialRenderer implements SpecialModelRenderer<CardComponent> 
     public void submit(@Nullable CardComponent argument, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         if (argument == null) return;
 
-        final var backSprite = sprites.get(HouseOfCardsAtlases.DECK_BACK_MAPPER.apply(argument.deck().unwrapKey().orElseThrow().identifier()));
-        final var cardSprite = sprites.get(HouseOfCardsAtlases.CARD_MAPPER.apply(argument.card().unwrapKey().orElseThrow().identifier()));
+        renderCard(argument, bothBack, sprites, poseStack, submitNodeCollector, lightCoords, overlayCoords);
+    }
+
+    public static void renderCard(CardComponent card, boolean bothBack, SpriteGetter sprites, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords) {
+        final var backSprite = sprites.get(HouseOfCardsAtlases.DECK_BACK_MAPPER.apply(card.deck().unwrapKey().orElseThrow().identifier()));
+        final var cardSprite = sprites.get(HouseOfCardsAtlases.CARD_MAPPER.apply(card.card().unwrapKey().orElseThrow().identifier()));
         final var frontSprite = bothBack ? backSprite : cardSprite;
 
         submitNodeCollector.submitCustomGeometry(poseStack, HouseOfCardsAtlases.CARDS_RENDER_TYPE, (pose, buffer) -> {
