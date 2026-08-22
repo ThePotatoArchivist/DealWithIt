@@ -10,20 +10,22 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.TagKey;
 
-import java.util.Arrays;
+import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
+
+import static net.minecraft.util.Util.makeDescriptionId;
 
 public abstract class DeckProvider implements RegistrySetBuilder.RegistryBootstrap<Card>, FabricDataGenerator.Pack.RegistryDependentFactory<FabricDynamicRegistryProvider> {
     private final Map<ResourceKey<Deck>, UnbakedDeck> decks = new HashMap<>();
@@ -34,16 +36,17 @@ public abstract class DeckProvider implements RegistrySetBuilder.RegistryBootstr
 
     @Override
     public void run(BootstrapContext<Card> registry) {
-        generate((id, cards) -> {
-            var namespace = id.getNamespace();
+        generate((id) -> {
+            var cards = new Object2IntLinkedOpenHashMap<Holder.Reference<Card>>(); // Linked only for datagen to stay in order
             decks.put(ResourceKey.create(HouseOfCardsRegistries.DECK, id), new UnbakedDeck(
-                    Component.translatable(id.toLanguageKey("deck")),
-                    TagKey.create(HouseOfCardsRegistries.CARD, id),
+                    Component.translatable(makeDescriptionId("deck", id)),
                     cards
-                            .map(path -> Identifier.fromNamespaceAndPath(namespace, path))
-                            .map(card -> registry.register(ResourceKey.create(HouseOfCardsRegistries.CARD, card), new Card(Component.translatable(card.toLanguageKey("card")))))
-                            .toList()
             ));
+
+            return (count, path) -> {
+                var card = id.withSuffix("/" + path);
+                cards.put(registry.register(ResourceKey.create(HouseOfCardsRegistries.CARD, card), new Card(Component.translatable(makeDescriptionId("card", card)))), count);
+            };
         });
     }
 
@@ -53,10 +56,10 @@ public abstract class DeckProvider implements RegistrySetBuilder.RegistryBootstr
             @Override
             protected void configure(HolderLookup.Provider registries, Entries entries) {
                 decks.forEach((id, unbaked) -> {
-                    for (var card : unbaked.cards)
+                    for (var card : unbaked.cards.keySet())
                         entries.add(card);
 
-                    entries.add(id, new Deck(unbaked.description, HolderSet.direct(unbaked.cards)));
+                    entries.add(id, new Deck(unbaked.description, Object2IntMaps.unmodifiable(unbaked.cards)));
                 });
             }
 
@@ -69,12 +72,41 @@ public abstract class DeckProvider implements RegistrySetBuilder.RegistryBootstr
 
     @FunctionalInterface
     public interface DeckOutput {
-        default void deck(Identifier id, String... cards) {
-            deck(id, Arrays.stream(cards));
-        }
-
-        void deck(Identifier id, Stream<String> cards);
+        DeckBuilder deck(Identifier id);
     }
 
-    record UnbakedDeck(Component description, TagKey<Card> tag, List<Holder.Reference<Card>> cards) {}
+    @FunctionalInterface
+    public interface DeckBuilder {
+        void addCard(int count, String path);
+
+        default DeckBuilder card(int count, String path) {
+            addCard(count, path);
+            return this;
+        }
+
+        default DeckBuilder card(String path) {
+            return card(1, path);
+        }
+
+        default DeckBuilder cards(int count, String... paths) {
+            for (var path : paths)
+                card(count, path);
+            return this;
+        }
+
+        default DeckBuilder cards(String... paths) {
+            return cards(1, paths);
+        }
+
+        default DeckBuilder cards(int count, Stream<String> paths) {
+            paths.forEach(path -> card(count, path));
+            return this;
+        }
+
+        default DeckBuilder cards(Stream<String> paths) {
+            return cards(1, paths);
+        }
+    }
+
+    record UnbakedDeck(Component description, Object2IntMap<Holder.Reference<Card>> cards) {}
 }
