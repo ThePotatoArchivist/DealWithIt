@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:directory",
+      "prefix": "houseofcards/card/",
+      "source": "houseofcards/card"
+    }
+  ]
+}

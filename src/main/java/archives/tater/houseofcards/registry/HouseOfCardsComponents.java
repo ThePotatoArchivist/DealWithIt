@@ -14,6 +14,10 @@ import net.minecraft.network.codec.StreamCodec;
 import java.util.function.Consumer;
 
 public interface HouseOfCardsComponents {
+
+    DataComponentType<CardComponent> CARD = createCached("card", CardComponent.CODEC, CardComponent.STREAM_CODEC);
+    DataComponentType<DeckContents> DECK_CONTENTS = createCached("deck_contents", DeckContents.CODEC, DeckContents.STREAM_CODEC);
+
     private static <T> DataComponentType<T> create(String path, DataComponentType.Builder<T> builder) {
         return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, HouseOfCards.id(path), builder.build());
     }
@@ -31,9 +35,6 @@ public interface HouseOfCardsComponents {
                 .cacheEncoding()
         );
     }
-
-    DataComponentType<CardComponent> CARD = createCached("card", CardComponent.CODEC, CardComponent.STREAM_CODEC);
-    DataComponentType<DeckContents> DECK_CONTENTS = createCached("deck_contents", DeckContents.CODEC, DeckContents.STREAM_CODEC);
 
     static void init() {
 

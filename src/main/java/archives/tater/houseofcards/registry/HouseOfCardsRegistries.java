@@ -10,12 +10,13 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
 public interface HouseOfCardsRegistries {
+
+    ResourceKey<Registry<Deck>> DECK = create("deck");
+    ResourceKey<Registry<Card>> CARD = create("card");
+
     private static <T> ResourceKey<Registry<T>> create(String path) {
         return ResourceKey.createRegistryKey(HouseOfCards.id(path));
     }
-
-    ResourceKey<Registry<Card>> CARD = create("card");
-    ResourceKey<Registry<Deck>> DECK = create("deck");
 
     static void init() {
         DynamicRegistries.registerSynced(CARD, Card.DIRECT_CODEC);

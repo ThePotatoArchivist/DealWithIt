@@ -7,10 +7,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 
 public interface HouseOfCardsItemIds {
-    private static ResourceKey<Item> create(String path) {
-        return ResourceKey.create(Registries.ITEM, HouseOfCards.id(path));
-    }
 
     ResourceKey<Item> CARD = create("card");
     ResourceKey<Item> CARD_BOX = create("card_box");
+
+    private static ResourceKey<Item> create(String path) {
+        return ResourceKey.create(Registries.ITEM, HouseOfCards.id(path));
+    }
 }
