@@ -1,9 +1,10 @@
 package archives.tater.dealwithit.component;
 
 import archives.tater.dealwithit.data.Card;
-import archives.tater.dealwithit.data.Deck;
 import archives.tater.dealwithit.DealWithIt;
 
+import archives.tater.dealwithit.data.Deck;
+import archives.tater.dealwithit.data.DeckType;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -31,7 +32,7 @@ public record DeckContents(
 ) implements TooltipProvider {
     public static final Codec<DeckContents> FULL_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Deck.CODEC.fieldOf("deck").forGetter(DeckContents::deck),
-            Deck.CARDS_CODEC.fieldOf("cards").forGetter(DeckContents::cards)
+            DeckType.CARDS_CODEC.fieldOf("cards").forGetter(DeckContents::cards)
     ).apply(instance, DeckContents::new));
 
     public static final Codec<DeckContents> CODEC = Codec.either(FULL_CODEC, Deck.CODEC).xmap(

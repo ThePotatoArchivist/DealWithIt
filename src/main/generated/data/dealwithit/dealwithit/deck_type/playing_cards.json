@@ -52,8 +52,5 @@
     "dealwithit:playing_cards/king_hearts",
     "dealwithit:playing_cards/king_clubs",
     "dealwithit:playing_cards/king_diamonds"
-  ],
-  "description": {
-    "translate": "deck.dealwithit.playing_cards"
-  }
+  ]
 }

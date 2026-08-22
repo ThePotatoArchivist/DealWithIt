@@ -1,0 +1,6 @@
+{
+  "type": "dealwithit:playing_cards",
+  "description": {
+    "translate": "deck.dealwithit.playing_cards_yellow"
+  }
+}

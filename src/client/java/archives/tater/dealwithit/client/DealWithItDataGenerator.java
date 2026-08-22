@@ -25,16 +25,25 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 	public static final DeckProvider PLAYING_CARDS = new DeckProvider() {
 		@Override
 		protected void generate(DeckOutput output) {
-			output.deck(DealWithIt.id("playing_cards"), "Playing Cards")
+			var playingCards = output.deckType(DealWithIt.id("playing_cards"))
 					.cards(Stream.of("ace", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king").flatMap(number ->
 							Stream.of("spades", "hearts", "clubs", "diamonds").map(suit -> card(number + "_" + suit, capitalize(number) + " of " + capitalize(suit)))
-					));
+					))
+					.build();
 
-			output.deck(DealWithIt.id("uno"), "Uno")
+			output.deck(DealWithIt.id("playing_cards_red"), "Playing Cards (Red)", playingCards);
+			output.deck(DealWithIt.id("playing_cards_green"), "Playing Cards (Green)", playingCards);
+			output.deck(DealWithIt.id("playing_cards_blue"), "Playing Cards (Blue)", playingCards);
+			output.deck(DealWithIt.id("playing_cards_yellow"), "Playing Cards (Yellow)", playingCards);
+
+			var uno = output.deckType(DealWithIt.id("uno"))
 					.cards(2, Stream.of("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "skip", "draw_two", "reverse").flatMap(number ->
 							Stream.of("red", "yellow", "green", "blue").map(color -> card(color + "_" + number, capitalize(color) + " " + snakeToTitleCase(number)))
 					))
-					.cards(4, card("wild", "Wild"), card("wild_draw_4", "Wild Draw 4"));
+					.cards(4, card("wild", "Wild"), card("wild_draw_4", "Wild Draw 4"))
+					.build();
+
+			output.deck(DealWithIt.id("uno"), "Uno", uno);
 		}
 
 		@Override
@@ -45,7 +54,8 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 
 	@Override
 	public void buildRegistry(RegistrySetBuilder registryBuilder) {
-		registryBuilder.add(DealWithItRegistries.CARD, PLAYING_CARDS);
+		registryBuilder.add(DealWithItRegistries.CARD, PLAYING_CARDS::bootstrapCards);
+		registryBuilder.add(DealWithItRegistries.DECK_TYPE, PLAYING_CARDS::bootstrapDeckTypes);
 	}
 
 	@Override
