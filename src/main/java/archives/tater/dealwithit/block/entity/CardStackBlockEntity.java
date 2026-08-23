@@ -13,6 +13,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.ProblemReporter;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
@@ -26,9 +27,11 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import static archives.tater.dealwithit.Util.toShuffledList;
 import static java.lang.Math.ceilDiv;
 import static net.minecraft.util.Mth.clamp;
 
@@ -68,6 +71,30 @@ public class CardStackBlockEntity extends BlockEntity {
         return cards;
     }
 
+    public void setCards(Collection<CardInstance> cards) {
+        this.cards.clear();
+        this.cards.addAll(cards);
+    }
+
+    public static List<CardInstance> getCards(ItemStack stack, float angle, boolean flip, RandomSource random) {
+        var single = CardInstance.fromStack(stack, angle, flip);
+        if (single != null) return List.of(single);
+
+        var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
+        if (deck != null) return deck.cards().object2IntEntrySet().stream()
+                .<CardInstance>mapMulti((entry, yield) -> {
+                    var instance = new CardInstance(new CardComponent(deck.deck(), entry.getKey()), angle, !flip);
+                    for (int i = 0; i < entry.getIntValue(); i++) yield.accept(instance);
+                })
+                .collect(toShuffledList(random));
+
+        return List.of();
+    }
+
+    public static int getHeight(int count) {
+        return clamp(ceilDiv(count * 16, FULL_HEIGHT), 1, 16);
+    }
+
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         var level = getLevel();
@@ -78,7 +105,7 @@ public class CardStackBlockEntity extends BlockEntity {
     }
 
     private void updateHeight() {
-        getLevel().setBlockAndUpdate(getBlockPos(), cards.isEmpty() ? Blocks.AIR.defaultBlockState() : getBlockState().setValue(CardStackBlock.HEIGHT, clamp(ceilDiv(cards.size() * 16, FULL_HEIGHT), 1, 16)));
+        getLevel().setBlockAndUpdate(getBlockPos(), cards.isEmpty() ? Blocks.AIR.defaultBlockState() : getBlockState().setValue(CardStackBlock.HEIGHT, getHeight(cards.size())));
     }
 
     private void markUpdated() {

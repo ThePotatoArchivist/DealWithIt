@@ -25,6 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import org.jspecify.annotations.Nullable;
 
 public class CardStackBlock extends BaseEntityBlock {
@@ -39,20 +40,12 @@ public class CardStackBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!(level.getBlockEntity(pos) instanceof CardStackBlockEntity blockEntity)) return InteractionResult.PASS;
+        if (!(level.getBlockEntity(pos) instanceof CardStackBlockEntity blockEntity) || !itemStack.isEmpty()) return InteractionResult.PASS;
 
-        if (itemStack.isEmpty()) {
-            var stack = blockEntity.popCard(player.isSecondaryUseActive());
-            if (stack.isEmpty()) return InteractionResult.FAIL;
+        var stack = blockEntity.popCard(player.isSecondaryUseActive());
+        if (stack.isEmpty()) return InteractionResult.FAIL;
 
-            player.setItemInHand(hand, stack);
-        } else {
-            if (!itemStack.has(DealWithItComponents.CARD)) return InteractionResult.FAIL;
-
-            if (!blockEntity.pushCard(itemStack, player.getYHeadRot(), player.isSecondaryUseActive())) return InteractionResult.FAIL;
-
-            itemStack.consume(1, player);
-        }
+        player.setItemInHand(hand, stack);
 
         return InteractionResult.SUCCESS;
     }
@@ -63,16 +56,24 @@ public class CardStackBlock extends BaseEntityBlock {
     }
 
     public static boolean place(Player player, InteractionHand hand, ItemStack stack, BlockHitResult hitResult) {
+        var cards = CardStackBlockEntity.getCards(stack, player.getYHeadRot(), player.isSecondaryUseActive(), player.getRandom());
+        if (cards.isEmpty()) return false;
+
         var context = new BlockPlaceContext(player, hand, stack, hitResult);
         if (!context.canPlace()) return false;
 
-        var state = DealWithItBlocks.CARD_STACK.defaultBlockState();
+        var state = DealWithItBlocks.CARD_STACK.defaultBlockState().setValue(HEIGHT, CardStackBlockEntity.getHeight(cards.size()));
         if (!context.getLevel().setBlock(context.getClickedPos(), state, Block.UPDATE_ALL_IMMEDIATE)) return false;
 
         if (!(player.level().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)) return true;
 
-        blockEntity.pushCard(stack, player.getYHeadRot(), player.isSecondaryUseActive());
-        stack.consume(1, player);
+        blockEntity.setCards(cards);
+
+        var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
+        if (deck != null)
+            stack.set(DealWithItComponents.DECK_CONTENTS, deck.withCards(Object2IntMaps.emptyMap()));
+        else
+            stack.consume(1, player);
 
         return true;
     }

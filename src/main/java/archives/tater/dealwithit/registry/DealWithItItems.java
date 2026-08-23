@@ -1,6 +1,7 @@
 package archives.tater.dealwithit.registry;
 
 import archives.tater.dealwithit.block.CardStackBlock;
+import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
 import archives.tater.dealwithit.data.Card;
 
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -52,10 +53,19 @@ public interface DealWithItItems {
 
         UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
             if (player.isSpectator()) return InteractionResult.PASS;
-            if (level.getBlockState(hitResult.getBlockPos()).is(DealWithItBlocks.CARD_STACK)) return InteractionResult.PASS;
-
             var stack = player.getItemInHand(hand);
-            if (!stack.has(DealWithItComponents.CARD)) return InteractionResult.PASS;
+
+            if (level.getBlockEntity(hitResult.getBlockPos()) instanceof CardStackBlockEntity blockEntity) {
+                if (!stack.has(DealWithItComponents.CARD)) return InteractionResult.PASS;
+
+                if (!blockEntity.pushCard(stack, player.getYHeadRot(), player.isSecondaryUseActive())) return InteractionResult.FAIL;
+
+                stack.consume(1, player);
+
+                return InteractionResult.SUCCESS;
+            }
+
+            if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS)) return InteractionResult.PASS;
 
             return CardStackBlock.place(player, hand, stack, hitResult) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         });

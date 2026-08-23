@@ -61,6 +61,10 @@ public record DeckContents(
         return cards.values().intStream().sum();
     }
 
+    public DeckContents withCards(Object2IntMap<Holder<Card>> cards) {
+        return new DeckContents(deck, cards);
+    }
+
     @Override
     public Identifier modelId() {
         return deck.unwrapKey().orElseThrow().identifier();
