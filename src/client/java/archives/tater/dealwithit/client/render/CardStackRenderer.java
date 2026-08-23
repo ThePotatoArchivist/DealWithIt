@@ -63,7 +63,7 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
                     sprites,
                     poseStack,
                     submitNodeCollector,
-                    i + 1 >= state.cards.size() ? -1 : i % 2 == 0 ? 0xdddddd : 0xbbbbbb,
+                    i + 1 >= state.cards.size() ? -1 : (i / 4) % 2 == 0 ? 0xdddddd : 0xbbbbbb,
                     state.lightCoords,
                     OverlayTexture.NO_OVERLAY
             );

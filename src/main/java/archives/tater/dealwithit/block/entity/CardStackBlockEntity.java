@@ -39,7 +39,7 @@ import static net.minecraft.util.Mth.clamp;
 
 public class CardStackBlockEntity extends BlockEntity {
 
-    public static final int FULL_HEIGHT = 64;
+    public static final int FULL_HEIGHT = 128;
     private final List<CardInstance> cards = new LinkedList<>();
 
     private static final Codec<List<CardInstance>> CARDS_CODEC = CardInstance.CODEC.listOf();
