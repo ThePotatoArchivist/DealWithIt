@@ -2,6 +2,7 @@ package archives.tater.dealwithit.client.datagen;
 
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.data.Card;
+import archives.tater.dealwithit.data.CardSet;
 import archives.tater.dealwithit.data.Deck;
 import archives.tater.dealwithit.data.DeckType;
 import archives.tater.dealwithit.registry.DealWithItRegistries;
@@ -19,7 +20,6 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.renderer.item.ClientItem;
 import net.minecraft.client.resources.model.sprite.Material;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -86,11 +86,11 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
 
     public void bootstrapDeckTypes(BootstrapContext<DeckType> registry) {
         for (var type : deckTypes) {
-            var cards = new Object2IntLinkedOpenHashMap<Holder<Card>>();
+            var cards = new CardSet.Mutable();
             type.cards.forEach((card, amount) ->
-                    cards.put(registry.lookup(DealWithItRegistries.CARD).getOrThrow(card.key), amount)
+                    cards.add(registry.lookup(DealWithItRegistries.CARD).getOrThrow(card.key), amount)
             );
-            registry.register(type.key, new DeckType(cards));
+            registry.register(type.key, new DeckType(cards.build()));
         }
     }
 

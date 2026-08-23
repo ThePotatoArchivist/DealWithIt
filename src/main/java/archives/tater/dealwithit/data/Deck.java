@@ -12,9 +12,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import org.jetbrains.annotations.Unmodifiable;
-
 public record Deck(
         Component description,
         Holder<DeckType> type
@@ -27,7 +24,7 @@ public record Deck(
     public static final Codec<Holder<Deck>> CODEC = RegistryFixedCodec.create(DealWithItRegistries.DECK);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Deck>> STREAM_CODEC = ByteBufCodecs.holderRegistry(DealWithItRegistries.DECK);
 
-    public @Unmodifiable Object2IntMap<Holder<Card>> cards() {
+    public CardSet cards() {
         return type.value().cards();
     }
 

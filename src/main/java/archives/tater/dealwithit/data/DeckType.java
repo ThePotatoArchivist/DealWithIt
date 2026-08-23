@@ -2,7 +2,6 @@ package archives.tater.dealwithit.data;
 
 import archives.tater.dealwithit.registry.DealWithItRegistries;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -10,33 +9,18 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
-import net.minecraft.util.ExtraCodecs;
-
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.jetbrains.annotations.Unmodifiable;
-
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
 
 public record DeckType(
-        @Unmodifiable Object2IntMap<Holder<Card>> cards
+        CardSet cards
 ) {
-    public static final Codec<Object2IntMap<Holder<Card>>> LONG_CARDS_CODEC = Codec.unboundedMap(Card.CODEC, ExtraCodecs.POSITIVE_INT).xmap(Object2IntOpenHashMap::new, identity());
-    public static final Codec<Object2IntMap<Holder<Card>>> SHORT_CARDS_CODEC = Card.CODEC.listOf().xmap(cards -> new Object2IntOpenHashMap<>(cards.stream().collect(toMap(identity(), _ -> 1))), map -> map.keySet().stream().toList());
-    public static final Codec<Object2IntMap<Holder<Card>>> CARDS_CODEC = Codec.either(LONG_CARDS_CODEC, SHORT_CARDS_CODEC).xmap(
-            Either::unwrap,
-            map -> map.values().intStream().allMatch(count -> count == 1) ? Either.right(map) : Either.left(map)
-    );
-
     public static final Codec<DeckType> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            CARDS_CODEC.fieldOf("cards").forGetter(DeckType::cards)
+            CardSet.CODEC.fieldOf("cards").forGetter(DeckType::cards)
     ).apply(instance, DeckType::new));
 
     public static final Codec<Holder<DeckType>> CODEC = RegistryFixedCodec.create(DealWithItRegistries.DECK_TYPE);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DeckType>> STREAM_CODEC = ByteBufCodecs.holderRegistry(DealWithItRegistries.DECK_TYPE);
 
     public int size() {
-        return cards.values().intStream().sum();
+        return cards.count();
     }
 }

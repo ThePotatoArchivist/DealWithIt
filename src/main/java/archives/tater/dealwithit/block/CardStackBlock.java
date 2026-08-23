@@ -2,6 +2,7 @@ package archives.tater.dealwithit.block;
 
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
 import archives.tater.dealwithit.component.DeckContents;
+import archives.tater.dealwithit.data.CardSet;
 import archives.tater.dealwithit.registry.DealWithItBlocks;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 
@@ -26,8 +27,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMaps;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jspecify.annotations.Nullable;
 
 public class CardStackBlock extends BaseEntityBlock {
@@ -55,8 +54,8 @@ public class CardStackBlock extends BaseEntityBlock {
 
         var contents = itemStack.get(DealWithItComponents.DECK_CONTENTS);
         if (contents != null) {
-            var cards = new Object2IntOpenHashMap<>(contents.cards());
-            var anyRemoved = blockEntity.removeIf(instance -> DeckContents.tryInsert(instance.card(), contents.deck(), cards) );
+            var cards = contents.mutableCards();
+            var anyRemoved = blockEntity.removeIf(instance -> DeckContents.tryInsert(instance.card(), contents.deck(), cards));
             if (!anyRemoved) return InteractionResult.FAIL;
 
             itemStack.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(cards));
@@ -87,7 +86,7 @@ public class CardStackBlock extends BaseEntityBlock {
 
         var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
         if (deck != null)
-            stack.set(DealWithItComponents.DECK_CONTENTS, deck.withCards(Object2IntMaps.emptyMap()));
+            stack.set(DealWithItComponents.DECK_CONTENTS, deck.withCards(CardSet.EMPTY));
         else
             stack.consume(1, player);
 

@@ -92,11 +92,8 @@ public class CardStackBlockEntity extends BlockEntity {
         if (single != null) return List.of(single);
 
         var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
-        if (deck != null) return deck.cards().object2IntEntrySet().stream()
-                .<CardInstance>mapMulti((entry, yield) -> {
-                    var instance = new CardInstance(new CardComponent(deck.deck(), entry.getKey()), angle, !flip);
-                    for (int i = 0; i < entry.getIntValue(); i++) yield.accept(instance);
-                })
+        if (deck != null) return deck.cards().stream()
+                .map(card -> new CardInstance(new CardComponent(deck.deck(), card), angle, !flip))
                 .collect(toShuffledList(random));
 
         return List.of();

@@ -2,9 +2,8 @@ package archives.tater.dealwithit.component;
 
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.ItemModelProviderComponent;
-import archives.tater.dealwithit.data.Card;
+import archives.tater.dealwithit.data.CardSet;
 import archives.tater.dealwithit.data.Deck;
-import archives.tater.dealwithit.data.DeckType;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 import archives.tater.dealwithit.registry.DealWithItItems;
 
@@ -16,7 +15,6 @@ import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -24,22 +22,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipProvider;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.jetbrains.annotations.Unmodifiable;
-
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import static java.util.function.Function.identity;
 
 public record DeckContents(
         Holder<Deck> deck,
-        @Unmodifiable Object2IntMap<Holder<Card>> cards
+        CardSet cards
 ) implements TooltipProvider, ItemModelProviderComponent {
     public static final Codec<DeckContents> FULL_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Deck.CODEC.fieldOf("deck").forGetter(DeckContents::deck),
-            DeckType.CARDS_CODEC.fieldOf("cards").forGetter(DeckContents::cards)
+            CardSet.CODEC.fieldOf("cards").forGetter(DeckContents::cards)
     ).apply(instance, DeckContents::new));
 
     public static final Codec<DeckContents> CODEC = Codec.either(FULL_CODEC, Deck.CODEC).xmap(
@@ -49,7 +42,7 @@ public record DeckContents(
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DeckContents> STREAM_CODEC = StreamCodec.composite(
             Deck.STREAM_CODEC, DeckContents::deck,
-            ByteBufCodecs.map(Object2IntOpenHashMap::new, Card.STREAM_CODEC, ByteBufCodecs.INT), DeckContents::cards,
+            CardSet.STREAM_CODEC, DeckContents::cards,
             DeckContents::new
     );
 
@@ -59,30 +52,30 @@ public record DeckContents(
     }
 
     public int cardCount() {
-        return cards.values().intStream().sum();
+        return cards.count();
     }
 
     public boolean isComplete() {
         return cards.equals(deck.value().cards());
     }
 
-    public DeckContents withCards(Object2IntMap<Holder<Card>> cards) {
+    public DeckContents withCards(CardSet cards) {
         return new DeckContents(deck, cards);
     }
 
-    public DeckContents withAdded(Stream<CardComponent> addedCards) {
-        var cards = new Object2IntOpenHashMap<>(this.cards);
-        addedCards.forEach(card -> {
-            tryInsert(card, deck, cards);
-        });
-        return new DeckContents(deck, cards);
+    public DeckContents withCards(CardSet.Mutable cards) {
+        return withCards(cards.build());
     }
 
     public DeckContents withAdded(CardComponent card) {
         if (!canInsert(card)) return this;
-        var cards = new Object2IntOpenHashMap<>(this.cards);
-        cards.addTo(card.card(), 1);
-        return new DeckContents(deck, cards);
+        var cards = mutableCards();
+        cards.add(card.card());
+        return withCards(cards);
+    }
+
+    public CardSet.Mutable mutableCards() {
+        return new CardSet.Mutable(this.cards, deck.value().cards());
     }
 
     public boolean canInsert(CardComponent card) {
@@ -106,13 +99,17 @@ public record DeckContents(
         return stack;
     }
 
-    public static boolean canInsert(CardComponent card, Holder<Deck> deck, Object2IntMap<Holder<Card>> cards) {
-        return card.deck() == deck && cards.getInt(card.card()) < deck.value().cards().getInt(card.card());
+    public static boolean canInsert(CardComponent card, Holder<Deck> deck, CardSet.Mutable cards) {
+        return card.deck() == deck && cards.canAdd(card.card());
     }
 
-    public static boolean tryInsert(CardComponent card, Holder<Deck> deck, Object2IntOpenHashMap<Holder<Card>> cards) {
+    public static boolean canInsert(CardComponent card, Holder<Deck> deck, CardSet cards) {
+        return card.deck() == deck && cards.count(card.card()) < deck.value().cards().count(card.card());
+    }
+
+    public static boolean tryInsert(CardComponent card, Holder<Deck> deck, CardSet.Mutable cards) {
         if (!canInsert(card, deck, cards)) return false;
-        cards.addTo(card.card(), 1);
+        cards.add(card.card());
         return true;
     }
 }
