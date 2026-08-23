@@ -1,9 +1,8 @@
 package archives.tater.dealwithit.component;
 
+import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.ItemModelProviderComponent;
 import archives.tater.dealwithit.data.Card;
-import archives.tater.dealwithit.DealWithIt;
-
 import archives.tater.dealwithit.data.Deck;
 import archives.tater.dealwithit.data.DeckType;
 import archives.tater.dealwithit.registry.DealWithItComponents;
@@ -43,7 +42,7 @@ public record DeckContents(
 
     public static final Codec<DeckContents> CODEC = Codec.either(FULL_CODEC, Deck.CODEC).xmap(
             either -> either.map(identity(), DeckContents::new),
-            contents -> contents.cards.equals(contents.deck.value().cards()) ? Either.right(contents.deck) : Either.left(contents)
+            contents -> contents.isComplete() ? Either.right(contents.deck) : Either.left(contents)
     );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DeckContents> STREAM_CODEC = StreamCodec.composite(
@@ -51,14 +50,18 @@ public record DeckContents(
             ByteBufCodecs.map(Object2IntOpenHashMap::new, Card.STREAM_CODEC, ByteBufCodecs.INT), DeckContents::cards,
             DeckContents::new
     );
-    public static final String FILL = "item." + DealWithIt.MOD_ID + ".card_box.fill";
 
+    public static final String FILL = "item." + DealWithIt.MOD_ID + ".card_box.fill";
     public DeckContents(Holder<Deck> deck) {
         this(deck, deck.value().cards());
     }
 
     public int cardCount() {
         return cards.values().intStream().sum();
+    }
+
+    public boolean isComplete() {
+        return cards.equals(deck.value().cards());
     }
 
     public DeckContents withCards(Object2IntMap<Holder<Card>> cards) {

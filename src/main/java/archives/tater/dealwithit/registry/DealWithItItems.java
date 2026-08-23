@@ -3,6 +3,7 @@ package archives.tater.dealwithit.registry;
 import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
 import archives.tater.dealwithit.data.Card;
+import archives.tater.dealwithit.item.CardBoxItem;
 
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -15,13 +16,16 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import java.util.function.Function;
 
 public interface DealWithItItems {
 
     Item CARD = register(DealWithItItemIds.CARD, new Item.Properties().stacksTo(1));
-    Item CARD_BOX = register(DealWithItItemIds.CARD_BOX, new Item.Properties().stacksTo(1));
+    Item CARD_BOX = register(DealWithItItemIds.CARD_BOX, CardBoxItem::new, new Item.Properties().stacksTo(1));
 
     private static Item register(ResourceKey<Item> id, Function<Item.Properties, Item> item, Item.Properties properties) {
         return Registry.register(BuiltInRegistries.ITEM, id, item.apply(properties.setId(id)));
@@ -31,13 +35,30 @@ public interface DealWithItItems {
         return register(id, Item::new, properties);
     }
 
+    private static boolean tryInsert(ItemStack box, ItemStack cardItem) {
+        var contents = box.get(DealWithItComponents.DECK_CONTENTS);
+        var card = cardItem.get(DealWithItComponents.CARD);
+        if (contents == null || card == null) return false;
+        if (contents.deck() != card.deck()) return false;
+        if (contents.cards().getInt(card.card()) >= contents.deck().value().cards().getInt(card.card())) return false;
+        var cards = new Object2IntOpenHashMap<>(contents.cards());
+        cards.addTo(card.card(), 1);
+        box.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(cards));
+        cardItem.shrink(1);
+        return true;
+    }
+
     static void init() {
         ItemClickBehaviorCallback.EVENT.register((hoveredItem, hoveredSlot, itemHeldByCursor, slotHeldByCursor, clickAction, player) -> {
-            if (clickAction != ClickAction.SECONDARY || !hoveredItem.is(DealWithItItemTags.FLIPPABLE) || !itemHeldByCursor.isEmpty()) return EventResult.PASS;
+            if (hoveredItem.is(DealWithItItemTags.FLIPPABLE) && itemHeldByCursor.isEmpty() && clickAction == ClickAction.SECONDARY) {
+                Card.flip(hoveredItem, player);
+                return EventResult.DENY;
+            }
 
-            Card.flip(hoveredItem, player);
+            if (clickAction == ClickAction.PRIMARY && (tryInsert(hoveredItem, itemHeldByCursor) || tryInsert(itemHeldByCursor, hoveredItem)))
+                return EventResult.DENY;
 
-            return EventResult.DENY;
+            return EventResult.PASS;
         });
 
         UseItemCallback.EVENT.register((player, level, hand) -> {
