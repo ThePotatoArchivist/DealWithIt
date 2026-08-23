@@ -1,0 +1,7 @@
+{
+  "model": {
+    "type": "dealwithit:component",
+    "component": "dealwithit:deck_contents",
+    "prefix": "dealwithit/card_box/"
+  }
+}

@@ -56,6 +56,7 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 	public void buildRegistry(RegistrySetBuilder registryBuilder) {
 		registryBuilder.add(DealWithItRegistries.CARD, PLAYING_CARDS::bootstrapCards);
 		registryBuilder.add(DealWithItRegistries.DECK_TYPE, PLAYING_CARDS::bootstrapDeckTypes);
+		registryBuilder.add(DealWithItRegistries.DECK, PLAYING_CARDS::bootstrapDecks);
 	}
 
 	@Override

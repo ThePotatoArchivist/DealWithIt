@@ -1,7 +1,6 @@
 package archives.tater.dealwithit.registry;
 
 import archives.tater.dealwithit.DealWithIt;
-import archives.tater.dealwithit.component.CardComponent;
 import archives.tater.dealwithit.component.DeckContents;
 
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
@@ -22,11 +21,8 @@ public interface DealWithItCreativeTabs {
     CreativeModeTab CARDS = register(DealWithIt.id("cards"), builder -> builder
             .icon(Items.PAPER::getDefaultInstance)
             .displayItems((parameters, output) -> {
-                parameters.holders().lookupOrThrow(DealWithItRegistries.DECK).listElements().forEach(deck -> {
-                    output.accept(DeckContents.createStack(deck));
-                    for (var card : deck.value().cards().keySet())
-                        output.accept(CardComponent.createStack(new CardComponent(deck, card)));
-                });
+                parameters.holders().lookupOrThrow(DealWithItRegistries.DECK).listElements().forEach(deck ->
+                        output.accept(DeckContents.createStack(deck)));
             })
     );
 

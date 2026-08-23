@@ -1,6 +1,7 @@
 package archives.tater.dealwithit.client.datagen;
 
 import archives.tater.dealwithit.client.render.CardSpecialRenderer;
+import archives.tater.dealwithit.client.render.ComponentModel;
 import archives.tater.dealwithit.registry.DealWithItBlocks;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 import archives.tater.dealwithit.registry.DealWithItItems;
@@ -41,5 +42,6 @@ public class ModModelProvider extends FabricModelProvider {
                 when(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, faceDown),
                 when(ItemDisplayContext.ON_SHELF, faceDown)
         ));
+        itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD_BOX, new ComponentModel.Unbaked<>(DealWithItComponents.DECK_CONTENTS, "dealwithit/card_box/"));
     }
 }

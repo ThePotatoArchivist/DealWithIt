@@ -3,6 +3,7 @@ package archives.tater.dealwithit.client;
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.client.render.CardSpecialRenderer;
 import archives.tater.dealwithit.client.render.CardStackRenderer;
+import archives.tater.dealwithit.client.render.ComponentModel;
 import archives.tater.dealwithit.registry.DealWithItBlockEntities;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 
@@ -10,6 +11,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.item.v1.ItemComponentTooltipProviderRegistry;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.item.ItemModels;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 
 public class DealWithItClient implements ClientModInitializer {
@@ -20,6 +22,7 @@ public class DealWithItClient implements ClientModInitializer {
 
 		BlockEntityRenderers.register(DealWithItBlockEntities.CARD_STACK, CardStackRenderer::new);
 
+		ItemModels.ID_MAPPER.put(DealWithIt.id("component"), ComponentModel.Unbaked.CODEC);
 		SpecialModelRenderers.ID_MAPPER.put(DealWithIt.id("card"), CardSpecialRenderer.Unbaked.CODEC);
 
 		ItemComponentTooltipProviderRegistry.addFirst(DealWithItComponents.DECK_CONTENTS);

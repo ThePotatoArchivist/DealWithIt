@@ -1,5 +1,6 @@
 package archives.tater.dealwithit.component;
 
+import archives.tater.dealwithit.ItemModelProviderComponent;
 import archives.tater.dealwithit.data.Card;
 import archives.tater.dealwithit.DealWithIt;
 
@@ -18,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -33,7 +35,7 @@ import static java.util.function.Function.identity;
 public record DeckContents(
         Holder<Deck> deck,
         Object2IntMap<Holder<Card>> cards
-) implements TooltipProvider {
+) implements TooltipProvider, ItemModelProviderComponent {
     public static final Codec<DeckContents> FULL_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Deck.CODEC.fieldOf("deck").forGetter(DeckContents::deck),
             DeckType.CARDS_CODEC.fieldOf("cards").forGetter(DeckContents::cards)
@@ -57,6 +59,11 @@ public record DeckContents(
 
     public int cardCount() {
         return cards.values().intStream().sum();
+    }
+
+    @Override
+    public Identifier modelId() {
+        return deck.unwrapKey().orElseThrow().identifier();
     }
 
     @Override

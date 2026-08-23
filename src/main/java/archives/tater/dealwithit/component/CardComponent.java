@@ -1,5 +1,6 @@
 package archives.tater.dealwithit.component;
 
+import archives.tater.dealwithit.ItemModelProviderComponent;
 import archives.tater.dealwithit.data.Card;
 import archives.tater.dealwithit.data.Deck;
 import archives.tater.dealwithit.registry.DealWithItComponents;
@@ -14,6 +15,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -21,7 +23,7 @@ import net.minecraft.world.item.component.TooltipProvider;
 
 import java.util.function.Consumer;
 
-public record CardComponent(Holder<Deck> deck, Holder<Card> card) implements TooltipProvider {
+public record CardComponent(Holder<Deck> deck, Holder<Card> card) implements TooltipProvider, ItemModelProviderComponent {
 
     public static final MapCodec<CardComponent> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Deck.CODEC.fieldOf("deck").forGetter(CardComponent::deck),
@@ -46,5 +48,10 @@ public record CardComponent(Holder<Deck> deck, Holder<Card> card) implements Too
         var stack = DealWithItItems.CARD.getDefaultInstance();
         stack.set(DealWithItComponents.CARD, value);
         return stack;
+    }
+
+    @Override
+    public Identifier modelId() {
+        return deck.unwrapKey().orElseThrow().identifier();
     }
 }

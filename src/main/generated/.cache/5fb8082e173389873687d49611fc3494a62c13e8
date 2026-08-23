@@ -1,4 +1,5 @@
 // 26.2	-999999999-01-01T00:00:00	DealWithIt/Model Definitions
 efc6c2e02d583c9b4a8312676554484c080bf5f5 assets/dealwithit/blockstates/card_stack.json
 24d8ebe796e7c7a50513369ffff4b9007882fae1 assets/dealwithit/items/card.json
+eb0af49593854619e11ad42ec24e0cdf9f46b886 assets/dealwithit/items/card_box.json
 ff452045231ba66eaf68e6d0faecf973ab1b5b6b assets/dealwithit/models/block/card_stack.json
