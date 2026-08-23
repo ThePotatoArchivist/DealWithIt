@@ -1,6 +1,7 @@
 package archives.tater.dealwithit.block;
 
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
+import archives.tater.dealwithit.component.DeckContents;
 import archives.tater.dealwithit.registry.DealWithItBlocks;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 
@@ -55,13 +56,7 @@ public class CardStackBlock extends BaseEntityBlock {
         var contents = itemStack.get(DealWithItComponents.DECK_CONTENTS);
         if (contents != null) {
             var cards = new Object2IntOpenHashMap<>(contents.cards());
-            var anyRemoved = blockEntity.removeIf(instance -> {
-                if (contents.deck() != instance.card().deck()) return false;
-                var card = instance.card().card();
-                if (cards.getInt(card) >= contents.deck().value().cards().getInt(card)) return false;
-                cards.addTo(card, 1);
-                return true;
-            });
+            var anyRemoved = blockEntity.removeIf(instance -> DeckContents.tryInsert(instance.card(), contents.deck(), cards) );
             if (!anyRemoved) return InteractionResult.FAIL;
 
             itemStack.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(cards));

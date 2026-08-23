@@ -7,8 +7,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
@@ -16,12 +14,13 @@ import net.minecraft.util.ExtraCodecs;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.Unmodifiable;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 public record DeckType(
-        Object2IntMap<Holder<Card>> cards
+        @Unmodifiable Object2IntMap<Holder<Card>> cards
 ) {
     public static final Codec<Object2IntMap<Holder<Card>>> LONG_CARDS_CODEC = Codec.unboundedMap(Card.CODEC, ExtraCodecs.POSITIVE_INT).xmap(Object2IntOpenHashMap::new, identity());
     public static final Codec<Object2IntMap<Holder<Card>>> SHORT_CARDS_CODEC = Card.CODEC.listOf().xmap(cards -> new Object2IntOpenHashMap<>(cards.stream().collect(toMap(identity(), _ -> 1))), map -> map.keySet().stream().toList());

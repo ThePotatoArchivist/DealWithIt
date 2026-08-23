@@ -18,8 +18,6 @@ import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-
 import java.util.function.Function;
 
 public interface DealWithItItems {
@@ -39,11 +37,8 @@ public interface DealWithItItems {
         var contents = box.get(DealWithItComponents.DECK_CONTENTS);
         var card = cardItem.get(DealWithItComponents.CARD);
         if (contents == null || card == null) return false;
-        if (contents.deck() != card.deck()) return false;
-        if (contents.cards().getInt(card.card()) >= contents.deck().value().cards().getInt(card.card())) return false;
-        var cards = new Object2IntOpenHashMap<>(contents.cards());
-        cards.addTo(card.card(), 1);
-        box.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(cards));
+        if (!contents.canInsert(card)) return false;
+        box.set(DealWithItComponents.DECK_CONTENTS, contents.withAdded(card));
         cardItem.shrink(1);
         return true;
     }

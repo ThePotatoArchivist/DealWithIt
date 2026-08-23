@@ -26,14 +26,16 @@ import net.minecraft.world.item.component.TooltipProvider;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static java.util.function.Function.identity;
 
 public record DeckContents(
         Holder<Deck> deck,
-        Object2IntMap<Holder<Card>> cards
+        @Unmodifiable Object2IntMap<Holder<Card>> cards
 ) implements TooltipProvider, ItemModelProviderComponent {
     public static final Codec<DeckContents> FULL_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Deck.CODEC.fieldOf("deck").forGetter(DeckContents::deck),
@@ -68,6 +70,25 @@ public record DeckContents(
         return new DeckContents(deck, cards);
     }
 
+    public DeckContents withAdded(Stream<CardComponent> addedCards) {
+        var cards = new Object2IntOpenHashMap<>(this.cards);
+        addedCards.forEach(card -> {
+            tryInsert(card, deck, cards);
+        });
+        return new DeckContents(deck, cards);
+    }
+
+    public DeckContents withAdded(CardComponent card) {
+        if (!canInsert(card)) return this;
+        var cards = new Object2IntOpenHashMap<>(this.cards);
+        cards.addTo(card.card(), 1);
+        return new DeckContents(deck, cards);
+    }
+
+    public boolean canInsert(CardComponent card) {
+        return canInsert(card, deck, cards);
+    }
+
     @Override
     public Identifier modelId() {
         return deck.unwrapKey().orElseThrow().identifier();
@@ -83,5 +104,15 @@ public record DeckContents(
         var stack = DealWithItItems.CARD_BOX.getDefaultInstance();
         stack.set(DealWithItComponents.DECK_CONTENTS, new DeckContents(deck));
         return stack;
+    }
+
+    public static boolean canInsert(CardComponent card, Holder<Deck> deck, Object2IntMap<Holder<Card>> cards) {
+        return card.deck() == deck && cards.getInt(card.card()) < deck.value().cards().getInt(card.card());
+    }
+
+    public static boolean tryInsert(CardComponent card, Holder<Deck> deck, Object2IntOpenHashMap<Holder<Card>> cards) {
+        if (!canInsert(card, deck, cards)) return false;
+        cards.addTo(card.card(), 1);
+        return true;
     }
 }
