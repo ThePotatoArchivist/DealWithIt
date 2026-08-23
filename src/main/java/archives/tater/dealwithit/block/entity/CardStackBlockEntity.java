@@ -25,11 +25,13 @@ import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
+import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static archives.tater.dealwithit.Util.toShuffledList;
 import static java.lang.Math.ceilDiv;
@@ -67,13 +69,22 @@ public class CardStackBlockEntity extends BlockEntity {
         return instance.toStack(flip);
     }
 
-    public List<CardInstance> getCards() {
+    public @UnmodifiableView List<CardInstance> getCards() {
         return cards;
     }
 
     public void setCards(Collection<CardInstance> cards) {
         this.cards.clear();
         this.cards.addAll(cards);
+        updateHeight();
+        setChanged();
+    }
+
+    public boolean removeIf(Predicate<CardInstance> condition) {
+        if (!cards.removeIf(condition)) return false;
+        updateHeight();
+        setChanged();
+        return true;
     }
 
     public static List<CardInstance> getCards(ItemStack stack, float angle, boolean flip, RandomSource random) {
@@ -104,7 +115,7 @@ public class CardStackBlockEntity extends BlockEntity {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), instance.toStack(false));
     }
 
-    private void updateHeight() {
+    public void updateHeight() {
         getLevel().setBlockAndUpdate(getBlockPos(), cards.isEmpty() ? Blocks.AIR.defaultBlockState() : getBlockState().setValue(CardStackBlock.HEIGHT, getHeight(cards.size())));
     }
 

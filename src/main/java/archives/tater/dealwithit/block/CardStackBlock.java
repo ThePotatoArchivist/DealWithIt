@@ -26,6 +26,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jspecify.annotations.Nullable;
 
 public class CardStackBlock extends BaseEntityBlock {
@@ -40,14 +41,34 @@ public class CardStackBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!(level.getBlockEntity(pos) instanceof CardStackBlockEntity blockEntity) || !itemStack.isEmpty()) return InteractionResult.PASS;
+        if (!(level.getBlockEntity(pos) instanceof CardStackBlockEntity blockEntity)) return InteractionResult.PASS;
 
-        var stack = blockEntity.popCard(player.isSecondaryUseActive());
-        if (stack.isEmpty()) return InteractionResult.FAIL;
+        if (hand == InteractionHand.MAIN_HAND && itemStack.isEmpty()) {
+            var stack = blockEntity.popCard(player.isSecondaryUseActive());
+            if (stack.isEmpty()) return InteractionResult.FAIL;
 
-        player.setItemInHand(hand, stack);
+            player.setItemInHand(hand, stack);
 
-        return InteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
+        }
+
+        var contents = itemStack.get(DealWithItComponents.DECK_CONTENTS);
+        if (contents != null) {
+            var cards = new Object2IntOpenHashMap<>(contents.cards());
+            var anyRemoved = blockEntity.removeIf(instance -> {
+                if (contents.deck() != instance.card().deck()) return false;
+                var card = instance.card().card();
+                if (cards.getInt(card) >= contents.deck().value().cards().getInt(card)) return false;
+                cards.addTo(card, 1);
+                return true;
+            });
+            if (!anyRemoved) return InteractionResult.FAIL;
+
+            itemStack.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(cards));
+            return InteractionResult.SUCCESS;
+        }
+
+        return InteractionResult.PASS;
     }
 
     @Override
