@@ -75,7 +75,7 @@ public record DeckContents(
     }
 
     public CardSet.Mutable mutableCards() {
-        return new CardSet.Mutable(this.cards, deck.value().cards());
+        return CardSet.mutable(this.cards, deck.value().cards());
     }
 
     public boolean canInsert(CardComponent card) {

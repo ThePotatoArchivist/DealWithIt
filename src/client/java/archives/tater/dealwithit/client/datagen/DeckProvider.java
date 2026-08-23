@@ -86,7 +86,7 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
 
     public void bootstrapDeckTypes(BootstrapContext<DeckType> registry) {
         for (var type : deckTypes) {
-            var cards = new CardSet.Mutable();
+            var cards = CardSet.mutable();
             type.cards.forEach((card, amount) ->
                     cards.add(registry.lookup(DealWithItRegistries.CARD).getOrThrow(card.key), amount)
             );
