@@ -1,12 +1,8 @@
 package archives.tater.dealwithit.data;
 
-import archives.tater.dealwithit.registry.DealWithItRegistries;
-
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,12 +14,15 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
+import static net.minecraft.network.codec.ByteBufCodecs.list;
 
 public sealed interface CardSet {
     
@@ -31,7 +30,7 @@ public sealed interface CardSet {
     
     StreamCodec<RegistryFriendlyByteBuf, CardSet> STREAM_CODEC = ByteBufCodecs.either(Single.STREAM_CODEC, CardSet.Multi.STREAM_CODEC).map(Either::unwrap, CardSet::wrapEither);
 
-    CardSet EMPTY = new Single(HolderSet.empty());
+    CardSet EMPTY = new Single(Set.of());
 
     int count();
 
@@ -57,10 +56,22 @@ public sealed interface CardSet {
         };
     }
 
-    record Single(HolderSet<Card> cards) implements CardSet {
+    record Single(@Unmodifiable Set<Holder<Card>> cards) implements CardSet {
 
-        public static final Codec<Single> CODEC = RegistryCodecs.homogeneousList(DealWithItRegistries.CARD, true).xmap(Single::new, Single::cards);
-        public static final StreamCodec<RegistryFriendlyByteBuf, Single> STREAM_CODEC = ByteBufCodecs.holderSet(DealWithItRegistries.CARD).map(Single::new, Single::cards);
+        private Single(List<Holder<Card>> cards) {
+            this(Set.copyOf(cards));
+        }
+
+        private List<Holder<Card>> toList() {
+            return List.copyOf(cards);
+        }
+
+        private List<Holder<Card>> toSortedList() {
+            return cards.stream().sorted(comparing(card -> card.unwrapKey().orElseThrow().identifier())).toList();
+        }
+
+        public static final Codec<Single> CODEC = Card.CODEC.listOf().xmap(Single::new, Single::toSortedList); // So it's consistent in datagen
+        public static final StreamCodec<RegistryFriendlyByteBuf, Single> STREAM_CODEC = Card.STREAM_CODEC.apply(list()).map(Single::new, Single::toList);
 
         @Override
         public int count() {
@@ -149,7 +160,7 @@ public sealed interface CardSet {
 
             @Override
             public CardSet build() {
-                return cards.size() == limits.count() ? limits : new CardSet.Single(HolderSet.direct(identity(), cards));
+                return cards.size() == limits.count() ? limits : new CardSet.Single(Set.copyOf(cards));
             }
         }
 
@@ -200,7 +211,7 @@ public sealed interface CardSet {
                 if (limits != null && cards.values().intStream().sum() == limits.count()) return limits;
 
                 if (cards.values().intStream().allMatch(amount -> amount == 1))
-                    return new CardSet.Single(HolderSet.direct(identity(), cards.keySet()));
+                    return new CardSet.Single(Set.copyOf(cards.keySet()));
 
                 return new CardSet.Multi(Object2IntMaps.unmodifiable(cards));
             }
