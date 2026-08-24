@@ -21,6 +21,7 @@ import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.renderer.item.ClientItem;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -78,6 +79,12 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
     protected abstract void generate(DeckOutput output);
 
     public abstract String getName();
+
+    public void buildRegistry(RegistrySetBuilder registryBuilder) {
+        registryBuilder.add(DealWithItRegistries.CARD, this::bootstrapCards);
+        registryBuilder.add(DealWithItRegistries.DECK_TYPE, this::bootstrapDeckTypes);
+        registryBuilder.add(DealWithItRegistries.DECK, this::bootstrapDecks);
+    }
 
     public void bootstrapCards(BootstrapContext<Card> registry) {
         for (var card : cards)

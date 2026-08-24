@@ -7,7 +7,6 @@ import archives.tater.dealwithit.client.datagen.ModItemTagProvider;
 import archives.tater.dealwithit.client.datagen.ModModelProvider;
 import archives.tater.dealwithit.component.DeckContents;
 import archives.tater.dealwithit.registry.DealWithItItems;
-import archives.tater.dealwithit.registry.DealWithItRegistries;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -35,7 +34,17 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 			output.deck(DealWithIt.id("playing_cards_green"), "Playing Cards (Green)", playingCards);
 			output.deck(DealWithIt.id("playing_cards_blue"), "Playing Cards (Blue)", playingCards);
 			output.deck(DealWithIt.id("playing_cards_yellow"), "Playing Cards (Yellow)", playingCards);
+		}
 
+		@Override
+		public String getName() {
+			return "Playing Cards";
+		}
+	};
+
+	public static final DeckProvider UNO = new DeckProvider() {
+		@Override
+		protected void generate(DeckOutput output) {
 			var uno = output.deckType(DealWithIt.id("uno"))
 					.cards(2, Stream.of("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "skip", "draw_two", "reverse").flatMap(number ->
 							Stream.of("red", "yellow", "green", "blue").map(color -> card(color + "_" + number, capitalize(color) + " " + snakeToTitleCase(number)))
@@ -48,15 +57,14 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 
 		@Override
 		public String getName() {
-			return "Test";
+			return "Uno";
 		}
 	};
 
 	@Override
 	public void buildRegistry(RegistrySetBuilder registryBuilder) {
-		registryBuilder.add(DealWithItRegistries.CARD, PLAYING_CARDS::bootstrapCards);
-		registryBuilder.add(DealWithItRegistries.DECK_TYPE, PLAYING_CARDS::bootstrapDeckTypes);
-		registryBuilder.add(DealWithItRegistries.DECK, PLAYING_CARDS::bootstrapDecks);
+		PLAYING_CARDS.buildRegistry(registryBuilder);
+		UNO.buildRegistry(registryBuilder);
 	}
 
 	@Override
@@ -64,6 +72,7 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 		var pack = fabricDataGenerator.createPack();
 
 		pack.addProvider(PLAYING_CARDS);
+		pack.addProvider(UNO);
 		pack.addProvider(ModItemTagProvider::new);
 
 		pack.addProvider(ModAtlasProvider::new);
@@ -72,6 +81,7 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 			@Override
 			public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
 				PLAYING_CARDS.generateTranslations(translationBuilder);
+				UNO.generateTranslations(translationBuilder);
 
 				translationBuilder.add(DealWithItItems.CARD, "Card");
 				translationBuilder.add(DealWithItItems.CARD_BOX, "Card Box");
