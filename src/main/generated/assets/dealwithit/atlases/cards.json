@@ -72,6 +72,45 @@
           "spades": "dealwithit:dealwithit/composite/playing_cards/ace_spades"
         }
       ]
+    },
+    {
+      "type": "dealwithit:cartesian_composite",
+      "base_path": "dealwithit:dealwithit/card/uno/",
+      "layers": [
+        "dealwithit:dealwithit/composite/uno/base",
+        {
+          "blue": "dealwithit:dealwithit/composite/uno/blue",
+          "green": "dealwithit:dealwithit/composite/uno/green",
+          "red": "dealwithit:dealwithit/composite/uno/red",
+          "yellow": "dealwithit:dealwithit/composite/uno/yellow"
+        },
+        {
+          "_draw_two": "dealwithit:dealwithit/composite/uno/draw_two",
+          "_eight": "dealwithit:dealwithit/composite/uno/eight",
+          "_five": "dealwithit:dealwithit/composite/uno/five",
+          "_four": "dealwithit:dealwithit/composite/uno/four",
+          "_nine": "dealwithit:dealwithit/composite/uno/nine",
+          "_one": "dealwithit:dealwithit/composite/uno/one",
+          "_reverse": "dealwithit:dealwithit/composite/uno/reverse",
+          "_seven": "dealwithit:dealwithit/composite/uno/seven",
+          "_six": "dealwithit:dealwithit/composite/uno/six",
+          "_skip": "dealwithit:dealwithit/composite/uno/skip",
+          "_three": "dealwithit:dealwithit/composite/uno/three",
+          "_two": "dealwithit:dealwithit/composite/uno/two",
+          "_zero": "dealwithit:dealwithit/composite/uno/zero"
+        }
+      ]
+    },
+    {
+      "type": "dealwithit:cartesian_composite",
+      "base_path": "dealwithit:dealwithit/card/uno/",
+      "layers": [
+        "dealwithit:dealwithit/composite/uno/base",
+        {
+          "wild": "dealwithit:dealwithit/composite/uno/wild",
+          "wild_draw_4": "dealwithit:dealwithit/composite/uno/wild_draw_4"
+        }
+      ]
     }
   ]
 }

@@ -46,9 +46,10 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 		@Override
 		protected void generate(DeckOutput output) {
 			var uno = output.deckType(DealWithIt.id("uno"))
-					.cards(2, Stream.of("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "skip", "draw_two", "reverse").flatMap(number ->
+					.cards(2, Stream.of( "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "skip", "draw_two", "reverse").flatMap(number ->
 							Stream.of("red", "yellow", "green", "blue").map(color -> card(color + "_" + number, capitalize(color) + " " + snakeToTitleCase(number)))
 					))
+					.cards(Stream.of("red", "yellow", "green", "blue").map(color -> card(color + "_zero", capitalize(color) + " Zero")))
 					.cards(4, card("wild", "Wild"), card("wild_draw_4", "Wild Draw 4"))
 					.build();
 

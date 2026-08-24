@@ -36,6 +36,8 @@ public class ModAtlasProvider extends FabricCodecDataProvider<List<SpriteSource>
         accept(provider, DealWithItAtlases.CARDS, List.of(
                 new DirectoryLister(DealWithIt.MOD_ID + "/deck_back", DealWithIt.MOD_ID + "/deck_back/"),
                 new DirectoryLister(DealWithIt.MOD_ID + "/card", DealWithIt.MOD_ID + "/card/"),
+
+                // Playing cards
                 compositeCards("black", "clubs", "spades"),
                 compositeCards("red", "hearts", "diamonds"),
                 new CartesianComposite(
@@ -47,6 +49,42 @@ public class ModAtlasProvider extends FabricCodecDataProvider<List<SpriteSource>
                                 "hearts", DealWithIt.id(DealWithIt.MOD_ID + "/composite/playing_cards/ace_hearts"),
                                 "diamonds", DealWithIt.id(DealWithIt.MOD_ID + "/composite/playing_cards/ace_diamonds")
                         ))
+                ),
+
+                // Uno
+                new CartesianComposite(
+                        DealWithIt.id(DealWithIt.MOD_ID + "/card/uno/"),
+                        new CartesianComposite.Layer(DealWithIt.id(DealWithIt.MOD_ID + "/composite/uno/base")),
+                        new CartesianComposite.Layer(Stream.of("red", "green", "blue", "yellow").collect(toMap(
+                                identity(),
+                                color -> DealWithIt.id(DealWithIt.MOD_ID + "/composite/uno/" + color)
+                        ))),
+                        new CartesianComposite.Layer(Stream.of(
+                                "zero",
+                                "one",
+                                "two",
+                                "three",
+                                "four",
+                                "five",
+                                "six",
+                                "seven",
+                                "eight",
+                                "nine",
+                                "draw_two",
+                                "reverse",
+                                "skip"
+                        ).collect(toMap(
+                                name -> "_" + name,
+                                name -> DealWithIt.id(DealWithIt.MOD_ID + "/composite/uno/" + name)
+                        )))
+                ),
+                new CartesianComposite(
+                        DealWithIt.id(DealWithIt.MOD_ID + "/card/uno/"),
+                        new CartesianComposite.Layer(DealWithIt.id(DealWithIt.MOD_ID + "/composite/uno/base")),
+                        new CartesianComposite.Layer(Stream.of("wild", "wild_draw_4").collect(toMap(
+                                identity(),
+                                color -> DealWithIt.id(DealWithIt.MOD_ID + "/composite/uno/" + color)
+                        )))
                 )
         ));
     }

@@ -42,6 +42,8 @@ public record CardComponent(Holder<Deck> deck, Holder<Card> card) implements Too
     public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
         if (components.get(DealWithItComponents.FACE_DOWN) == null)
             consumer.accept(card.value().description().copy().withColor(TextColor.GRAY));
+        else
+            consumer.accept(deck.value().description().copy().withColor(TextColor.GRAY));
     }
 
     public static ItemStack createStack(CardComponent value) {

@@ -12,7 +12,7 @@
     "dealwithit:uno/blue_skip": 2,
     "dealwithit:uno/blue_three": 2,
     "dealwithit:uno/blue_two": 2,
-    "dealwithit:uno/blue_zero": 2,
+    "dealwithit:uno/blue_zero": 1,
     "dealwithit:uno/green_draw_two": 2,
     "dealwithit:uno/green_eight": 2,
     "dealwithit:uno/green_five": 2,
@@ -25,7 +25,7 @@
     "dealwithit:uno/green_skip": 2,
     "dealwithit:uno/green_three": 2,
     "dealwithit:uno/green_two": 2,
-    "dealwithit:uno/green_zero": 2,
+    "dealwithit:uno/green_zero": 1,
     "dealwithit:uno/red_draw_two": 2,
     "dealwithit:uno/red_eight": 2,
     "dealwithit:uno/red_five": 2,
@@ -38,7 +38,7 @@
     "dealwithit:uno/red_skip": 2,
     "dealwithit:uno/red_three": 2,
     "dealwithit:uno/red_two": 2,
-    "dealwithit:uno/red_zero": 2,
+    "dealwithit:uno/red_zero": 1,
     "dealwithit:uno/wild": 4,
     "dealwithit:uno/wild_draw_4": 4,
     "dealwithit:uno/yellow_draw_two": 2,
@@ -53,6 +53,6 @@
     "dealwithit:uno/yellow_skip": 2,
     "dealwithit:uno/yellow_three": 2,
     "dealwithit:uno/yellow_two": 2,
-    "dealwithit:uno/yellow_zero": 2
+    "dealwithit:uno/yellow_zero": 1
   }
 }
