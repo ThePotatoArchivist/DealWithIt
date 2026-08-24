@@ -2,8 +2,76 @@
   "sources": [
     {
       "type": "minecraft:directory",
-      "prefix": "dealwithit/",
-      "source": "dealwithit"
+      "prefix": "dealwithit/deck_back/",
+      "source": "dealwithit/deck_back"
+    },
+    {
+      "type": "minecraft:directory",
+      "prefix": "dealwithit/card/",
+      "source": "dealwithit/card"
+    },
+    {
+      "type": "dealwithit:cartesian_composite",
+      "base_path": "dealwithit:dealwithit/card/playing_cards/",
+      "layers": [
+        "dealwithit:dealwithit/composite/playing_cards/base",
+        {
+          "eight": "dealwithit:dealwithit/composite/playing_cards/black_eight",
+          "five": "dealwithit:dealwithit/composite/playing_cards/black_five",
+          "four": "dealwithit:dealwithit/composite/playing_cards/black_four",
+          "jack": "dealwithit:dealwithit/composite/playing_cards/black_jack",
+          "king": "dealwithit:dealwithit/composite/playing_cards/black_king",
+          "nine": "dealwithit:dealwithit/composite/playing_cards/black_nine",
+          "queen": "dealwithit:dealwithit/composite/playing_cards/black_queen",
+          "seven": "dealwithit:dealwithit/composite/playing_cards/black_seven",
+          "six": "dealwithit:dealwithit/composite/playing_cards/black_six",
+          "ten": "dealwithit:dealwithit/composite/playing_cards/black_ten",
+          "three": "dealwithit:dealwithit/composite/playing_cards/black_three",
+          "two": "dealwithit:dealwithit/composite/playing_cards/black_two"
+        },
+        {
+          "_clubs": "dealwithit:dealwithit/composite/playing_cards/clubs",
+          "_spades": "dealwithit:dealwithit/composite/playing_cards/spades"
+        }
+      ]
+    },
+    {
+      "type": "dealwithit:cartesian_composite",
+      "base_path": "dealwithit:dealwithit/card/playing_cards/",
+      "layers": [
+        "dealwithit:dealwithit/composite/playing_cards/base",
+        {
+          "eight": "dealwithit:dealwithit/composite/playing_cards/red_eight",
+          "five": "dealwithit:dealwithit/composite/playing_cards/red_five",
+          "four": "dealwithit:dealwithit/composite/playing_cards/red_four",
+          "jack": "dealwithit:dealwithit/composite/playing_cards/red_jack",
+          "king": "dealwithit:dealwithit/composite/playing_cards/red_king",
+          "nine": "dealwithit:dealwithit/composite/playing_cards/red_nine",
+          "queen": "dealwithit:dealwithit/composite/playing_cards/red_queen",
+          "seven": "dealwithit:dealwithit/composite/playing_cards/red_seven",
+          "six": "dealwithit:dealwithit/composite/playing_cards/red_six",
+          "ten": "dealwithit:dealwithit/composite/playing_cards/red_ten",
+          "three": "dealwithit:dealwithit/composite/playing_cards/red_three",
+          "two": "dealwithit:dealwithit/composite/playing_cards/red_two"
+        },
+        {
+          "_diamonds": "dealwithit:dealwithit/composite/playing_cards/diamonds",
+          "_hearts": "dealwithit:dealwithit/composite/playing_cards/hearts"
+        }
+      ]
+    },
+    {
+      "type": "dealwithit:cartesian_composite",
+      "base_path": "dealwithit:dealwithit/card/playing_cards/ace_",
+      "layers": [
+        "dealwithit:dealwithit/composite/playing_cards/base",
+        {
+          "clubs": "dealwithit:dealwithit/composite/playing_cards/ace_clubs",
+          "diamonds": "dealwithit:dealwithit/composite/playing_cards/ace_diamonds",
+          "hearts": "dealwithit:dealwithit/composite/playing_cards/ace_hearts",
+          "spades": "dealwithit:dealwithit/composite/playing_cards/ace_spades"
+        }
+      ]
     }
   ]
 }
