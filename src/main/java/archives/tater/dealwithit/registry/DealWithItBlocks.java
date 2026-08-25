@@ -15,6 +15,7 @@ public interface DealWithItBlocks {
     Block CARD_STACK = register(DealWithItBlockIds.CARD_STACK, CardStackBlock::new, BlockBehaviour.Properties.of()
             .noCollision()
             .strength(0.2f, 0)
+            .sound(DealWithItSounds.CARD_STACK)
             .noLootTable()
             .noTerrainParticles()
     );

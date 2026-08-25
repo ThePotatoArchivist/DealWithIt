@@ -26,6 +26,7 @@ public class DealWithIt implements ModInitializer {
 		DealWithItRegistries.init();
 		DealWithItComponents.init();
 		DealWithItBlockEntities.init();
+		DealWithItSounds.init();
 		DealWithItBlocks.init();
 		DealWithItItems.init();
 		DealWithItCreativeTabs.init();

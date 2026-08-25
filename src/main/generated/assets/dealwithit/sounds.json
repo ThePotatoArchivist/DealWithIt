@@ -1,0 +1,87 @@
+{
+  "block.card_stack.break": {
+    "sounds": [
+      "dealwithit:break1",
+      "dealwithit:break2",
+      "dealwithit:break3"
+    ],
+    "subtitle": "subtitles.block.generic.break"
+  },
+  "block.card_stack.fall": {
+    "sounds": [
+      "dealwithit:place1",
+      "dealwithit:place2",
+      "dealwithit:place3",
+      "dealwithit:place4",
+      "dealwithit:place5",
+      "dealwithit:place6",
+      "dealwithit:place7",
+      "dealwithit:place8"
+    ],
+    "subtitle": "subtitles.block.generic.fall"
+  },
+  "block.card_stack.hit": {
+    "sounds": [
+      "dealwithit:hit1",
+      "dealwithit:hit2",
+      "dealwithit:hit3",
+      "dealwithit:hit4",
+      "dealwithit:hit5",
+      "dealwithit:hit6",
+      "dealwithit:hit7",
+      "dealwithit:hit8"
+    ],
+    "subtitle": "subtitles.block.generic.hit"
+  },
+  "block.card_stack.pickup": {
+    "sounds": [
+      "dealwithit:pickup1",
+      "dealwithit:pickup2",
+      "dealwithit:pickup3",
+      "dealwithit:pickup4",
+      "dealwithit:pickup5"
+    ],
+    "subtitle": "subtitles.dealwithit.block.card_stack.pickup"
+  },
+  "block.card_stack.place": {
+    "sounds": [
+      "dealwithit:place1",
+      "dealwithit:place2",
+      "dealwithit:place3",
+      "dealwithit:place4",
+      "dealwithit:place5",
+      "dealwithit:place6",
+      "dealwithit:place7",
+      "dealwithit:place8"
+    ],
+    "subtitle": "subtitles.dealwithit.block.card_stack.place"
+  },
+  "block.card_stack.shuffle": {
+    "sounds": [
+      "dealwithit:shuffle1",
+      "dealwithit:shuffle2"
+    ],
+    "subtitle": "subtitles.dealwithit.block.card_stack.shuffle"
+  },
+  "block.card_stack.step": {
+    "sounds": [
+      "dealwithit:hit1",
+      "dealwithit:hit2",
+      "dealwithit:hit3",
+      "dealwithit:hit4",
+      "dealwithit:hit5",
+      "dealwithit:hit6",
+      "dealwithit:hit7",
+      "dealwithit:hit8"
+    ],
+    "subtitle": "subtitles.block.generic.step"
+  },
+  "item.card_box.insert": {
+    "sounds": [
+      "dealwithit:insert1",
+      "dealwithit:insert2",
+      "dealwithit:insert3"
+    ],
+    "subtitle": "subtitles.dealwithit.item.card_box.insert"
+  }
+}

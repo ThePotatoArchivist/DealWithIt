@@ -5,10 +5,12 @@ import archives.tater.dealwithit.component.DeckContents;
 import archives.tater.dealwithit.data.CardSet;
 import archives.tater.dealwithit.registry.DealWithItBlocks;
 import archives.tater.dealwithit.registry.DealWithItComponents;
+import archives.tater.dealwithit.registry.DealWithItSounds;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -48,6 +50,7 @@ public class CardStackBlock extends BaseEntityBlock {
             if (stack.isEmpty()) return InteractionResult.FAIL;
 
             player.setItemInHand(hand, stack);
+            level.playSound(player, pos, DealWithItSounds.CARD_STACK_PICKUP, SoundSource.BLOCKS);
 
             return InteractionResult.SUCCESS;
         }
@@ -59,6 +62,8 @@ public class CardStackBlock extends BaseEntityBlock {
             if (!anyRemoved) return InteractionResult.FAIL;
 
             itemStack.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(cards));
+            level.playSound(player, pos, DealWithItSounds.CARD_BOX_INSERT, SoundSource.BLOCKS);
+
             return InteractionResult.SUCCESS;
         }
 
@@ -80,9 +85,10 @@ public class CardStackBlock extends BaseEntityBlock {
         var state = DealWithItBlocks.CARD_STACK.defaultBlockState().setValue(HEIGHT, CardStackBlockEntity.getHeight(cards.size()));
         if (!context.getLevel().setBlock(context.getClickedPos(), state, Block.UPDATE_ALL_IMMEDIATE)) return false;
 
-        if (!(player.level().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)) return true;
+        if (player.level().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)
+            blockEntity.setCards(cards);
 
-        blockEntity.setCards(cards);
+        player.level().playSound(player, context.getClickedPos(), cards.size() == 1 ? DealWithItSounds.CARD_STACK_PLACE : DealWithItSounds.CARD_STACK_SHUFFLE, SoundSource.BLOCKS);
 
         var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
         if (deck != null)

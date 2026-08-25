@@ -112,5 +112,9 @@
   "deck.dealwithit.uno": "Uno",
   "item.dealwithit.card": "Card",
   "item.dealwithit.card_box": "Card Box",
-  "item.dealwithit.card_box.fill": "%s/%s"
+  "item.dealwithit.card_box.fill": "%s/%s",
+  "subtitles.dealwithit.block.card_stack.pickup": "Card taken",
+  "subtitles.dealwithit.block.card_stack.place": "Card placed",
+  "subtitles.dealwithit.block.card_stack.shuffle": "Cards shuffled",
+  "subtitles.dealwithit.item.card_box.insert": "Cards collected"
 }

@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.util.EventResult;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.Item;
@@ -50,8 +51,10 @@ public interface DealWithItItems {
                 return EventResult.DENY;
             }
 
-            if (clickAction == ClickAction.PRIMARY && (tryInsert(hoveredItem, itemHeldByCursor) || tryInsert(itemHeldByCursor, hoveredItem)))
+            if (clickAction == ClickAction.PRIMARY && (tryInsert(hoveredItem, itemHeldByCursor) || tryInsert(itemHeldByCursor, hoveredItem))) {
+                player.level().playLocalSound(player, DealWithItSounds.CARD_BOX_INSERT, player.getSoundSource(), 0.3f, 1);
                 return EventResult.DENY;
+            }
 
             return EventResult.PASS;
         });
@@ -76,6 +79,7 @@ public interface DealWithItItems {
 
                 if (!blockEntity.pushCard(stack, player.getYHeadRot(), player.isSecondaryUseActive())) return InteractionResult.FAIL;
 
+                level.playSound(player, hitResult.getBlockPos(), DealWithItSounds.CARD_STACK_PLACE, SoundSource.BLOCKS);
                 stack.consume(1, player);
 
                 return InteractionResult.SUCCESS;
