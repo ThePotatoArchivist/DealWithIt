@@ -2,11 +2,17 @@ package archives.tater.dealwithit.client;
 
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.client.datagen.*;
+import archives.tater.dealwithit.client.mixin.ShapedRecipeBuilderAccessor;
+import archives.tater.dealwithit.registry.DealWithItItems;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.util.stream.Stream;
 
@@ -23,10 +29,16 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 					))
 					.build();
 
-			output.deck(DealWithIt.id("playing_cards_red"), "Playing Cards (Red)", playingCards);
-			output.deck(DealWithIt.id("playing_cards_green"), "Playing Cards (Green)", playingCards);
-			output.deck(DealWithIt.id("playing_cards_blue"), "Playing Cards (Blue)", playingCards);
-			output.deck(DealWithIt.id("playing_cards_yellow"), "Playing Cards (Yellow)", playingCards);
+			output.deck(DealWithIt.id("playing_cards_red"), "Playing Cards (Red)", playingCards, dyeBox(Items.DYE.red()));
+			output.deck(DealWithIt.id("playing_cards_green"), "Playing Cards (Green)", playingCards, dyeBox(Items.DYE.green()));
+			output.deck(DealWithIt.id("playing_cards_blue"), "Playing Cards (Blue)", playingCards, dyeBox(Items.DYE.blue()));
+			output.deck(DealWithIt.id("playing_cards_yellow"), "Playing Cards (Yellow)", playingCards, dyeBox(Items.DYE.yellow()));
+		}
+
+		private static RecipeFactory dyeBox(Item dye) {
+			return (provider, _, result) -> provider.shapeless(RecipeCategory.MISC, result)
+					.requires(DealWithItItems.BLANK_CARD_BOX)
+					.requires(dye);
 		}
 
 		@Override
@@ -46,7 +58,17 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 					.cards(4, card("wild", "Wild"), card("wild_draw_4", "Wild Draw 4"))
 					.build();
 
-			output.deck(DealWithIt.id("uno"), "Uno", uno);
+			output.deck(DealWithIt.id("uno"), "Uno", uno, (_, registries, result) ->
+					ShapedRecipeBuilderAccessor.createShapedRecipeBuilder(registries.lookupOrThrow(Registries.ITEM), RecipeCategory.MISC, result)
+							.pattern(" R ")
+							.pattern("Y#G")
+							.pattern(" B ")
+							.define('R', Items.DYE.red())
+							.define('G', Items.DYE.green())
+							.define('B', Items.DYE.blue())
+							.define('Y', Items.DYE.yellow())
+							.define('#', DealWithItItems.BLANK_CARD_BOX)
+			);
 		}
 
 		@Override
@@ -68,6 +90,7 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(PLAYING_CARDS);
 		pack.addProvider(UNO);
 		pack.addProvider(ModItemTagProvider::new);
+		pack.addProvider(ModRecipeProvider::new);
 
 		pack.addProvider(ModAtlasProvider::new);
 		pack.addProvider(ModModelProvider::new);

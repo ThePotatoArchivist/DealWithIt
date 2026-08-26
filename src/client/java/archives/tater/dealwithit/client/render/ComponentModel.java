@@ -64,6 +64,10 @@ public class ComponentModel implements ItemModel {
             this(component, prefix, Optional.empty());
         }
 
+        public Unbaked(DataComponentType<T> component, String prefix, ItemModel.@Nullable Unbaked fallback) {
+            this(component, prefix, Optional.ofNullable(fallback));
+        }
+
         @Override
         public MapCodec<? extends ItemModel.Unbaked> type() {
             return CODEC;

@@ -10,6 +10,7 @@ public interface DealWithItItemIds {
 
     ResourceKey<Item> CARD = create("card");
     ResourceKey<Item> CARD_BOX = create("card_box");
+    ResourceKey<Item> BLANK_CARD_BOX = create("blank_card_box");
 
     private static ResourceKey<Item> create(String path) {
         return ResourceKey.create(Registries.ITEM, DealWithIt.id(path));

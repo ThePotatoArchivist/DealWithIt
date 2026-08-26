@@ -1,10 +1,13 @@
 package archives.tater.dealwithit.client.datagen;
 
 import archives.tater.dealwithit.DealWithIt;
+import archives.tater.dealwithit.component.DeckContents;
 import archives.tater.dealwithit.data.Card;
 import archives.tater.dealwithit.data.CardSet;
 import archives.tater.dealwithit.data.Deck;
 import archives.tater.dealwithit.data.DeckType;
+import archives.tater.dealwithit.registry.DealWithItComponents;
+import archives.tater.dealwithit.registry.DealWithItItems;
 import archives.tater.dealwithit.registry.DealWithItRegistries;
 
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
@@ -13,6 +16,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricCodecDataProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider.TranslationBuilder;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -22,15 +26,22 @@ import net.minecraft.client.renderer.item.ClientItem;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ItemStackTemplate;
 
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +81,8 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
             }
 
             @Override
-            public void deck(Identifier id, String translation, UnbakedDeckType type) {
-                decks.add(new UnbakedDeck(ResourceKey.create(DealWithItRegistries.DECK, id), Component.translatable(makeDescriptionId("deck", id)), translation, type));
+            public void deck(Identifier id, String translation, UnbakedDeckType type, @Nullable RecipeFactory recipe) {
+                decks.add(new UnbakedDeck(ResourceKey.create(DealWithItRegistries.DECK, id), Component.translatable(makeDescriptionId("deck", id)), translation, type, recipe));
             }
         });
     }
@@ -150,6 +161,30 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
                             provider.accept(id, new ClientItem(plainModel(id.withPrefix("item/")), ClientItem.Properties.DEFAULT));
                         }
                     }
+                },
+                new FabricRecipeProvider(output, registriesFuture) {
+                    @Override
+                    protected RecipeProvider createRecipeProvider(HolderLookup.Provider registries, RecipeOutput output) {
+                        return new RecipeProvider(registries, output) {
+                            @Override
+                            public void buildRecipes() {
+                                for (var deck : decks) {
+                                    if (deck.recipe == null) continue;
+                                    deck.recipe
+                                            .createRecipe(this, registries, new ItemStackTemplate(DealWithItItems.CARD_BOX, DataComponentPatch.builder()
+                                                .set(DealWithItComponents.DECK_CONTENTS, new DeckContents(registries.getOrThrow(deck.key)))
+                                                .build()))
+                                            .unlockedBy(getHasName(DealWithItItems.BLANK_CARD_BOX), has(DealWithItItems.BLANK_CARD_BOX))
+                                            .save(output, ResourceKey.create(Registries.RECIPE, deck.key.identifier()));
+                                }
+                            }
+                        };
+                    }
+
+                    @Override
+                    public String getName() {
+                        return "";
+                    }
                 }
         );
     }
@@ -165,10 +200,19 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
         return new CardInfo(path, translation);
     }
 
+    @FunctionalInterface
+    public interface RecipeFactory {
+        RecipeBuilder createRecipe(RecipeProvider provider, HolderLookup.Provider registries, ItemStackTemplate result);
+    }
+
     public interface DeckOutput {
         DeckTypeBuilder deckType(Identifier id);
 
-        void deck(Identifier id, String translation, UnbakedDeckType type);
+        void deck(Identifier id, String translation, UnbakedDeckType type, @Nullable RecipeFactory recipe);
+
+        default void deck(Identifier id, String translation, UnbakedDeckType type) {
+            deck(id, translation, type, null);
+        }
     }
 
     public interface DeckTypeBuilder {
@@ -208,5 +252,5 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
     public record CardInfo(String path, String translation) {}
     public record UnbakedCard(ResourceKey<Card> key, Component description, String translation) {}
     public record UnbakedDeckType(ResourceKey<DeckType> key, Object2IntMap<UnbakedCard> cards) {}
-    public record UnbakedDeck(ResourceKey<Deck> key, Component description, String translation, UnbakedDeckType type) {}
+    public record UnbakedDeck(ResourceKey<Deck> key, Component description, String translation, UnbakedDeckType type, @Nullable RecipeFactory recipe) {}
 }

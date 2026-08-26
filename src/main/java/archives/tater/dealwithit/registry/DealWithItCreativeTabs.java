@@ -10,7 +10,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Items;
 
 import java.util.function.Consumer;
 
@@ -19,8 +18,9 @@ import static net.minecraft.util.Util.makeDescriptionId;
 public interface DealWithItCreativeTabs {
 
     CreativeModeTab CARDS = register(DealWithIt.id("cards"), builder -> builder
-            .icon(Items.PAPER::getDefaultInstance)
+            .icon(DealWithItItems.BLANK_CARD_BOX::getDefaultInstance)
             .displayItems((parameters, output) -> {
+                output.accept(DealWithItItems.BLANK_CARD_BOX);
                 parameters.holders().lookupOrThrow(DealWithItRegistries.DECK).listElements().forEach(deck ->
                         output.accept(DeckContents.createStack(deck)));
             })

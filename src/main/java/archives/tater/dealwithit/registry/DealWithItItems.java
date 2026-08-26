@@ -25,6 +25,7 @@ public interface DealWithItItems {
 
     Item CARD = register(DealWithItItemIds.CARD, new Item.Properties().stacksTo(1));
     Item CARD_BOX = register(DealWithItItemIds.CARD_BOX, CardBoxItem::new, new Item.Properties().stacksTo(1));
+    Item BLANK_CARD_BOX = register(DealWithItItemIds.BLANK_CARD_BOX, new Item.Properties().stacksTo(1));
 
     private static Item register(ResourceKey<Item> id, Function<Item.Properties, Item> item, Item.Properties properties) {
         return Registry.register(BuiltInRegistries.ITEM, id, item.apply(properties.setId(id)));

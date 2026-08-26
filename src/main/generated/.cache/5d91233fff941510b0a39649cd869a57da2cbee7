@@ -1,6 +1,7 @@
 // 26.2	-999999999-01-01T00:00:00	DealWithIt/Uno
 6ed08d5724a405916184b0bd762893f653c79a32 assets/dealwithit/items/dealwithit/card_box/uno.json
 ce8fd8b5c3632dee054991b998bc34478d27bad8 assets/dealwithit/models/item/dealwithit/card_box/uno.json
+d580057387ecc9526696af66ba83aa31440ce2f6 data/dealwithit/advancement/recipes/misc/uno.json
 ade881d4d5c79ac0ac299f39dcce438b32bb32b5 data/dealwithit/dealwithit/card/playing_cards/ace_clubs.json
 c2697cd2d03d3dec35d6be8515024e0f2d156aef data/dealwithit/dealwithit/card/playing_cards/ace_diamonds.json
 dc868a3afee1699acfafedf078487aaad4bff19e data/dealwithit/dealwithit/card/playing_cards/ace_hearts.json
@@ -114,3 +115,4 @@ de503181ef2b8db4812f0d1c64e19f82d8fe7793 data/dealwithit/dealwithit/deck/playing
 2f1f5a4f57e6c56bb74d882e4c891c72dac42319 data/dealwithit/dealwithit/deck/uno.json
 6e01fa5906890b4dfe57d87a2245ebc490d7ca31 data/dealwithit/dealwithit/deck_type/playing_cards.json
 5b9e75285a54ddd97c1cbb7ad620ef687eaf9870 data/dealwithit/dealwithit/deck_type/uno.json
+728ce4275ef99ec3439d28df6714353675f404db data/dealwithit/recipe/uno.json

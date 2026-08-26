@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "dealwithit:blank_card_box",
+    "minecraft:blue_dye"
+  ],
+  "result": {
+    "components": {
+      "dealwithit:deck_contents": "dealwithit:playing_cards_blue"
+    },
+    "id": "dealwithit:card_box"
+  }
+}

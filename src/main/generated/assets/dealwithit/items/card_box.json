@@ -2,6 +2,10 @@
   "model": {
     "type": "dealwithit:component",
     "component": "dealwithit:deck_contents",
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "dealwithit:item/blank_card_box"
+    },
     "prefix": "dealwithit/card_box/"
   }
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "dealwithit:blank_card_box",
+    "B": "minecraft:blue_dye",
+    "G": "minecraft:green_dye",
+    "R": "minecraft:red_dye",
+    "Y": "minecraft:yellow_dye"
+  },
+  "pattern": [
+    " R ",
+    "Y#G",
+    " B "
+  ],
+  "result": {
+    "components": {
+      "dealwithit:deck_contents": "dealwithit:uno"
+    },
+    "id": "dealwithit:card_box"
+  }
+}
