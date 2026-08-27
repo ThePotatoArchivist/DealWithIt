@@ -11,6 +11,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -20,8 +21,10 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -76,6 +79,13 @@ public class CardStackBlock extends BaseEntityBlock {
         return Block.isFaceFull(level.getBlockState(pos.below()).getCollisionShape(level, pos.below()), Direction.UP);
     }
 
+    @Override
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
+        return directionToNeighbour == Direction.DOWN && !canSurvive(state, level, pos)
+                ? Blocks.AIR.defaultBlockState()
+                : super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
+    }
+
     public static boolean place(Player player, UseOnContext useContext) {
         var stack = useContext.getItemInHand();
         var cards = CardStackBlockEntity.getCards(stack, player.getYHeadRot(), player.isSecondaryUseActive(), player.getRandom());
@@ -84,13 +94,16 @@ public class CardStackBlock extends BaseEntityBlock {
         var context = new BlockPlaceContext(useContext);
         if (!context.canPlace()) return false;
 
-        var state = DealWithItBlocks.CARD_STACK.defaultBlockState().setValue(HEIGHT, CardStackBlockEntity.getHeight(cards.size()));
+        var initialState = DealWithItBlocks.CARD_STACK.getStateForPlacement(context);
+        if (initialState == null) return false;
+        var state = initialState.setValue(HEIGHT, CardStackBlockEntity.getHeight(cards.size()));
+        if (!state.canSurvive(context.getLevel(), context.getClickedPos())) return false;
         if (!context.getLevel().setBlock(context.getClickedPos(), state, Block.UPDATE_ALL_IMMEDIATE)) return false;
 
-        if (player.level().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)
+        if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)
             blockEntity.setCards(cards);
 
-        player.level().playSound(player, context.getClickedPos(), cards.size() == 1 ? DealWithItSounds.CARD_STACK_PLACE : DealWithItSounds.CARD_STACK_SHUFFLE, SoundSource.BLOCKS);
+        context.getLevel().playSound(player, context.getClickedPos(), cards.size() == 1 ? DealWithItSounds.CARD_STACK_PLACE : DealWithItSounds.CARD_STACK_SHUFFLE, SoundSource.BLOCKS);
 
         var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
         if (deck != null)

@@ -92,14 +92,17 @@ public interface DealWithItItems {
 
             if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS)) return InteractionResult.PASS;
 
-            return CardStackBlock.place(player, context) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            return CardStackBlock.place(player, context) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         });
 
         ItemStackBarCallback.EVENT.register(stack -> {
             var contents = stack.get(DealWithItComponents.DECK_CONTENTS);
             if (contents == null || contents.isComplete()) return null;
 
-            return new BarDisplay(0xFF7087FF, contents.cardCount() == 0 ? 0 : 12 * contents.cardCount() / contents.deck().value().size() + 1);
+            return new BarDisplay(
+                    0xFF7087FF,
+                    contents.cardCount() == 0 ? 0 : 12 * contents.cardCount() / contents.deck().value().size() + 1
+            );
         });
     }
 }
