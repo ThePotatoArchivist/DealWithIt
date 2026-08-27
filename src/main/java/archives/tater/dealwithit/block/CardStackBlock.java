@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -75,11 +76,12 @@ public class CardStackBlock extends BaseEntityBlock {
         return Block.isFaceFull(level.getBlockState(pos.below()).getCollisionShape(level, pos.below()), Direction.UP);
     }
 
-    public static boolean place(Player player, InteractionHand hand, ItemStack stack, BlockHitResult hitResult) {
+    public static boolean place(Player player, UseOnContext useContext) {
+        var stack = useContext.getItemInHand();
         var cards = CardStackBlockEntity.getCards(stack, player.getYHeadRot(), player.isSecondaryUseActive(), player.getRandom());
         if (cards.isEmpty()) return false;
 
-        var context = new BlockPlaceContext(player, hand, stack, hitResult);
+        var context = new BlockPlaceContext(useContext);
         if (!context.canPlace()) return false;
 
         var state = DealWithItBlocks.CARD_STACK.defaultBlockState().setValue(HEIGHT, CardStackBlockEntity.getHeight(cards.size()));

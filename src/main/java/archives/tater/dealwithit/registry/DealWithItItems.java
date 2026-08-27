@@ -3,10 +3,11 @@ package archives.tater.dealwithit.registry;
 import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
 import archives.tater.dealwithit.data.Card;
-import archives.tater.dealwithit.item.CardBoxItem;
+import archives.tater.dealwithit.event.ItemStackBarCallback;
+import archives.tater.dealwithit.event.ItemStackBarCallback.BarDisplay;
+import archives.tater.dealwithit.event.ItemStackUseCallback;
+import archives.tater.dealwithit.event.ItemStackUseOnCallback;
 
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.item.v1.ItemClickBehaviorCallback;
 import net.fabricmc.fabric.api.util.EventResult;
 
@@ -24,7 +25,7 @@ import java.util.function.Function;
 public interface DealWithItItems {
 
     Item CARD = register(DealWithItItemIds.CARD, new Item.Properties().stacksTo(1));
-    Item CARD_BOX = register(DealWithItItemIds.CARD_BOX, CardBoxItem::new, new Item.Properties().stacksTo(1));
+    Item CARD_BOX = register(DealWithItItemIds.CARD_BOX, new Item.Properties().stacksTo(1));
     Item BLANK_CARD_BOX = register(DealWithItItemIds.BLANK_CARD_BOX, new Item.Properties().stacksTo(1));
 
     private static Item register(ResourceKey<Item> id, Function<Item.Properties, Item> item, Item.Properties properties) {
@@ -60,7 +61,7 @@ public interface DealWithItItems {
             return EventResult.PASS;
         });
 
-        UseItemCallback.EVENT.register((player, level, hand) -> {
+        ItemStackUseCallback.EVENT.register((_, player, hand) -> {
             if (player.isSpectator()) return InteractionResult.PASS;
 
             var stack = player.getItemInHand(hand);
@@ -71,16 +72,19 @@ public interface DealWithItItems {
             return InteractionResult.SUCCESS;
         });
 
-        UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
-            if (player.isSpectator()) return InteractionResult.PASS;
-            var stack = player.getItemInHand(hand);
+        ItemStackUseOnCallback.EVENT.register(context -> {
+            var level = context.getLevel();
+            var player = context.getPlayer();
+            var pos = context.getClickedPos();
+            if (player == null) return InteractionResult.PASS;
+            var stack = context.getItemInHand();
 
-            if (level.getBlockEntity(hitResult.getBlockPos()) instanceof CardStackBlockEntity blockEntity) {
+            if (level.getBlockEntity(pos) instanceof CardStackBlockEntity blockEntity) {
                 if (!stack.has(DealWithItComponents.CARD)) return InteractionResult.PASS;
 
                 if (!blockEntity.pushCard(stack, player.getYHeadRot(), player.isSecondaryUseActive())) return InteractionResult.FAIL;
 
-                level.playSound(player, hitResult.getBlockPos(), DealWithItSounds.CARD_STACK_PLACE, SoundSource.BLOCKS);
+                level.playSound(player, pos, DealWithItSounds.CARD_STACK_PLACE, SoundSource.BLOCKS);
                 stack.consume(1, player);
 
                 return InteractionResult.SUCCESS;
@@ -88,7 +92,14 @@ public interface DealWithItItems {
 
             if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS)) return InteractionResult.PASS;
 
-            return CardStackBlock.place(player, hand, stack, hitResult) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            return CardStackBlock.place(player, context) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        });
+
+        ItemStackBarCallback.EVENT.register(stack -> {
+            var contents = stack.get(DealWithItComponents.DECK_CONTENTS);
+            if (contents == null || contents.isComplete()) return null;
+
+            return new BarDisplay(0xFF7087FF, contents.cardCount() == 0 ? 0 : 12 * contents.cardCount() / contents.deck().value().size() + 1);
         });
     }
 }
