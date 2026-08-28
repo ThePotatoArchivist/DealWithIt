@@ -2,6 +2,7 @@ package archives.tater.dealwithit.data;
 
 import archives.tater.dealwithit.registry.DealWithItComponents;
 import archives.tater.dealwithit.registry.DealWithItRegistries;
+import archives.tater.dealwithit.registry.DealWithItSounds;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,7 +13,6 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFixedCodec;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +27,7 @@ public record Card(Component description) {
 
     public static void flip(ItemStack stack, Player player) {
         flip(stack);
-        player.playSound(SoundEvents.BOOK_PAGE_TURN);
+        player.playSound(DealWithItSounds.CARD_FLIP);
     }
 
     public static void flip(ItemStack stack) {

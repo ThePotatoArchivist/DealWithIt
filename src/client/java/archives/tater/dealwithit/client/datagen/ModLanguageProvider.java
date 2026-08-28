@@ -35,5 +35,6 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(DealWithItSounds.CARD_STACK_PLACE, "Card placed");
         translationBuilder.add(DealWithItSounds.CARD_STACK_PICKUP, "Card taken");
         translationBuilder.add(DealWithItSounds.CARD_BOX_INSERT, "Cards collected");
+        translationBuilder.add(DealWithItSounds.CARD_FLIP, "Cards flips");
     }
 }

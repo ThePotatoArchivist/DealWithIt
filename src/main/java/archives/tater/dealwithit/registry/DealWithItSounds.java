@@ -18,6 +18,7 @@ public interface DealWithItSounds {
     SoundEvent CARD_STACK_SHUFFLE = register("block.card_stack.shuffle");
     SoundEvent CARD_STACK_PICKUP = register("block.card_stack.pickup");
     SoundEvent CARD_BOX_INSERT = register("item.card_box.insert");
+    SoundEvent CARD_FLIP = register("item.card.flip");
 
     SoundType CARD_STACK = new SoundType(1f, 1f, CARD_STACK_BREAK, CARD_STACK_STEP, CARD_STACK_PLACE, CARD_STACK_HIT, CARD_STACK_FALL);
 

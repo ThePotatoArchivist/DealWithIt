@@ -76,6 +76,14 @@
     ],
     "subtitle": "subtitles.block.generic.step"
   },
+  "item.card.flip": {
+    "sounds": [
+      "dealwithit:flip1",
+      "dealwithit:flip2",
+      "dealwithit:flip3"
+    ],
+    "subtitle": "subtitles.dealwithit.item.card.flip"
+  },
   "item.card_box.insert": {
     "sounds": [
       "dealwithit:insert1",
