@@ -40,12 +40,13 @@ public class ItemStackMixin {
 		return original.call(instance, context);
 	}
 
-	@ModifyReturnValue(
+	@SuppressWarnings("ConstantValue")
+    @ModifyReturnValue(
 			method = "isBarVisible",
 			at = @At("RETURN")
 	)
 	private boolean barVisibleEvent(boolean original) {
-		return ItemStackBarCallback.EVENT.invoker().getBar((ItemStack) (Object) this) != null;
+		return original || ItemStackBarCallback.EVENT.invoker().getBar((ItemStack) (Object) this) != null;
 	}
 
 	@ModifyReturnValue(
