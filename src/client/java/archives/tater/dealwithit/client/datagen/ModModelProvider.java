@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.renderer.item.properties.conditional.HasComponent;
 import net.minecraft.client.renderer.item.properties.select.DisplayContext;
@@ -34,14 +33,17 @@ public class ModModelProvider extends FabricModelProvider {
     public void generateItemModels(ItemModelGenerators itemModelGenerators) {
         var faceDown = specialModel(Identifier.withDefaultNamespace("item/generated"), new CardSpecialRenderer.Unbaked(true));
         var faceUp = specialModel(Identifier.withDefaultNamespace("item/generated"), new CardSpecialRenderer.Unbaked(false));
-        itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD, ItemModelUtils.select(new DisplayContext(),
-                conditional(new HasComponent(DealWithItComponents.FACE_DOWN, false),
-                        faceDown,
-                        faceUp
+        itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD, conditional(
+                hasComponent(DealWithItComponents.CARD),
+                select(new DisplayContext(),
+                        conditional(new HasComponent(DealWithItComponents.FACE_DOWN, false),
+                                faceDown,
+                                faceUp
+                        ),
+                        when(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, faceDown),
+                        when(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, faceDown)
                 ),
-                when(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, faceDown),
-                when(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, faceDown),
-                when(ItemDisplayContext.ON_SHELF, faceDown)
+                plainModel(itemModelGenerators.createFlatItemModel(DealWithItItems.CARD, ModelTemplates.FLAT_ITEM))
         ));
 
         var blank = plainModel(itemModelGenerators.createFlatItemModel(DealWithItItems.BLANK_CARD_BOX, ModelTemplates.FLAT_ITEM));
