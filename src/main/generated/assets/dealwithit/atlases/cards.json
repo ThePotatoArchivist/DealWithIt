@@ -75,6 +75,17 @@
     },
     {
       "type": "dealwithit:cartesian_composite",
+      "base_path": "dealwithit:dealwithit/card/playing_cards/",
+      "layers": [
+        "dealwithit:dealwithit/composite/playing_cards/base",
+        {
+          "black_joker": "dealwithit:dealwithit/composite/playing_cards/black_joker",
+          "red_joker": "dealwithit:dealwithit/composite/playing_cards/red_joker"
+        }
+      ]
+    },
+    {
+      "type": "dealwithit:cartesian_composite",
       "base_path": "dealwithit:dealwithit/card/uno/",
       "layers": [
         "dealwithit:dealwithit/composite/uno/base",

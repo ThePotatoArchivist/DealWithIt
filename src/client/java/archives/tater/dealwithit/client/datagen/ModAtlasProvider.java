@@ -50,6 +50,14 @@ public class ModAtlasProvider extends FabricCodecDataProvider<List<SpriteSource>
                                 "diamonds", DealWithIt.id(DealWithIt.MOD_ID + "/composite/playing_cards/ace_diamonds")
                         ))
                 ),
+                new CartesianComposite(
+                        DealWithIt.id(DealWithIt.MOD_ID + "/card/playing_cards/"),
+                        new CartesianComposite.Layer(DealWithIt.id(DealWithIt.MOD_ID + "/composite/playing_cards/base")),
+                        new CartesianComposite.Layer(Map.of(
+                                "black_joker", DealWithIt.id(DealWithIt.MOD_ID + "/composite/playing_cards/black_joker"),
+                                "red_joker", DealWithIt.id(DealWithIt.MOD_ID + "/composite/playing_cards/red_joker")
+                        ))
+                ),
 
                 // Uno
                 new CartesianComposite(

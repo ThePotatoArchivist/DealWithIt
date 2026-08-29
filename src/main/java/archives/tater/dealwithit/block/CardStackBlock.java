@@ -98,10 +98,12 @@ public class CardStackBlock extends BaseEntityBlock {
         if (initialState == null) return false;
         var state = initialState.setValue(HEIGHT, CardStackBlockEntity.getHeight(cards.size()));
         if (!state.canSurvive(context.getLevel(), context.getClickedPos())) return false;
-        if (!context.getLevel().setBlock(context.getClickedPos(), state, Block.UPDATE_ALL_IMMEDIATE)) return false;
 
-        if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)
-            blockEntity.setCards(cards);
+        if (!context.getLevel().isClientSide()) {
+            if (!context.getLevel().setBlock(context.getClickedPos(), state, Block.UPDATE_ALL_IMMEDIATE)) return false;
+            if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)
+                blockEntity.setCards(cards);
+        }
 
         context.getLevel().playSound(player, context.getClickedPos(), cards.size() == 1 ? DealWithItSounds.CARD_STACK_PLACE : DealWithItSounds.CARD_STACK_SHUFFLE, SoundSource.BLOCKS);
 
