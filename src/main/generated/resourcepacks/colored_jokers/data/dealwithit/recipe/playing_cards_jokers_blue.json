@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "fabric:type": "fabric:components",
+      "base": "dealwithit:card_box",
+      "components": {
+        "dealwithit:deck_contents": "dealwithit:playing_cards_blue"
+      }
+    },
+    "minecraft:paper",
+    "minecraft:paper"
+  ],
+  "result": {
+    "components": {
+      "dealwithit:deck_contents": "dealwithit:playing_cards_jokers_blue"
+    },
+    "id": "dealwithit:card_box"
+  }
+}

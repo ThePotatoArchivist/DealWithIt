@@ -1,4 +1,7 @@
 // 26.2	-999999999-01-01T00:00:00	dealwithit:jokers/Jokers
+585658ff1d012daa6cf135b436c171173778753c resourcepacks/jokers/data/dealwithit/advancement/recipes/misc/playing_cards_jokers.json
 ab4a3144a3191b8b0ed3fc2aaa9db29fb0c2d9bf resourcepacks/jokers/data/dealwithit/dealwithit/card/playing_cards/black_joker.json
 08fcc6bbec4cbe540aff82d3d627af2a96cff70b resourcepacks/jokers/data/dealwithit/dealwithit/card/playing_cards/red_joker.json
-c46dd7b580f45d5769ebbbdea57ebc06ff673b6a resourcepacks/jokers/data/dealwithit/dealwithit/deck_type/playing_cards.json
+90947c529a9a5d6174ab9f3dc740ef5c537ab89b resourcepacks/jokers/data/dealwithit/dealwithit/deck/playing_cards_jokers.json
+c46dd7b580f45d5769ebbbdea57ebc06ff673b6a resourcepacks/jokers/data/dealwithit/dealwithit/deck_type/playing_cards_jokers.json
+5d322cbd51897ee97efedd6b89201d4f31da2c54 resourcepacks/jokers/data/dealwithit/recipe/playing_cards_jokers.json

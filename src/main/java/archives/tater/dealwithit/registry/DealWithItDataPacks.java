@@ -13,7 +13,8 @@ public interface DealWithItDataPacks {
 
     Identifier PLAYING_CARDS = register("playing_cards", true);
     Identifier JOKERS = register("jokers", false);
-    Identifier NERTZ = register("nertz", false);
+    Identifier COLORED = register("colored", false);
+    Identifier COLORED_JOKERS = register("colored_jokers", false);
     Identifier UNO = register("uno", true);
 
     private static Identifier register(String path, boolean defaultEnabled) {

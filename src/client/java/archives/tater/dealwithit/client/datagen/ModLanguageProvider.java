@@ -29,11 +29,14 @@ public class ModLanguageProvider extends FabricLanguageProvider {
     public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
         DeckProviders.PlayingCards.PLAYING_CARDS.generateTranslations(translationBuilder);
         DeckProviders.PlayingCards.JOKERS.generateTranslations(translationBuilder);
-        DeckProviders.PlayingCards.NERTZ.generateTranslations(translationBuilder);
+        DeckProviders.PlayingCards.COLORED.generateTranslations(translationBuilder);
+        DeckProviders.PlayingCards.COLORED_JOKERS.generateTranslations(translationBuilder);
         DeckProviders.UNO.generateTranslations(translationBuilder);
 
         addPack(translationBuilder, DealWithItDataPacks.PLAYING_CARDS, "Playing Cards", "Standard 52-card deck");
-        addPack(translationBuilder, DealWithItDataPacks.NERTZ, "Nertz", "Colored decks for Nertz");
+        addPack(translationBuilder, DealWithItDataPacks.JOKERS, "Jokers", "54-card deck with 2 Jokers");
+        addPack(translationBuilder, DealWithItDataPacks.COLORED, "Colored", "Colored decks");
+        addPack(translationBuilder, DealWithItDataPacks.COLORED_JOKERS, "Colored Jokers", "Colored decks with Jokers");
         addPack(translationBuilder, DealWithItDataPacks.UNO, "Uno", "Regular Uno");
 
         translationBuilder.add(DealWithItItems.CARD, "Card");

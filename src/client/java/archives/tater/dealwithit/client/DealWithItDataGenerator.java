@@ -2,7 +2,6 @@ package archives.tater.dealwithit.client;
 
 import archives.tater.dealwithit.client.datagen.*;
 import archives.tater.dealwithit.registry.DealWithItDataPacks;
-import archives.tater.dealwithit.registry.DealWithItRegistries;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -15,9 +14,9 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
     @Override
 	public void buildRegistry(RegistrySetBuilder registryBuilder) {
 		DeckProviders.PlayingCards.PLAYING_CARDS.buildRegistry(registryBuilder);
-		registryBuilder.add(DealWithItRegistries.CARD, DeckProviders.PlayingCards.JOKERS::bootstrapCards);
-		registryBuilder.add(DealWithItRegistries.DECK, DeckProviders.PlayingCards.JOKERS::bootstrapDecks);
-		DeckProviders.PlayingCards.NERTZ.buildRegistry(registryBuilder);
+		DeckProviders.PlayingCards.JOKERS.buildRegistry(registryBuilder);
+		DeckProviders.PlayingCards.COLORED.buildRegistry(registryBuilder);
+		DeckProviders.PlayingCards.COLORED_JOKERS.buildRegistry(registryBuilder);
 		DeckProviders.UNO.buildRegistry(registryBuilder);
 	}
 
@@ -39,7 +38,8 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 
 		pack.addProvider(DeckProviders.PlayingCards.PLAYING_CARDS::clientData);
 		pack.addProvider(DeckProviders.PlayingCards.JOKERS::clientData);
-		pack.addProvider(DeckProviders.PlayingCards.NERTZ::clientData);
+		pack.addProvider(DeckProviders.PlayingCards.COLORED::clientData);
+		pack.addProvider(DeckProviders.PlayingCards.COLORED_JOKERS::clientData);
 		pack.addProvider(DeckProviders.UNO::clientData);
 		pack.addProvider(ModItemTagProvider::new);
 		pack.addProvider(ModRecipeProvider::new);
@@ -51,7 +51,8 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 
 		createDeckPack(fabricDataGenerator, DealWithItDataPacks.PLAYING_CARDS, DeckProviders.PlayingCards.PLAYING_CARDS);
 		createDeckPack(fabricDataGenerator, DealWithItDataPacks.JOKERS, DeckProviders.PlayingCards.JOKERS);
-		createDeckPack(fabricDataGenerator, DealWithItDataPacks.NERTZ, DeckProviders.PlayingCards.NERTZ);
+		createDeckPack(fabricDataGenerator, DealWithItDataPacks.COLORED, DeckProviders.PlayingCards.COLORED);
+		createDeckPack(fabricDataGenerator, DealWithItDataPacks.COLORED_JOKERS, DeckProviders.PlayingCards.COLORED_JOKERS);
 		createDeckPack(fabricDataGenerator, DealWithItDataPacks.UNO, DeckProviders.UNO);
 	}
 }

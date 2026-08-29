@@ -80,8 +80,9 @@ public abstract class DeckProvider {
             }
 
             @Override
-            public void deck(Identifier id, String translation, ResourceKey<DeckType> type, DeckProvider.@Nullable ItemRecipeFactory recipe) {
-                decks.add(new UnbakedDeck(ResourceKey.create(DealWithItRegistries.DECK, id), Component.translatable(makeDescriptionId("deck", id)), translation, type, recipe));
+            public ResourceKey<Deck> deck(ResourceKey<Deck> key, String translation, ResourceKey<DeckType> type, @Nullable ItemRecipeFactory recipe) {
+                decks.add(new UnbakedDeck(key, Component.translatable(makeDescriptionId("deck", key.identifier())), translation, type, recipe));
+                return key;
             }
 
             @Override
@@ -126,11 +127,11 @@ public abstract class DeckProvider {
                     @Override
                     protected void configure(HolderLookup.Provider registries, Entries entries) {
                         for (var card : cards)
-                            entries.add(card.key, card.bake());
+                            entries.add(registries.getOrThrow(card.key));
                         for (var deckType : deckTypes)
-                            entries.add(deckType.key, deckType.bake(registries.lookupOrThrow(DealWithItRegistries.CARD)));
+                            entries.add(registries.getOrThrow(deckType.key));
                         for (var deck : decks)
-                            entries.add(deck.key, deck.bake(registries.lookupOrThrow(DealWithItRegistries.DECK_TYPE)));
+                            entries.add(registries.getOrThrow(deck.key));
                     }
 
                     @Override
@@ -222,10 +223,18 @@ public abstract class DeckProvider {
             return deckType(ResourceKey.create(DealWithItRegistries.DECK_TYPE, id));
         }
 
-        void deck(Identifier id, String translation, ResourceKey<DeckType> type, DeckProvider.@Nullable ItemRecipeFactory recipe);
+        ResourceKey<Deck> deck(ResourceKey<Deck> key, String translation, ResourceKey<DeckType> type, DeckProvider.@Nullable ItemRecipeFactory recipe);
 
-        default void deck(Identifier id, String translation, ResourceKey<DeckType> type) {
-            deck(id, translation, type, null);
+        default ResourceKey<Deck> deck(Identifier id, String translation, ResourceKey<DeckType> type, DeckProvider.@Nullable ItemRecipeFactory recipe) {
+            return deck(ResourceKey.create(DealWithItRegistries.DECK, id), translation, type, recipe);
+        }
+
+        default ResourceKey<Deck> deck(ResourceKey<Deck> key, String translation, ResourceKey<DeckType> type) {
+            return deck(key, translation, type, null);
+        }
+
+        default ResourceKey<Deck> deck(Identifier id, String translation, ResourceKey<DeckType> type) {
+            return deck(id, translation, type, null);
         }
 
         ResourceKey<Card> card(ResourceKey<Card> key, String translation);

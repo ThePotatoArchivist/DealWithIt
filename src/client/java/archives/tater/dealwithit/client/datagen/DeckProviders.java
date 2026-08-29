@@ -2,16 +2,23 @@ package archives.tater.dealwithit.client.datagen;
 
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.client.mixin.ShapedRecipeBuilderAccessor;
+import archives.tater.dealwithit.component.DeckContents;
 import archives.tater.dealwithit.data.Card;
+import archives.tater.dealwithit.data.Deck;
 import archives.tater.dealwithit.data.DeckType;
+import archives.tater.dealwithit.registry.DealWithItComponents;
 import archives.tater.dealwithit.registry.DealWithItItems;
 import archives.tater.dealwithit.registry.DealWithItRegistries;
 
+import net.fabricmc.fabric.api.recipe.v1.ingredient.DefaultCustomIngredients;
+
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +32,12 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 
 public interface DeckProviders {
     interface PlayingCards {
-        ResourceKey<DeckType> TYPE = ResourceKey.create(DealWithItRegistries.DECK_TYPE, DealWithIt.id("playing_cards"));
+        ResourceKey<DeckType> NORMAL_TYPE = ResourceKey.create(DealWithItRegistries.DECK_TYPE, DealWithIt.id("playing_cards"));
+        ResourceKey<DeckType> JOKERS_TYPE = ResourceKey.create(DealWithItRegistries.DECK_TYPE, DealWithIt.id("playing_cards_jokers"));
+        ResourceKey<Deck> NORMAL_DECK = ResourceKey.create(DealWithItRegistries.DECK, DealWithIt.id("playing_cards"));
+        ResourceKey<Deck> GREEN_DECK = ResourceKey.create(DealWithItRegistries.DECK, DealWithIt.id("playing_cards_green"));
+        ResourceKey<Deck> BLUE_DECK = ResourceKey.create(DealWithItRegistries.DECK, DealWithIt.id("playing_cards_blue"));
+        ResourceKey<Deck> YELLOW_DECK = ResourceKey.create(DealWithItRegistries.DECK, DealWithIt.id("playing_cards_yellow"));
 
         enum Number {
             ACE("ace"),
@@ -71,7 +83,7 @@ public interface DeckProviders {
         DeckProvider PLAYING_CARDS = new DeckProvider() {
             @Override
             protected void generate(DeckOutput output) {
-                output.deckType(TYPE)
+                output.deckType(NORMAL_TYPE)
                         .cards(mapEntries(KEYS, (number, map) ->
                                 mapEntries(map, (suit, key) ->
                                         output.card(key, capitalize(number.name) + " of " + capitalize(suit.name))
@@ -79,7 +91,7 @@ public interface DeckProviders {
                         ).flatMap(identity()))
                         .build();
 
-                output.deck(DealWithIt.id("playing_cards"), "Playing Cards", TYPE, dyeBox(Items.DYE.red()));
+                output.deck(NORMAL_DECK, "Playing Cards", NORMAL_TYPE, dyeBox(Items.DYE.red()));
             }
 
             @Override
@@ -91,13 +103,15 @@ public interface DeckProviders {
         DeckProvider JOKERS = new DeckProvider() {
             @Override
             protected void generate(DeckOutput output) {
-                output.deckType(TYPE)
+                output.deckType(JOKERS_TYPE)
                         .cards(KEYS.values().stream().flatMap(map -> map.values().stream()))
                         .cards(List.of(
                                 output.card(DealWithIt.id("playing_cards/red_joker"), "Red Joker"),
                                 output.card(DealWithIt.id("playing_cards/black_joker"), "Black Joker")
                         ))
                         .build();
+
+                output.deck(DealWithIt.id("playing_cards_jokers"), "Playing Cards (with Jokers)", JOKERS_TYPE, addJokers(NORMAL_DECK));
             }
 
             @Override
@@ -106,17 +120,31 @@ public interface DeckProviders {
             }
         };
 
-        DeckProvider NERTZ = new DeckProvider() {
+        DeckProvider COLORED = new DeckProvider() {
             @Override
             protected void generate(DeckOutput output) {
-                output.deck(DealWithIt.id("playing_cards_green"), "Playing Cards (Green)", TYPE, dyeBox(Items.DYE.green()));
-                output.deck(DealWithIt.id("playing_cards_blue"), "Playing Cards (Blue)", TYPE, dyeBox(Items.DYE.blue()));
-                output.deck(DealWithIt.id("playing_cards_yellow"), "Playing Cards (Yellow)", TYPE, dyeBox(Items.DYE.yellow()));
+                output.deck(GREEN_DECK, "Playing Cards (Green)", NORMAL_TYPE, dyeBox(Items.DYE.green()));
+                output.deck(BLUE_DECK, "Playing Cards (Blue)", NORMAL_TYPE, dyeBox(Items.DYE.blue()));
+                output.deck(YELLOW_DECK, "Playing Cards (Yellow)", NORMAL_TYPE, dyeBox(Items.DYE.yellow()));
             }
 
             @Override
             public String getName() {
-                return "Nertz";
+                return "Colored";
+            }
+        };
+
+        DeckProvider COLORED_JOKERS = new DeckProvider() {
+            @Override
+            protected void generate(DeckOutput output) {
+                output.deck(DealWithIt.id("playing_cards_jokers_green"), "Playing Cards (Green with Jokers)", JOKERS_TYPE, addJokers(GREEN_DECK));
+                output.deck(DealWithIt.id("playing_cards_jokers_blue"), "Playing Cards (Blue with Jokers)", JOKERS_TYPE, addJokers(BLUE_DECK));
+                output.deck(DealWithIt.id("playing_cards_jokers_yellow"), "Playing Cards (Yellow with Jokers)", JOKERS_TYPE, addJokers(YELLOW_DECK));
+            }
+
+            @Override
+            public String getName() {
+                return "Colored Jokers";
             }
         };
     }
@@ -158,5 +186,15 @@ public interface DeckProviders {
         return (provider, _, result) -> provider.shapeless(RecipeCategory.MISC, result)
                 .requires(DealWithItItems.BLANK_CARD_BOX)
                 .requires(dye);
+    }
+
+    private static DeckProvider.ItemRecipeFactory addJokers(ResourceKey<Deck> deck) {
+        return (provider, registries, result) -> provider.shapeless(RecipeCategory.MISC, result)
+                .requires(deckIngredient(deck, registries))
+                .requires(Items.PAPER, 2);
+    }
+
+    private static Ingredient deckIngredient(ResourceKey<Deck> deck, HolderLookup.Provider registries) {
+        return DefaultCustomIngredients.components(Ingredient.of(DealWithItItems.CARD_BOX), builder -> builder.set(DealWithItComponents.DECK_CONTENTS, new DeckContents(registries.getOrThrow(deck))));
     }
 }
