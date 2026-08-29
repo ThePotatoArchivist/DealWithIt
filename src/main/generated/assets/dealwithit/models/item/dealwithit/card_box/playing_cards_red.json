@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "dealwithit:item/dealwithit/card_box/playing_cards_red"
-  }
-}

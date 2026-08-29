@@ -6,7 +6,7 @@
   ],
   "result": {
     "components": {
-      "dealwithit:deck_contents": "dealwithit:playing_cards_red"
+      "dealwithit:deck_contents": "dealwithit:playing_cards"
     },
     "id": "dealwithit:card_box"
   }

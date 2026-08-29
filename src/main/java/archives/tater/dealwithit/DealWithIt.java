@@ -30,6 +30,7 @@ public class DealWithIt implements ModInitializer {
 		DealWithItBlocks.init();
 		DealWithItItems.init();
 		DealWithItCreativeTabs.init();
+		DealWithItDataPacks.init();
 	}
 
 	public static Identifier id(String path) {

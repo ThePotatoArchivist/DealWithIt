@@ -11,7 +11,6 @@ import archives.tater.dealwithit.registry.DealWithItItems;
 import archives.tater.dealwithit.registry.DealWithItRegistries;
 
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricCodecDataProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
@@ -52,7 +51,7 @@ import java.util.stream.Stream;
 import static net.minecraft.client.data.models.model.ItemModelUtils.plainModel;
 import static net.minecraft.util.Util.makeDescriptionId;
 
-public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryDependentFactory<DataProvider> {
+public abstract class DeckProvider {
     private final List<UnbakedCard> cards = new ArrayList<>();
     private final List<UnbakedDeckType> deckTypes = new ArrayList<>();
     private final List<UnbakedDeck> decks = new ArrayList<>();
@@ -60,28 +59,28 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
     public DeckProvider() {
         generate(new DeckOutput() {
             @Override
-            public DeckTypeBuilder deckType(Identifier id) {
+            public DeckTypeBuilder deckType(ResourceKey<DeckType> key) {
                 var cards = new Object2IntLinkedOpenHashMap<UnbakedCard>();
                 return new DeckTypeBuilder() {
                     @Override
                     public void addCard(int count, CardInfo info) {
-                        var cardId = id.withSuffix("/" + info.path);
+                        var cardId = key.identifier().withSuffix("/" + info.path);
                         var card = new UnbakedCard(ResourceKey.create(DealWithItRegistries.CARD, cardId), Component.translatable(makeDescriptionId("card", cardId)), info.translation);
                         cards.put(card, count);
                         DeckProvider.this.cards.add(card);
                     }
 
                     @Override
-                    public UnbakedDeckType build() {
-                        var type = new UnbakedDeckType(ResourceKey.create(DealWithItRegistries.DECK_TYPE, id), cards);
+                    public ResourceKey<DeckType> build() {
+                        var type = new UnbakedDeckType(key, cards);
                         deckTypes.add(type);
-                        return type;
+                        return key;
                     }
                 };
             }
 
             @Override
-            public void deck(Identifier id, String translation, UnbakedDeckType type, @Nullable RecipeFactory recipe) {
+            public void deck(Identifier id, String translation, ResourceKey<DeckType> type, DeckProvider.@Nullable ItemRecipeFactory recipe) {
                 decks.add(new UnbakedDeck(ResourceKey.create(DealWithItRegistries.DECK, id), Component.translatable(makeDescriptionId("deck", id)), translation, type, recipe));
             }
         });
@@ -114,52 +113,26 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
 
     public void bootstrapDecks(BootstrapContext<Deck> registry) {
         for (var deck : decks)
-            registry.register(deck.key, new Deck(deck.description, registry.lookup(DealWithItRegistries.DECK_TYPE).getOrThrow(deck.type.key)));
+            registry.register(deck.key, new Deck(deck.description, registry.lookup(DealWithItRegistries.DECK_TYPE).getOrThrow(deck.type)));
     }
 
-    @Override
-    public DataProvider create(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    public DataProvider serverData(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         return new MultiDataProvider(
                 getName(),
                 new FabricDynamicRegistryProvider(output, registriesFuture) {
                     @Override
                     protected void configure(HolderLookup.Provider registries, Entries entries) {
-                        entries.addAll(registries.lookupOrThrow(DealWithItRegistries.CARD));
-                        entries.addAll(registries.lookupOrThrow(DealWithItRegistries.DECK_TYPE));
-                        entries.addAll(registries.lookupOrThrow(DealWithItRegistries.DECK));
+                        for (var card : cards)
+                            entries.add(registries.getOrThrow(card.key));
+                        for (var deckType : deckTypes)
+                            entries.add(registries.getOrThrow(deckType.key));
+                        for (var deck : decks)
+                            entries.add(registries.getOrThrow(deck.key));
                     }
 
                     @Override
                     public String getName() {
                         return DeckProvider.this.getName() + " Registries";
-                    }
-                },
-                new FabricModelProvider(output) {
-                    @Override
-                    public void generateBlockStateModels(BlockModelGenerators blockModelGenerators) {
-
-                    }
-
-                    @Override
-                    public void generateItemModels(ItemModelGenerators itemModelGenerators) {
-                        for (var deck : decks) {
-                            var id = deck.key.identifier().withPrefix("item/" + DealWithIt.MOD_ID + "/card_box/");
-                            ModelTemplates.FLAT_ITEM.create(id, TextureMapping.layer0(new Material(id)), itemModelGenerators.modelOutput);
-                        }
-                    }
-                },
-                new FabricCodecDataProvider<>(output, registriesFuture, PackOutput.Target.RESOURCE_PACK, "items", ClientItem.CODEC) {
-                    @Override
-                    public String getName() {
-                        return DeckProvider.this.getName() + " Item Models";
-                    }
-
-                    @Override
-                    protected void configure(BiConsumer<Identifier, ClientItem> provider, HolderLookup.Provider registryLookup) {
-                        for (var deck : decks) {
-                            var id = deck.key.identifier().withPrefix(DealWithIt.MOD_ID + "/card_box/");
-                            provider.accept(id, new ClientItem(plainModel(id.withPrefix("item/")), ClientItem.Properties.DEFAULT));
-                        }
                     }
                 },
                 new FabricRecipeProvider(output, registriesFuture) {
@@ -189,6 +162,44 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
         );
     }
 
+    public DataProvider clientData(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+        return new MultiDataProvider(getName(),
+                new FabricModelProvider(output) {
+                    @Override
+                    public void generateBlockStateModels(BlockModelGenerators blockModelGenerators) {
+
+                    }
+
+                    @Override
+                    public void generateItemModels(ItemModelGenerators itemModelGenerators) {
+                        for (var deck : decks) {
+                            var id = deck.key.identifier().withPrefix("item/" + DealWithIt.MOD_ID + "/card_box/");
+                            ModelTemplates.FLAT_ITEM.create(id, TextureMapping.layer0(new Material(id)), itemModelGenerators.modelOutput);
+                        }
+                    }
+
+                    @Override
+                    public String getName() {
+                        return DeckProvider.this.getName() + " " + super.getName();
+                    }
+                },
+                new FabricCodecDataProvider<>(output, registriesFuture, PackOutput.Target.RESOURCE_PACK, "items", ClientItem.CODEC) {
+                    @Override
+                    public String getName() {
+                        return DeckProvider.this.getName() + " Item Models";
+                    }
+
+                    @Override
+                    protected void configure(BiConsumer<Identifier, ClientItem> provider, HolderLookup.Provider registryLookup) {
+                        for (var deck : decks) {
+                            var id = deck.key.identifier().withPrefix(DealWithIt.MOD_ID + "/card_box/");
+                            provider.accept(id, new ClientItem(plainModel(id.withPrefix("item/")), ClientItem.Properties.DEFAULT));
+                        }
+                    }
+                }
+        );
+    }
+
     public void generateTranslations(TranslationBuilder translationBuilder) {
         for (var card : cards)
             translationBuilder.add(makeDescriptionId("card", card.key.identifier()), card.translation);
@@ -201,16 +212,20 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
     }
 
     @FunctionalInterface
-    public interface RecipeFactory {
+    public interface ItemRecipeFactory {
         RecipeBuilder createRecipe(RecipeProvider provider, HolderLookup.Provider registries, ItemStackTemplate result);
     }
 
     public interface DeckOutput {
-        DeckTypeBuilder deckType(Identifier id);
+        DeckTypeBuilder deckType(ResourceKey<DeckType> key);
 
-        void deck(Identifier id, String translation, UnbakedDeckType type, @Nullable RecipeFactory recipe);
+        default DeckTypeBuilder deckType(Identifier id) {
+            return deckType(ResourceKey.create(DealWithItRegistries.DECK_TYPE, id));
+        }
 
-        default void deck(Identifier id, String translation, UnbakedDeckType type) {
+        void deck(Identifier id, String translation, ResourceKey<DeckType> type, DeckProvider.@Nullable ItemRecipeFactory recipe);
+
+        default void deck(Identifier id, String translation, ResourceKey<DeckType> type) {
             deck(id, translation, type, null);
         }
     }
@@ -218,7 +233,7 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
     public interface DeckTypeBuilder {
         void addCard(int count, CardInfo info);
 
-        UnbakedDeckType build();
+        ResourceKey<DeckType> build();
 
         default DeckTypeBuilder card(int count, CardInfo info) {
             addCard(count, info);
@@ -252,5 +267,5 @@ public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryD
     public record CardInfo(String path, String translation) {}
     public record UnbakedCard(ResourceKey<Card> key, Component description, String translation) {}
     public record UnbakedDeckType(ResourceKey<DeckType> key, Object2IntMap<UnbakedCard> cards) {}
-    public record UnbakedDeck(ResourceKey<Deck> key, Component description, String translation, UnbakedDeckType type, @Nullable RecipeFactory recipe) {}
+    public record UnbakedDeck(ResourceKey<Deck> key, Component description, String translation, ResourceKey<DeckType> type, DeckProvider.@Nullable ItemRecipeFactory recipe) {}
 }
