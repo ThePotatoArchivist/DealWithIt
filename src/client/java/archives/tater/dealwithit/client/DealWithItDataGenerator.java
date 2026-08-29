@@ -36,7 +36,6 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		var pack = fabricDataGenerator.createPack();
 
-		pack.addProvider(ModItemTagsProvider::new);
 		pack.addProvider(ModRecipeProvider::new);
 		pack.addProvider(DeckTagsProvider::new);
 

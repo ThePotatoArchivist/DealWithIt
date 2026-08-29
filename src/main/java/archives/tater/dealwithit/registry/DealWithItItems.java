@@ -48,7 +48,7 @@ public interface DealWithItItems {
 
     static void init() {
         ItemClickBehaviorCallback.EVENT.register((hoveredItem, hoveredSlot, itemHeldByCursor, slotHeldByCursor, clickAction, player) -> {
-            if (hoveredItem.is(DealWithItItemTags.FLIPPABLE) && itemHeldByCursor.isEmpty() && clickAction == ClickAction.SECONDARY) {
+            if (hoveredItem.has(DealWithItComponents.CARD) && itemHeldByCursor.isEmpty() && clickAction == ClickAction.SECONDARY) {
                 Card.flip(hoveredItem, player);
                 return EventResult.DENY;
             }
@@ -65,7 +65,7 @@ public interface DealWithItItems {
             if (player.isSpectator()) return InteractionResult.PASS;
 
             var stack = player.getItemInHand(hand);
-            if (!stack.is(DealWithItItemTags.FLIPPABLE)) return InteractionResult.PASS;
+            if (!stack.has(DealWithItComponents.CARD)) return InteractionResult.PASS;
 
             Card.flip(stack, player);
 
