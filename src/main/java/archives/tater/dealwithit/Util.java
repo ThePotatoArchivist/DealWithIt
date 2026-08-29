@@ -9,9 +9,11 @@ import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.minecraft.util.Util.shuffle;
 import static net.minecraft.util.Util.toMap;
@@ -41,5 +43,9 @@ public interface Util {
             if (value == null) return;
             yield.accept(Map.entry(entry.getKey(), value));
         }).collect(toMap());
+    }
+
+    static <K, V, T> Stream<T> mapEntries(Map<K, V> map, BiFunction<K, V, T> transform) {
+        return map.entrySet().stream().map(entry -> transform.apply(entry.getKey(), entry.getValue()));
     }
 }

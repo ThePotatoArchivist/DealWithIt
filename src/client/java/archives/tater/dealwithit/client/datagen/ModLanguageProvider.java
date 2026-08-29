@@ -27,8 +27,9 @@ public class ModLanguageProvider extends FabricLanguageProvider {
 
     @Override
     public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
-        DeckProviders.PLAYING_CARDS.generateTranslations(translationBuilder);
-        DeckProviders.NERTZ.generateTranslations(translationBuilder);
+        DeckProviders.PlayingCards.PLAYING_CARDS.generateTranslations(translationBuilder);
+        DeckProviders.PlayingCards.JOKERS.generateTranslations(translationBuilder);
+        DeckProviders.PlayingCards.NERTZ.generateTranslations(translationBuilder);
         DeckProviders.UNO.generateTranslations(translationBuilder);
 
         addPack(translationBuilder, DealWithItDataPacks.PLAYING_CARDS, "Playing Cards", "Standard 52-card deck");

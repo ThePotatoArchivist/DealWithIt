@@ -12,8 +12,9 @@ import net.minecraft.resources.Identifier;
 public interface DealWithItDataPacks {
 
     Identifier PLAYING_CARDS = register("playing_cards", true);
-    Identifier UNO = register("uno", true);
+    Identifier JOKERS = register("jokers", false);
     Identifier NERTZ = register("nertz", false);
+    Identifier UNO = register("uno", true);
 
     private static Identifier register(String path, boolean defaultEnabled) {
         var id = DealWithIt.id(path);
