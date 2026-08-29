@@ -1,0 +1,40 @@
+{
+  "values": [
+    {
+      "id": "dealwithit:playing_cards",
+      "required": false
+    },
+    {
+      "id": "dealwithit:playing_cards_green",
+      "required": false
+    },
+    {
+      "id": "dealwithit:playing_cards_blue",
+      "required": false
+    },
+    {
+      "id": "dealwithit:playing_cards_yellow",
+      "required": false
+    },
+    {
+      "id": "dealwithit:playing_cards_jokers",
+      "required": false
+    },
+    {
+      "id": "dealwithit:playing_cards_jokers_green",
+      "required": false
+    },
+    {
+      "id": "dealwithit:playing_cards_jokers_blue",
+      "required": false
+    },
+    {
+      "id": "dealwithit:playing_cards_jokers_yellow",
+      "required": false
+    },
+    {
+      "id": "dealwithit:uno",
+      "required": false
+    }
+  ]
+}

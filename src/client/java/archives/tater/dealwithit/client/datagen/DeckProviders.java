@@ -34,10 +34,6 @@ public interface DeckProviders {
     interface PlayingCards {
         ResourceKey<DeckType> NORMAL_TYPE = ResourceKey.create(DealWithItRegistries.DECK_TYPE, DealWithIt.id("playing_cards"));
         ResourceKey<DeckType> JOKERS_TYPE = ResourceKey.create(DealWithItRegistries.DECK_TYPE, DealWithIt.id("playing_cards_jokers"));
-        ResourceKey<Deck> NORMAL_DECK = ResourceKey.create(DealWithItRegistries.DECK, DealWithIt.id("playing_cards"));
-        ResourceKey<Deck> GREEN_DECK = ResourceKey.create(DealWithItRegistries.DECK, DealWithIt.id("playing_cards_green"));
-        ResourceKey<Deck> BLUE_DECK = ResourceKey.create(DealWithItRegistries.DECK, DealWithIt.id("playing_cards_blue"));
-        ResourceKey<Deck> YELLOW_DECK = ResourceKey.create(DealWithItRegistries.DECK, DealWithIt.id("playing_cards_yellow"));
 
         enum Number {
             ACE("ace"),
@@ -91,7 +87,7 @@ public interface DeckProviders {
                         ).flatMap(identity()))
                         .build();
 
-                output.deck(NORMAL_DECK, "Playing Cards", NORMAL_TYPE, dyeBox(Items.DYE.red()));
+                output.deck(Decks.PLAYING_CARDS, "Playing Cards", NORMAL_TYPE, dyeBox(Items.DYE.red()));
             }
 
             @Override
@@ -111,7 +107,7 @@ public interface DeckProviders {
                         ))
                         .build();
 
-                output.deck(DealWithIt.id("playing_cards_jokers"), "Playing Cards (with Jokers)", JOKERS_TYPE, addJokers(NORMAL_DECK));
+                output.deck(Decks.JOKERS_PLAYING_CARDS, "Playing Cards (with Jokers)", JOKERS_TYPE, addJokers(Decks.PLAYING_CARDS));
             }
 
             @Override
@@ -123,9 +119,9 @@ public interface DeckProviders {
         DeckProvider COLORED = new DeckProvider() {
             @Override
             protected void generate(DeckOutput output) {
-                output.deck(GREEN_DECK, "Playing Cards (Green)", NORMAL_TYPE, dyeBox(Items.DYE.green()));
-                output.deck(BLUE_DECK, "Playing Cards (Blue)", NORMAL_TYPE, dyeBox(Items.DYE.blue()));
-                output.deck(YELLOW_DECK, "Playing Cards (Yellow)", NORMAL_TYPE, dyeBox(Items.DYE.yellow()));
+                output.deck(Decks.GREEN_PLAYING_CARDS, "Playing Cards (Green)", NORMAL_TYPE, dyeBox(Items.DYE.green()));
+                output.deck(Decks.BLUE_PLAYING_CARDS, "Playing Cards (Blue)", NORMAL_TYPE, dyeBox(Items.DYE.blue()));
+                output.deck(Decks.YELLOW_PLAYING_CARDS, "Playing Cards (Yellow)", NORMAL_TYPE, dyeBox(Items.DYE.yellow()));
             }
 
             @Override
@@ -137,9 +133,9 @@ public interface DeckProviders {
         DeckProvider COLORED_JOKERS = new DeckProvider() {
             @Override
             protected void generate(DeckOutput output) {
-                output.deck(DealWithIt.id("playing_cards_jokers_green"), "Playing Cards (Green with Jokers)", JOKERS_TYPE, addJokers(GREEN_DECK));
-                output.deck(DealWithIt.id("playing_cards_jokers_blue"), "Playing Cards (Blue with Jokers)", JOKERS_TYPE, addJokers(BLUE_DECK));
-                output.deck(DealWithIt.id("playing_cards_jokers_yellow"), "Playing Cards (Yellow with Jokers)", JOKERS_TYPE, addJokers(YELLOW_DECK));
+                output.deck(Decks.GREEN_JOKERS_PLAYING_CARDS, "Playing Cards (Green with Jokers)", JOKERS_TYPE, addJokers(Decks.GREEN_PLAYING_CARDS));
+                output.deck(Decks.BLUE_JOKERS_PLAYING_CARDS, "Playing Cards (Blue with Jokers)", JOKERS_TYPE, addJokers(Decks.BLUE_PLAYING_CARDS));
+                output.deck(Decks.YELLOW_JOKERS_PLAYING_CARDS, "Playing Cards (Yellow with Jokers)", JOKERS_TYPE, addJokers(Decks.YELLOW_PLAYING_CARDS));
             }
 
             @Override
@@ -163,7 +159,7 @@ public interface DeckProviders {
                     ))
                     .build();
 
-            output.deck(DealWithIt.id("uno"), "Uno", uno, (_, registries, result) ->
+            output.deck(Decks.UNO, "Uno", uno, (_, registries, result) ->
                     ShapedRecipeBuilderAccessor.createShapedRecipeBuilder(registries.lookupOrThrow(Registries.ITEM), RecipeCategory.MISC, result)
                             .pattern(" R ")
                             .pattern("Y#G")

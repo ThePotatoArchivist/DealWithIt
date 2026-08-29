@@ -13,6 +13,7 @@ import net.minecraft.world.item.CreativeModeTab;
 
 import java.util.function.Consumer;
 
+import static archives.tater.dealwithit.Util.streamOrdered;
 import static net.minecraft.util.Util.makeDescriptionId;
 
 public interface DealWithItCreativeTabs {
@@ -21,7 +22,7 @@ public interface DealWithItCreativeTabs {
             .icon(DealWithItItems.BLANK_CARD_BOX::getDefaultInstance)
             .displayItems((parameters, output) -> {
                 output.accept(DealWithItItems.BLANK_CARD_BOX);
-                parameters.holders().lookupOrThrow(DealWithItRegistries.DECK).listElements().forEach(deck ->
+                streamOrdered(parameters.holders().lookupOrThrow(DealWithItRegistries.DECK), DealWithItDeckTags.CREATIVE_TAB_ORDER).forEach(deck ->
                         output.accept(DeckContents.createStack(deck)));
             })
     );

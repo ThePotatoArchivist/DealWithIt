@@ -36,14 +36,15 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		var pack = fabricDataGenerator.createPack();
 
+		pack.addProvider(ModItemTagsProvider::new);
+		pack.addProvider(ModRecipeProvider::new);
+		pack.addProvider(DeckTagsProvider::new);
+
 		pack.addProvider(DeckProviders.PlayingCards.PLAYING_CARDS::clientData);
 		pack.addProvider(DeckProviders.PlayingCards.JOKERS::clientData);
 		pack.addProvider(DeckProviders.PlayingCards.COLORED::clientData);
 		pack.addProvider(DeckProviders.PlayingCards.COLORED_JOKERS::clientData);
 		pack.addProvider(DeckProviders.UNO::clientData);
-		pack.addProvider(ModItemTagProvider::new);
-		pack.addProvider(ModRecipeProvider::new);
-
 		pack.addProvider(ModAtlasProvider::new);
 		pack.addProvider(ModModelProvider::new);
 		pack.addProvider(ModSoundsProvider::new);

@@ -1,5 +1,9 @@
 package archives.tater.dealwithit;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 
 import com.google.common.collect.ImmutableList;
@@ -47,5 +51,12 @@ public interface Util {
 
     static <K, V, T> Stream<T> mapEntries(Map<K, V> map, BiFunction<K, V, T> transform) {
         return map.entrySet().stream().map(entry -> transform.apply(entry.getKey(), entry.getValue()));
+    }
+
+    static <T> Stream<Holder<T>> streamOrdered(HolderLookup<T> registry, TagKey<T> orderTag) {
+        return Stream.concat(
+                registry.get(orderTag).stream().flatMap(HolderSet::stream),
+                registry.listElements().filter(holder -> !holder.is(orderTag))
+        );
     }
 }
