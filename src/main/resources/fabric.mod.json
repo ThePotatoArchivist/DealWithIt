@@ -23,6 +23,9 @@
 		],
 		"fabric-datagen": [
 			"archives.tater.dealwithit.client.DealWithItDataGenerator"
+		],
+		"rrv_client": [
+			"archives.tater.dealwithit.client.DealWithItRRVClientPlugin"
 		]
 	},
 	"mixins": [
