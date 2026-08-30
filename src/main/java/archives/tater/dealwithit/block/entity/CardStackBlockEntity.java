@@ -3,6 +3,7 @@ package archives.tater.dealwithit.block.entity;
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.component.CardComponent;
+import archives.tater.dealwithit.component.CardInstance;
 import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.registry.DealWithItBlockEntities;
 import archives.tater.dealwithit.registry.DealWithItComponents;
@@ -42,23 +43,31 @@ import static net.minecraft.util.Mth.clamp;
 public class CardStackBlockEntity extends BlockEntity {
 
     public static final int FULL_HEIGHT = 128;
-    private final List<CardInstance> cards = new LinkedList<>();
+    private final List<WorldCardInstance> cards = new LinkedList<>();
 
-    private static final Codec<List<CardInstance>> CARDS_CODEC = CardInstance.CODEC.listOf();
+    private static final Codec<List<WorldCardInstance>> CARDS_CODEC = WorldCardInstance.CODEC.listOf();
 
     public CardStackBlockEntity(BlockPos worldPosition, BlockState blockState) {
         super(DealWithItBlockEntities.CARD_STACK, worldPosition, blockState);
     }
 
     public boolean pushCard(ItemStack stack, float angle, boolean flip) {
-        var instance = CardInstance.fromStack(stack, angle, flip);
+        var instance = WorldCardInstance.fromStack(stack, angle, flip);
         if (instance == null) return false;
 
+        pushCard(instance);
+
+        return true;
+    }
+
+    public void pushCard(CardComponent card, boolean faceDown, float angle) {
+        pushCard(new WorldCardInstance(card, angle, faceDown));
+    }
+
+    private void pushCard(WorldCardInstance instance) {
         cards.add(instance);
         markUpdated();
         updateHeight();
-
-        return true;
     }
 
     public ItemStack popCard(boolean flip) {
@@ -71,32 +80,37 @@ public class CardStackBlockEntity extends BlockEntity {
         return instance.toStack(flip);
     }
 
-    public @UnmodifiableView List<CardInstance> getCards() {
+    public @UnmodifiableView List<WorldCardInstance> getCards() {
         return cards;
     }
 
-    public void setCards(Collection<CardInstance> cards) {
+    public void setCards(Collection<WorldCardInstance> cards) {
         this.cards.clear();
         this.cards.addAll(cards);
         updateHeight();
         setChanged();
     }
 
-    public boolean removeIf(Predicate<CardInstance> condition) {
+    public boolean removeIf(Predicate<WorldCardInstance> condition) {
         if (!cards.removeIf(condition)) return false;
         updateHeight();
         setChanged();
         return true;
     }
 
-    public static List<CardInstance> getCards(ItemStack stack, float angle, boolean flip, RandomSource random) {
-        var single = CardInstance.fromStack(stack, angle, flip);
+    public static List<WorldCardInstance> getCards(ItemStack stack, float angle, boolean secondaryActive, RandomSource random) {
+        var single = WorldCardInstance.fromStack(stack, angle, secondaryActive);
         if (single != null) return List.of(single);
 
         var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
         if (deck != null) return deck.cards().stream()
-                .map(card -> new CardInstance(new CardComponent(deck.deck(), card), angle, !flip))
+                .map(card -> new WorldCardInstance(new CardComponent(deck.deck(), card), angle, !secondaryActive))
                 .collect(toShuffledList(random));
+
+        var cardStack = stack.get(DealWithItComponents.CARDS);
+        if (cardStack != null && !cardStack.cards().isEmpty()) return secondaryActive
+            ? cardStack.cards().stream().map(cardInstance -> new WorldCardInstance(cardInstance.card(), angle, cardInstance.faceDown())).toList()
+            : List.of(new WorldCardInstance(cardStack.cards().getLast().card(), angle, cardStack.cards().getLast().faceDown()));
 
         return List.of();
     }
@@ -111,7 +125,7 @@ public class CardStackBlockEntity extends BlockEntity {
         if (level == null) return;
 
         var stack = DealWithItItems.CARD_STACK.getDefaultInstance();
-        stack.set(DealWithItComponents.CARDS, new CardStack(cards.stream().map(CardInstance::toStackEntry).toList()));
+        stack.set(DealWithItComponents.CARDS, new CardStack(cards.stream().map(WorldCardInstance::toStackEntry).toList()));
         Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
     }
 
@@ -147,15 +161,15 @@ public class CardStackBlockEntity extends BlockEntity {
         }
     }
 
-    public record CardInstance(CardComponent card, float angle, boolean faceDown) {
-        public static final Codec<CardInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                CardComponent.MAP_CODEC.forGetter(CardInstance::card),
-                Codec.FLOAT.fieldOf("angle").forGetter(CardInstance::angle),
-                Codec.BOOL.fieldOf("face_down").forGetter(CardInstance::faceDown)
-        ).apply(instance, CardInstance::new));
+    public record WorldCardInstance(CardComponent card, float angle, boolean faceDown) {
+        public static final Codec<WorldCardInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                CardComponent.MAP_CODEC.forGetter(WorldCardInstance::card),
+                Codec.FLOAT.fieldOf("angle").forGetter(WorldCardInstance::angle),
+                Codec.BOOL.fieldOf("face_down").forGetter(WorldCardInstance::faceDown)
+        ).apply(instance, WorldCardInstance::new));
 
-        public CardStack.Entry toStackEntry() {
-            return new CardStack.Entry(card, faceDown);
+        public CardInstance toStackEntry() {
+            return new CardInstance(card, faceDown);
         }
 
         public ItemStack toStack(boolean flip) {
@@ -164,10 +178,10 @@ public class CardStackBlockEntity extends BlockEntity {
             return stack;
         }
 
-        public static @Nullable CardInstance fromStack(ItemStack stack, float angle, boolean flip) {
+        public static CardStackBlockEntity.@Nullable WorldCardInstance fromStack(ItemStack stack, float angle, boolean flip) {
             var card = stack.get(DealWithItComponents.CARD);
             if (card == null) return null;
-            return new CardInstance(card, angle, flip ^ stack.has(DealWithItComponents.FACE_DOWN));
+            return new WorldCardInstance(card, angle, flip ^ stack.has(DealWithItComponents.FACE_DOWN));
         }
     }
 }

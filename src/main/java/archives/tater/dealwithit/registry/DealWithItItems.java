@@ -2,6 +2,7 @@ package archives.tater.dealwithit.registry;
 
 import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
+import archives.tater.dealwithit.component.CardInstance;
 import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.data.Card;
 import archives.tater.dealwithit.event.ItemStackBarCallback;
@@ -64,14 +65,21 @@ public interface DealWithItItems {
         });
 
         ItemStackUseCallback.EVENT.register((_, player, hand) -> {
-            if (player.isSpectator()) return InteractionResult.PASS;
-
             var stack = player.getItemInHand(hand);
-            if (!stack.has(DealWithItComponents.CARD)) return InteractionResult.PASS;
 
-            Card.flip(stack, player);
+            if (stack.has(DealWithItComponents.CARD)) {
+                Card.flip(stack, player);
+                return InteractionResult.SUCCESS;
+            }
 
-            return InteractionResult.SUCCESS;
+            var cardStack = stack.get(DealWithItComponents.CARDS);
+            if (cardStack != null) {
+                stack.set(DealWithItComponents.CARDS, new CardStack(cardStack.cards().reversed().stream().map(CardInstance::flipped).toList()));
+                player.playSound(DealWithItSounds.CARD_FLIP);
+                return InteractionResult.SUCCESS;
+            }
+
+            return InteractionResult.PASS;
         });
 
         ItemStackUseOnCallback.EVENT.register(context -> {
@@ -82,9 +90,16 @@ public interface DealWithItItems {
             var stack = context.getItemInHand();
 
             if (level.getBlockEntity(pos) instanceof CardStackBlockEntity blockEntity) {
-                if (!stack.has(DealWithItComponents.CARD)) return InteractionResult.PASS;
+                if (stack.has(DealWithItComponents.CARD)) {
+                    if (!blockEntity.pushCard(stack, player.getYHeadRot(), player.isSecondaryUseActive()))
+                        return InteractionResult.FAIL;
 
-                if (!blockEntity.pushCard(stack, player.getYHeadRot(), player.isSecondaryUseActive())) return InteractionResult.FAIL;
+                } else if (stack.has(DealWithItComponents.CARDS)) {
+                    var card = CardStack.pop(stack);
+                    if (card == null) return InteractionResult.FAIL;
+                    blockEntity.pushCard(card.card(), card.faceDown(), player.getYHeadRot());
+
+                } else return InteractionResult.PASS;
 
                 level.playSound(player, pos, DealWithItSounds.CARD_STACK_PLACE, SoundSource.BLOCKS);
                 stack.consume(1, player);
@@ -92,7 +107,7 @@ public interface DealWithItItems {
                 return InteractionResult.SUCCESS;
             }
 
-            if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS)) return InteractionResult.PASS;
+            if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS) && !stack.has(DealWithItComponents.CARDS)) return InteractionResult.PASS;
 
             return CardStackBlock.place(player, context) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         });

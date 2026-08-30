@@ -1,6 +1,7 @@
 package archives.tater.dealwithit.block;
 
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
+import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.component.DeckContents;
 import archives.tater.dealwithit.data.CardSet;
 import archives.tater.dealwithit.registry.DealWithItBlocks;
@@ -110,6 +111,8 @@ public class CardStackBlock extends BaseEntityBlock {
         var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
         if (deck != null)
             stack.set(DealWithItComponents.DECK_CONTENTS, deck.withCards(CardSet.EMPTY));
+        else if (stack.has(DealWithItComponents.CARDS))
+            CardStack.pop(stack);
         else
             stack.consume(1, player);
 

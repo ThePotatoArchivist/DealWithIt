@@ -80,6 +80,6 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
     }
 
     public static class CardStackRenderState extends BlockEntityRenderState {
-        public List<CardStackBlockEntity.CardInstance> cards = List.of();
+        public List<CardStackBlockEntity.WorldCardInstance> cards = List.of();
     }
 }

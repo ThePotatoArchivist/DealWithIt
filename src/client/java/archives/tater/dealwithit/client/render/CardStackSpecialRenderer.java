@@ -1,5 +1,6 @@
 package archives.tater.dealwithit.client.render;
 
+import archives.tater.dealwithit.component.CardInstance;
 import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 
@@ -21,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardStack.Entry>> {
+public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardInstance>> {
     private final Vec3 offset;
     private final boolean shade;
     private final int limit;
@@ -37,7 +38,7 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardS
     }
 
     @Override
-    public void submit(@Nullable List<CardStack.Entry> argument, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+    public void submit(@Nullable List<CardInstance> argument, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         if (argument == null) return;
         poseStack.pushPose();
         var cardCount = argument.size();
@@ -59,11 +60,11 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardS
     }
 
     @Override
-    public @Nullable List<CardStack.Entry> extractArgument(ItemStack stack) {
+    public @Nullable List<CardInstance> extractArgument(ItemStack stack) {
         return stack.getOrDefault(DealWithItComponents.CARDS, CardStack.EMPTY).cards();
     }
 
-    public record Unbaked(Vec3 offset, boolean shade, int limit, boolean reversed) implements SpecialModelRenderer.Unbaked<List<CardStack.Entry>> {
+    public record Unbaked(Vec3 offset, boolean shade, int limit, boolean reversed) implements SpecialModelRenderer.Unbaked<List<CardInstance>> {
         public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Vec3.CODEC.fieldOf("offset").forGetter(Unbaked::offset),
                 Codec.BOOL.optionalFieldOf("shade", false).forGetter(Unbaked::shade),
@@ -72,7 +73,7 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardS
         ).apply(instance, Unbaked::new));
 
         @Override
-        public SpecialModelRenderer<List<CardStack.Entry>> bake(BakingContext context) {
+        public SpecialModelRenderer<List<CardInstance>> bake(BakingContext context) {
             return new CardStackSpecialRenderer(
                     offset,
                     shade,
@@ -83,7 +84,7 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardS
         }
 
         @Override
-        public MapCodec<? extends SpecialModelRenderer.Unbaked<List<CardStack.Entry>>> type() {
+        public MapCodec<? extends SpecialModelRenderer.Unbaked<List<CardInstance>>> type() {
             return CODEC;
         }
     }
