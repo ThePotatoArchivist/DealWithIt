@@ -23,6 +23,7 @@ import static net.minecraft.util.Mth.PI;
 
 public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEntity, CardStackRenderer.CardStackRenderState> {
 
+    public static final float INTERVAL = 1f / CardStackBlockEntity.FULL_HEIGHT;
     private final SpriteGetter sprites;
 
     public CardStackRenderer(BlockEntityRendererProvider.Context context) {
@@ -50,7 +51,7 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
         for (int i = 0; i < state.cards.size(); i++) {
             var instance = state.cards.get(i);
 
-            poseStack.translate(0, 1f / CardStackBlockEntity.FULL_HEIGHT, 0);
+            poseStack.translate(0, INTERVAL, 0);
 
             poseStack.pushPose();
             poseStack.mulPose(Axis.YN.rotationDegrees(instance.angle()));
@@ -63,7 +64,7 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
                     sprites,
                     poseStack,
                     submitNodeCollector,
-                    i + 1 >= state.cards.size() ? -1 : (i / 4) % 2 == 0 ? 0xdddddd : 0xbbbbbb,
+                    getColor(i, state.cards.size()),
                     state.lightCoords,
                     OverlayTexture.NO_OVERLAY
             );
@@ -72,6 +73,10 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
         }
 
         poseStack.popPose();
+    }
+
+    public static int getColor(int i, int size) {
+        return i + 1 >= size ? 0xffffffff : (i / 4) % 2 == 0 ? 0xffdddddd : 0xffbbbbbb;
     }
 
     public static class CardStackRenderState extends BlockEntityRenderState {

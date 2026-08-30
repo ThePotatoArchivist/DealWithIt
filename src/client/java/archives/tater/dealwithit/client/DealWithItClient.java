@@ -3,9 +3,7 @@ package archives.tater.dealwithit.client;
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.client.atlas.CartesianComposite;
 import archives.tater.dealwithit.client.mixin.SpriteSourcesAccessor;
-import archives.tater.dealwithit.client.render.CardSpecialRenderer;
-import archives.tater.dealwithit.client.render.CardStackRenderer;
-import archives.tater.dealwithit.client.render.ComponentModel;
+import archives.tater.dealwithit.client.render.*;
 import archives.tater.dealwithit.registry.DealWithItBlockEntities;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 
@@ -26,6 +24,8 @@ public class DealWithItClient implements ClientModInitializer {
 
 		ItemModels.ID_MAPPER.put(DealWithIt.id("component"), ComponentModel.Unbaked.CODEC);
 		SpecialModelRenderers.ID_MAPPER.put(DealWithIt.id("card"), CardSpecialRenderer.Unbaked.CODEC);
+		SpecialModelRenderers.ID_MAPPER.put(DealWithIt.id("card_stack"), CardStackSpecialRenderer.Unbaked.CODEC);
+		SpecialModelRenderers.ID_MAPPER.put(DealWithIt.id("card_stack_count"), CardStackCountSpecialRenderer.Unbaked.CODEC);
 		SpriteSourcesAccessor.getID_MAPPER().put(DealWithIt.id("cartesian_composite"), CartesianComposite.CODEC);
 
 		ItemComponentTooltipProviderRegistry.addFirst(DealWithItComponents.DECK_CONTENTS);

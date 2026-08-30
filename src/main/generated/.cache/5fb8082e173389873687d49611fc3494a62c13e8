@@ -3,6 +3,7 @@ efc6c2e02d583c9b4a8312676554484c080bf5f5 assets/dealwithit/blockstates/card_stac
 47c50e882cd2e1e13e5d24647274f7b874153ee6 assets/dealwithit/items/blank_card_box.json
 ff9f1f6c32df7837939c834777a1c1d96ab18fbd assets/dealwithit/items/card.json
 9158e936d9fa8382cda16456e37ae751fd70a411 assets/dealwithit/items/card_box.json
+2d392d03176c99df139caa4d424796d1bbf864d8 assets/dealwithit/items/card_stack.json
 ff452045231ba66eaf68e6d0faecf973ab1b5b6b assets/dealwithit/models/block/card_stack.json
 6121a280a2faa1c548e039c26b621980d4e192cf assets/dealwithit/models/item/blank_card_box.json
 ae27437b9be4bb2d7ebfd8fa0a791c85d9d7dc3c assets/dealwithit/models/item/card.json

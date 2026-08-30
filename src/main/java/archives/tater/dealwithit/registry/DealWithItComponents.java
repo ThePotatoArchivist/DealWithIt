@@ -2,6 +2,7 @@ package archives.tater.dealwithit.registry;
 
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.component.CardComponent;
+import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.component.DeckContents;
 
 import com.mojang.serialization.Codec;
@@ -17,6 +18,7 @@ import java.util.function.Consumer;
 public interface DealWithItComponents {
 
     DataComponentType<CardComponent> CARD = createCached("card", CardComponent.CODEC, CardComponent.STREAM_CODEC);
+    DataComponentType<CardStack> CARDS = createCached("cards", CardStack.CODEC, CardStack.STREAM_CODEC);
     DataComponentType<DeckContents> DECK_CONTENTS = createCached("deck_contents", DeckContents.CODEC, DeckContents.STREAM_CODEC);
     DataComponentType<Unit> FACE_DOWN = createUncached("face_down", Unit.CODEC, Unit.STREAM_CODEC);
 

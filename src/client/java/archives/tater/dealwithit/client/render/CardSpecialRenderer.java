@@ -82,7 +82,7 @@ public class CardSpecialRenderer implements SpecialModelRenderer<CardComponent> 
         ).apply(instance, Unbaked::new));
 
         @Override
-        public SpecialModelRenderer<CardComponent> bake(BakingContext context) {
+        public CardSpecialRenderer bake(BakingContext context) {
             return new CardSpecialRenderer(context.sprites(), bothBack);
         }
 

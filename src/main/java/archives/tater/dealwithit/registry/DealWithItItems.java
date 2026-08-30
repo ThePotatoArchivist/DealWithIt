@@ -2,6 +2,7 @@ package archives.tater.dealwithit.registry;
 
 import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
+import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.data.Card;
 import archives.tater.dealwithit.event.ItemStackBarCallback;
 import archives.tater.dealwithit.event.ItemStackBarCallback.BarDisplay;
@@ -25,6 +26,7 @@ import java.util.function.Function;
 public interface DealWithItItems {
 
     Item CARD = register(DealWithItItemIds.CARD, new Item.Properties().stacksTo(1));
+    Item CARD_STACK = register(DealWithItItemIds.CARD_STACK, new Item.Properties().stacksTo(1).component(DealWithItComponents.CARDS, CardStack.EMPTY));
     Item CARD_BOX = register(DealWithItItemIds.CARD_BOX, new Item.Properties().stacksTo(1));
     Item BLANK_CARD_BOX = register(DealWithItItemIds.BLANK_CARD_BOX, new Item.Properties().stacksTo(1));
 

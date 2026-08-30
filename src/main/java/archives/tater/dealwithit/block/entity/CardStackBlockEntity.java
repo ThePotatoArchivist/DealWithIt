@@ -3,8 +3,10 @@ package archives.tater.dealwithit.block.entity;
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.component.CardComponent;
+import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.registry.DealWithItBlockEntities;
 import archives.tater.dealwithit.registry.DealWithItComponents;
+import archives.tater.dealwithit.registry.DealWithItItems;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -108,8 +110,9 @@ public class CardStackBlockEntity extends BlockEntity {
         var level = getLevel();
         if (level == null) return;
 
-        for (var instance : cards)
-            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), instance.toStack(false));
+        var stack = DealWithItItems.CARD_STACK.getDefaultInstance();
+        stack.set(DealWithItComponents.CARDS, new CardStack(cards.stream().map(CardInstance::toStackEntry).toList()));
+        Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
     }
 
     public void updateHeight() {
@@ -150,6 +153,10 @@ public class CardStackBlockEntity extends BlockEntity {
                 Codec.FLOAT.fieldOf("angle").forGetter(CardInstance::angle),
                 Codec.BOOL.fieldOf("face_down").forGetter(CardInstance::faceDown)
         ).apply(instance, CardInstance::new));
+
+        public CardStack.Entry toStackEntry() {
+            return new CardStack.Entry(card, faceDown);
+        }
 
         public ItemStack toStack(boolean flip) {
             var stack = CardComponent.createStack(card);

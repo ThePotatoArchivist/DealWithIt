@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 public interface DealWithItItemIds {
 
     ResourceKey<Item> CARD = create("card");
+    ResourceKey<Item> CARD_STACK = create("card_stack");
     ResourceKey<Item> CARD_BOX = create("card_box");
     ResourceKey<Item> BLANK_CARD_BOX = create("blank_card_box");
 
