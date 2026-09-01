@@ -72,7 +72,7 @@ public interface DealWithItItems {
 
             var cardStack = stack.get(DealWithItComponents.CARD_STACK);
             if (cardStack != null) {
-                stack.set(DealWithItComponents.CARD_STACK, new CardStack(cardStack.cards().reversed().stream().map(CardInstance::flipped).toList()));
+                stack.set(DealWithItComponents.CARD_STACK, cardStack.flipped());
                 player.playSound(DealWithItSounds.CARD_FLIP);
                 return InteractionResult.SUCCESS;
             }
