@@ -16,6 +16,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
@@ -37,6 +38,34 @@ public record CardStack(List<CardInstance> cards) {
         if (cardStack == null || cardStack.cards.isEmpty()) return null;
         setCardStack(cardStack.cards.subList(0, cardStack.cards.size() - 1), stack, replaceStack);
         return cardStack.cards.getLast();
+    }
+
+    public static boolean tryClickPop(ItemStack target, Consumer<ItemStack> setTarget, ItemStack empty, Consumer<ItemStack> setEmpty) {
+        if (!empty.isEmpty()) return false;
+        var card = pop(target, setTarget);
+        if (card == null) return false;
+        setEmpty.accept(CardInstance.createStack(card));
+        return true;
+    }
+
+    public static boolean tryClickCombine(ItemStack target, Consumer<ItemStack> setTarget, ItemStack additional, Consumer<ItemStack> setAdditional) {
+        var targetCards = getCards(target);
+        var additionalCards = getCards(additional);
+        if (targetCards == null || additionalCards == null) return false;
+        var cards = Stream.concat(targetCards, additionalCards).toList();
+        setCardStack(cards, target, setTarget);
+        setAdditional.accept(ItemStack.EMPTY);
+        return true;
+    }
+
+    public static @Nullable Stream<CardInstance> getCards(ItemStack stack) {
+        var card = stack.get(DealWithItComponents.CARD);
+        if (card != null) return Stream.of(card);
+
+        var cardStack = stack.get(DealWithItComponents.CARD_STACK);
+        if (cardStack != null) return cardStack.cards().stream();
+
+        return null;
     }
 
     public static void setCardStack(List<CardInstance> cards, ItemStack stack, Consumer<ItemStack> replaceStack) {

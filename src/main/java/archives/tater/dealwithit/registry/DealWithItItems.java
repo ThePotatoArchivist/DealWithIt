@@ -4,6 +4,7 @@ import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
 import archives.tater.dealwithit.component.CardInstance;
 import archives.tater.dealwithit.component.CardStack;
+import archives.tater.dealwithit.component.DeckContents;
 import archives.tater.dealwithit.event.ItemStackBarCallback;
 import archives.tater.dealwithit.event.ItemStackBarCallback.BarDisplay;
 import archives.tater.dealwithit.event.ItemStackUseCallback;
@@ -18,7 +19,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Function;
 
@@ -37,16 +37,6 @@ public interface DealWithItItems {
         return register(id, Item::new, properties);
     }
 
-    private static boolean tryInsert(ItemStack box, ItemStack cardItem) {
-        var contents = box.get(DealWithItComponents.DECK_CONTENTS);
-        var card = cardItem.get(DealWithItComponents.CARD);
-        if (contents == null || card == null) return false;
-        if (!contents.canInsert(card)) return false;
-        box.set(DealWithItComponents.DECK_CONTENTS, contents.withAdded(card));
-        cardItem.shrink(1);
-        return true;
-    }
-
     static void init() {
         ItemClickBehaviorCallback.EVENT.register((hoveredItem, hoveredSlot, itemHeldByCursor, slotHeldByCursor, clickAction, player) -> {
             if (hoveredItem.has(DealWithItComponents.CARD) && itemHeldByCursor.isEmpty() && clickAction == ClickAction.SECONDARY) {
@@ -55,12 +45,19 @@ public interface DealWithItItems {
             }
 
             if (clickAction == ClickAction.PRIMARY && !hoveredItem.isEmpty() && !itemHeldByCursor.isEmpty() && (hoveredItem.has(DealWithItComponents.DECK_CONTENTS) || itemHeldByCursor.has(DealWithItComponents.DECK_CONTENTS))) {
-                if (tryInsert(hoveredItem, itemHeldByCursor) || tryInsert(itemHeldByCursor, hoveredItem))
+                if (DeckContents.tryInsert(hoveredItem, itemHeldByCursor) || DeckContents.tryInsert(itemHeldByCursor, hoveredItem))
                     player.level().playLocalSound(player, DealWithItSounds.CARD_BOX_INSERT, player.getSoundSource(), 0.3f, 1);
                 else
                     player.level().playLocalSound(player, DealWithItSounds.CARD_BOX_INSERT_FAIL, player.getSoundSource(), 1, 1);
                 return EventResult.DENY;
             }
+
+            if (clickAction == ClickAction.SECONDARY && (CardStack.tryClickPop(hoveredItem, hoveredSlot::set, itemHeldByCursor, slotHeldByCursor::set)
+                    || CardStack.tryClickPop(itemHeldByCursor, slotHeldByCursor::set, hoveredItem, hoveredSlot::set)))
+                return EventResult.DENY;
+
+            if (clickAction == ClickAction.PRIMARY && CardStack.tryClickCombine(hoveredItem, hoveredSlot::set, itemHeldByCursor, slotHeldByCursor::set))
+                return EventResult.DENY;
 
             return EventResult.PASS;
         });

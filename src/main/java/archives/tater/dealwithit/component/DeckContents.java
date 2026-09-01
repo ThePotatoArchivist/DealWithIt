@@ -107,6 +107,16 @@ public record DeckContents(
         return card.deck() == deck && cards.count(card.card()) < deck.value().cards().count(card.card());
     }
 
+    public static boolean tryInsert(ItemStack box, ItemStack cardItem) {
+        var contents = box.get(DealWithItComponents.DECK_CONTENTS);
+        var card = cardItem.get(DealWithItComponents.CARD);
+        if (contents == null || card == null) return false;
+        if (!contents.canInsert(card)) return false;
+        box.set(DealWithItComponents.DECK_CONTENTS, contents.withAdded(card));
+        cardItem.shrink(1);
+        return true;
+    }
+
     public static boolean tryInsert(CardInstance card, Holder<Deck> deck, CardSet.Mutable cards) {
         if (!canInsert(card, deck, cards)) return false;
         cards.add(card.card());
