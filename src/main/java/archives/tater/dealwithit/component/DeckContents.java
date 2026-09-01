@@ -22,6 +22,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipProvider;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.function.Consumer;
 
 import static java.util.function.Function.identity;
@@ -109,12 +111,37 @@ public record DeckContents(
 
     public static boolean tryInsert(ItemStack box, ItemStack cardItem) {
         var contents = box.get(DealWithItComponents.DECK_CONTENTS);
-        var card = cardItem.get(DealWithItComponents.CARD);
-        if (contents == null || card == null) return false;
-        if (!contents.canInsert(card)) return false;
-        box.set(DealWithItComponents.DECK_CONTENTS, contents.withAdded(card));
-        cardItem.shrink(1);
-        return true;
+        if (contents == null) return false;
+
+        var single = cardItem.get(DealWithItComponents.CARD);
+        if (single != null) {
+            if (!contents.canInsert(single)) return false;
+            box.set(DealWithItComponents.DECK_CONTENTS, contents.withAdded(single));
+            cardItem.shrink(1);
+            return true;
+        }
+
+        var cardStack = cardItem.get(DealWithItComponents.CARD_STACK);
+        if (cardStack != null) {
+            var mutable = contents.mutableCards();
+            var remainders = ImmutableList.<CardInstance>builder();
+            var anyInserted = false;
+
+            for (var card : cardStack.cards())
+                if (tryInsert(card, contents.deck, mutable))
+                    anyInserted = true;
+                else
+                    remainders.add(card);
+
+            if (!anyInserted) return false;
+
+            box.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(mutable));
+            cardItem.set(DealWithItComponents.CARD_STACK, new CardStack(remainders.build()));
+
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean tryInsert(CardInstance card, Holder<Deck> deck, CardSet.Mutable cards) {
