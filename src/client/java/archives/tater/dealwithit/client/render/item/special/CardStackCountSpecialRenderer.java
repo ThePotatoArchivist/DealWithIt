@@ -53,10 +53,10 @@ public class CardStackCountSpecialRenderer implements SpecialModelRenderer<Integ
 
     @Override
     public void getExtents(Consumer<Vector3fc> output) {
-        output.accept(new Vector3f(0,-1, 0));
-        output.accept(new Vector3f(17,-1, 0));
-        output.accept(new Vector3f(17,16, 0));
-        output.accept(new Vector3f(0,16, 0));
+        output.accept(new Vector3f(0,-1 / 16f, 0));
+        output.accept(new Vector3f(17 / 16f,-1 / 16f, 0));
+        output.accept(new Vector3f(17 / 16f,1, 0));
+        output.accept(new Vector3f(0,1, 0));
     }
 
     @Override

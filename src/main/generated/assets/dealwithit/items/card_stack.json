@@ -50,7 +50,7 @@
               "shadeInterval": 1
             }
           },
-          "threshold": 4.0
+          "threshold": 5.0
         },
         {
           "model": {
@@ -66,7 +66,7 @@
               "shadeInterval": 1
             }
           },
-          "threshold": 8.0
+          "threshold": 9.0
         },
         {
           "model": {
@@ -82,7 +82,7 @@
               "shadeInterval": 4
             }
           },
-          "threshold": 16.0
+          "threshold": 17.0
         }
       ],
       "fallback": {

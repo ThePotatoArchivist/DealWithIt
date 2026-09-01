@@ -56,10 +56,10 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD_STACK, select(
                 new DisplayContext(),
                 rangeSelect(new CardStackCount(),
-                        specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(4 / 16f, 0, CardStackRenderer.INTERVAL), 1, Integer.MAX_VALUE, false)),
-                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(2 / 16f, 0, CardStackRenderer.INTERVAL), 1, Integer.MAX_VALUE, false)), 4),
-                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(1 / 16f, 0, CardStackRenderer.INTERVAL), 1, Integer.MAX_VALUE, false)), 8),
-                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(0, 0, CardStackRenderer.INTERVAL), 4, Integer.MAX_VALUE, false)), 16)
+                        specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(4 / 16f, 0, CardStackRenderer.INTERVAL), 1)),
+                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(2 / 16f, 0, CardStackRenderer.INTERVAL), 1)), 5),
+                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(1 / 16f, 0, CardStackRenderer.INTERVAL), 1)), 9),
+                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(0, 0, CardStackRenderer.INTERVAL), 4)), 17)
                 ),
                 when(ItemDisplayContext.GUI, composite(
                         specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(-2 / 16f, 0, -1), 1, 3, true)),

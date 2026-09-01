@@ -86,6 +86,10 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardI
                 Codec.BOOL.optionalFieldOf("reversed", false).forGetter(Unbaked::reversed)
         ).apply(instance, Unbaked::new));
 
+        public Unbaked(Vec3 offset, int shadeInterval) {
+            this(offset, shadeInterval, Integer.MAX_VALUE, false);
+        }
+
         @Override
         public SpecialModelRenderer<List<CardInstance>> bake(BakingContext context) {
             return new CardStackSpecialRenderer(
