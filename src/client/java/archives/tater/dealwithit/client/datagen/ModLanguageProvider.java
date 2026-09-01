@@ -40,6 +40,7 @@ public class ModLanguageProvider extends FabricLanguageProvider {
         addPack(translationBuilder, DealWithItDataPacks.UNO, "Uno", "Regular Uno");
 
         translationBuilder.add(DealWithItItems.CARD, "Card");
+        translationBuilder.add(DealWithItItems.CARD_STACK, "Card Stack");
         translationBuilder.add(DealWithItItems.CARD_BOX, "Card Box");
         translationBuilder.add(DealWithItItems.BLANK_CARD_BOX, "Blank Card Box");
         translationBuilder.add(DeckContents.FILL, "%s/%s");

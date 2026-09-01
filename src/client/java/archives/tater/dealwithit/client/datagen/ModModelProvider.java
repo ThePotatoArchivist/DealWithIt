@@ -61,7 +61,7 @@ public class ModModelProvider extends FabricModelProvider {
                 when(List.of(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND), createFanVariants(true)),
                 when(ItemDisplayContext.GUI, composite(
                         specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(-2 / 16f, 0, -1), false, 1, 3, true)),
-                        specialModel(TEMPLATE_CARD,  new CardStackCountSpecialRenderer.Unbaked())
+                        specialModel(TEMPLATE_CARD, new CardStackCountSpecialRenderer.Unbaked())
                 ))
         ), new ClientItem.Properties(true, true, 1f));
 

@@ -130,6 +130,7 @@
   "item.dealwithit.card": "Card",
   "item.dealwithit.card_box": "Card Box",
   "item.dealwithit.card_box.fill": "%s/%s",
+  "item.dealwithit.card_stack": "Card Stack",
   "itemGroup.dealwithit.cards": "Deal With It",
   "subtitles.dealwithit.block.card_stack.pickup": "Card taken",
   "subtitles.dealwithit.block.card_stack.place": "Card placed",
