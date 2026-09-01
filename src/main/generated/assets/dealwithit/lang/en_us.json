@@ -135,5 +135,6 @@
   "subtitles.dealwithit.block.card_stack.place": "Card placed",
   "subtitles.dealwithit.block.card_stack.shuffle": "Cards shuffled",
   "subtitles.dealwithit.item.card.flip": "Cards flips",
-  "subtitles.dealwithit.item.card_box.insert": "Cards collected"
+  "subtitles.dealwithit.item.card_box.insert": "Cards collected",
+  "subtitles.dealwithit.item.card_box.insert.fail": "Card box full"
 }

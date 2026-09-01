@@ -54,8 +54,11 @@ public interface DealWithItItems {
                 return EventResult.DENY;
             }
 
-            if (clickAction == ClickAction.PRIMARY && (tryInsert(hoveredItem, itemHeldByCursor) || tryInsert(itemHeldByCursor, hoveredItem))) {
-                player.level().playLocalSound(player, DealWithItSounds.CARD_BOX_INSERT, player.getSoundSource(), 0.3f, 1);
+            if (clickAction == ClickAction.PRIMARY && !hoveredItem.isEmpty() && !itemHeldByCursor.isEmpty() && (hoveredItem.has(DealWithItComponents.DECK_CONTENTS) || itemHeldByCursor.has(DealWithItComponents.DECK_CONTENTS))) {
+                if (tryInsert(hoveredItem, itemHeldByCursor) || tryInsert(itemHeldByCursor, hoveredItem))
+                    player.level().playLocalSound(player, DealWithItSounds.CARD_BOX_INSERT, player.getSoundSource(), 0.3f, 1);
+                else
+                    player.level().playLocalSound(player, DealWithItSounds.CARD_BOX_INSERT_FAIL, player.getSoundSource(), 1, 1);
                 return EventResult.DENY;
             }
 

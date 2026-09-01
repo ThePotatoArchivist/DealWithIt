@@ -93,5 +93,14 @@
       "dealwithit:insert3"
     ],
     "subtitle": "subtitles.dealwithit.item.card_box.insert"
+  },
+  "item.card_box.insert.fail": {
+    "sounds": [
+      "dealwithit:insert_fail1",
+      "dealwithit:insert_fail2",
+      "dealwithit:insert_fail3",
+      "dealwithit:insert_fail4"
+    ],
+    "subtitle": "subtitles.dealwithit.item.card_box.insert.fail"
   }
 }
