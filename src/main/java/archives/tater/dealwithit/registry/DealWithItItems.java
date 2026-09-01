@@ -45,7 +45,7 @@ public interface DealWithItItems {
             }
 
             if (clickAction == ClickAction.PRIMARY && !hoveredItem.isEmpty() && !itemHeldByCursor.isEmpty() && (hoveredItem.has(DealWithItComponents.DECK_CONTENTS) || itemHeldByCursor.has(DealWithItComponents.DECK_CONTENTS))) {
-                if (DeckContents.tryInsert(hoveredItem, itemHeldByCursor) || DeckContents.tryInsert(itemHeldByCursor, hoveredItem))
+                if (DeckContents.tryInsert(hoveredItem, itemHeldByCursor, slotHeldByCursor::set) || DeckContents.tryInsert(itemHeldByCursor, hoveredItem, hoveredSlot::set))
                     player.level().playLocalSound(player, DealWithItSounds.CARD_BOX_INSERT, player.getSoundSource(), 0.3f, 1);
                 else
                     player.level().playLocalSound(player, DealWithItSounds.CARD_BOX_INSERT_FAIL, player.getSoundSource(), 1, 1);

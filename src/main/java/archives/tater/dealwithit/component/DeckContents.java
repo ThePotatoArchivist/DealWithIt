@@ -109,7 +109,7 @@ public record DeckContents(
         return card.deck() == deck && cards.count(card.card()) < deck.value().cards().count(card.card());
     }
 
-    public static boolean tryInsert(ItemStack box, ItemStack cardItem) {
+    public static boolean tryInsert(ItemStack box, ItemStack cardItem, Consumer<ItemStack> setCardItem) {
         var contents = box.get(DealWithItComponents.DECK_CONTENTS);
         if (contents == null) return false;
 
@@ -136,7 +136,7 @@ public record DeckContents(
             if (!anyInserted) return false;
 
             box.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(mutable));
-            cardItem.set(DealWithItComponents.CARD_STACK, new CardStack(remainders.build()));
+            CardStack.setCardStack(remainders.build(), cardItem, setCardItem);
 
             return true;
         }
