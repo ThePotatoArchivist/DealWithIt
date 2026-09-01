@@ -24,10 +24,6 @@ public record CardStack(List<CardInstance> cards) {
     public static final StreamCodec<RegistryFriendlyByteBuf, CardStack> STREAM_CODEC = CardInstance.STREAM_CODEC.apply(ByteBufCodecs.list()).map(CardStack::new, CardStack::cards);
     public static final CardStack EMPTY = new CardStack(List.of());
 
-    public CardStack {
-        assert cards.size() > 1;
-    }
-
     public static @Nullable CardInstance pop(ItemStack stack, UseOnContext context) {
         return pop(stack, requireNonNull(context.getPlayer()), context.getHand());
     }

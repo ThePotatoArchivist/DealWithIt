@@ -1,6 +1,8 @@
 package archives.tater.dealwithit.block;
 
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
+import archives.tater.dealwithit.block.entity.CardStackBlockEntity.WorldCardInstance;
+import archives.tater.dealwithit.component.CardInstance;
 import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.component.DeckContents;
 import archives.tater.dealwithit.data.CardSet;
@@ -35,6 +37,10 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+
+import static archives.tater.dealwithit.Util.toShuffledList;
 
 public class CardStackBlock extends BaseEntityBlock {
     public static final IntegerProperty HEIGHT = IntegerProperty.create("height", 1, 16);
@@ -87,36 +93,71 @@ public class CardStackBlock extends BaseEntityBlock {
                 : super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
     }
 
-    public static boolean place(Player player, UseOnContext useContext) {
+    public static boolean placeStack(Player player, UseOnContext useContext) {
         var stack = useContext.getItemInHand();
-        var cards = CardStackBlockEntity.getCards(stack, player.getYHeadRot(), player.isSecondaryUseActive(), player.getRandom());
-        if (cards.isEmpty()) return false;
-
         var context = new BlockPlaceContext(useContext);
         if (!context.canPlace()) return false;
 
         var initialState = DealWithItBlocks.CARD_STACK.getStateForPlacement(context);
         if (initialState == null) return false;
+        if (!initialState.canSurvive(context.getLevel(), context.getClickedPos())) return false; // height shouldn't affect placement
+
+        var cards = extractCards(stack, player, useContext.getHand(), player.isSecondaryUseActive(), player.getRandom());
+        if (cards.isEmpty()) return false;
+
         var state = initialState.setValue(HEIGHT, CardStackBlockEntity.getHeight(cards.size()));
-        if (!state.canSurvive(context.getLevel(), context.getClickedPos())) return false;
 
         if (!context.getLevel().isClientSide()) {
-            if (!context.getLevel().setBlock(context.getClickedPos(), state, Block.UPDATE_ALL_IMMEDIATE)) return false;
-            if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)
-                blockEntity.setCards(cards);
+            context.getLevel().setBlock(context.getClickedPos(), state, Block.UPDATE_ALL_IMMEDIATE);
+            if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity) {
+                var angle = player.getYHeadRot();
+                blockEntity.setCards(cards.stream().map(card -> new WorldCardInstance(card, angle)));
+            }
         }
 
         context.getLevel().playSound(player, context.getClickedPos(), cards.size() < 8 || !stack.has(DealWithItComponents.DECK_CONTENTS) ? DealWithItSounds.CARD_STACK_PLACE : DealWithItSounds.CARD_STACK_SHUFFLE, SoundSource.BLOCKS);
 
-        var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
-        if (deck != null)
-            stack.set(DealWithItComponents.DECK_CONTENTS, deck.withCards(CardSet.EMPTY));
-        else if (stack.has(DealWithItComponents.CARD_STACK))
-            CardStack.pop(stack, useContext);
-        else
-            stack.consume(1, player);
+        return true;
+    }
+
+    public static boolean addToStack(Player player, UseOnContext context, CardStackBlockEntity blockEntity) {
+        var stack = context.getItemInHand();
+        var cards = extractCards(stack, player, context.getHand(), player.isSecondaryUseActive(), player.getRandom());
+        if (cards.isEmpty()) return false;
+
+        if (!context.getLevel().isClientSide()) {
+            var angle = player.getYHeadRot();
+            blockEntity.pushCards(cards.stream().map(card -> new WorldCardInstance(card, angle)));
+        }
+
+        context.getLevel().playSound(player, context.getClickedPos(), DealWithItSounds.CARD_STACK_PLACE, SoundSource.BLOCKS);
 
         return true;
+    }
+
+    public static List<CardInstance> extractCards(ItemStack stack, Player player, InteractionHand hand, boolean secondaryActive, RandomSource random) {
+        var single = stack.get(DealWithItComponents.CARD);
+        if (single != null) {
+            stack.consume(1, player);
+            return List.of(secondaryActive ? single.flipped() : single);
+        }
+
+        var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
+        if (deck != null) {
+            stack.set(DealWithItComponents.DECK_CONTENTS, deck.withCards(CardSet.EMPTY));
+            return deck.cards().stream()
+                    .map(card -> new CardInstance(deck.deck(), card, !secondaryActive))
+                    .collect(toShuffledList(random));
+        }
+
+        var cardStack = stack.get(DealWithItComponents.CARD_STACK);
+        if (cardStack != null) {
+            var card = CardStack.pop(stack, player, hand);
+            if (card == null) return List.of();
+            return List.of(secondaryActive ? card.flipped() : card);
+        }
+
+        return List.of();
     }
 
     @Override

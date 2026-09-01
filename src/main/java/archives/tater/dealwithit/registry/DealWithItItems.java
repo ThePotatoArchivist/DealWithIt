@@ -15,7 +15,6 @@ import net.fabricmc.fabric.api.util.EventResult;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.Item;
@@ -26,7 +25,7 @@ import java.util.function.Function;
 public interface DealWithItItems {
 
     Item CARD = register(DealWithItItemIds.CARD, new Item.Properties().stacksTo(1));
-    Item CARD_STACK = register(DealWithItItemIds.CARD_STACK, new Item.Properties().stacksTo(1).component(DealWithItComponents.CARD_STACK, CardStack.EMPTY));
+    Item CARD_STACK = register(DealWithItItemIds.CARD_STACK, new Item.Properties().stacksTo(1));
     Item CARD_BOX = register(DealWithItItemIds.CARD_BOX, new Item.Properties().stacksTo(1));
     Item BLANK_CARD_BOX = register(DealWithItItemIds.BLANK_CARD_BOX, new Item.Properties().stacksTo(1));
 
@@ -84,31 +83,15 @@ public interface DealWithItItems {
         ItemStackUseOnCallback.EVENT.register(context -> {
             var level = context.getLevel();
             var player = context.getPlayer();
-            var pos = context.getClickedPos();
             if (player == null) return InteractionResult.PASS;
             var stack = context.getItemInHand();
 
-            if (level.getBlockEntity(pos) instanceof CardStackBlockEntity blockEntity) {
-                if (stack.has(DealWithItComponents.CARD)) {
-                    if (!blockEntity.pushCard(stack, player.getYHeadRot(), player.isSecondaryUseActive()))
-                        return InteractionResult.FAIL;
-
-                } else if (stack.has(DealWithItComponents.CARD_STACK)) {
-                    var card = CardStack.pop(stack, context);
-                    if (card == null) return InteractionResult.FAIL;
-                    blockEntity.pushCard(card, player.getYHeadRot());
-
-                } else return InteractionResult.PASS;
-
-                level.playSound(player, pos, DealWithItSounds.CARD_STACK_PLACE, SoundSource.BLOCKS);
-                stack.consume(1, player);
-
-                return InteractionResult.SUCCESS;
-            }
-
             if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS) && !stack.has(DealWithItComponents.CARD_STACK)) return InteractionResult.PASS;
 
-            return CardStackBlock.place(player, context) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+            if (level.getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)
+                return CardStackBlock.addToStack(player, context, blockEntity) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+
+            return CardStackBlock.placeStack(player, context) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         });
 
         ItemStackBarCallback.EVENT.register(stack -> {
