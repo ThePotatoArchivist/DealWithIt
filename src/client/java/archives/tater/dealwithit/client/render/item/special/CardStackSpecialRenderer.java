@@ -27,17 +27,19 @@ import static java.lang.Math.min;
 
 public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardInstance>> {
     private final Vec3 offset;
+    private final boolean forceHidden;
     private final int shadeInterval;
     private final int limit;
     private final boolean reversed;
     private final SpriteGetter sprites;
 
-    public CardStackSpecialRenderer(Vec3 offset, int shadeInterval, int limit, boolean reversed, SpriteGetter sprites) {
+    public CardStackSpecialRenderer(Vec3 offset, boolean forceHidden, int shadeInterval, int limit, boolean reversed, SpriteGetter sprites) {
+        this.offset = offset;
+        this.forceHidden = forceHidden;
         this.shadeInterval = shadeInterval;
         this.limit = limit;
         this.reversed = reversed;
         this.sprites = sprites;
-        this.offset = offset;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardI
             var entry = argument.get(index);
             CardSpecialRenderer.renderCard(
                     entry,
-                    false,
+                    forceHidden,
                     sprites,
                     poseStack,
                     submitNodeCollector,
@@ -78,23 +80,24 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardI
         return stack.getOrDefault(DealWithItComponents.CARD_STACK, CardStack.EMPTY).cards();
     }
 
-    public record Unbaked(Vec3 offset, int shadeInterval, int limit, boolean reversed) implements SpecialModelRenderer.Unbaked<List<CardInstance>> {
+    public record Unbaked(Vec3 offset, boolean forceHidden, int shadeInterval, int limit, boolean reversed) implements SpecialModelRenderer.Unbaked<List<CardInstance>> {
         public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Vec3.CODEC.fieldOf("offset").forGetter(Unbaked::offset),
+                Codec.BOOL.optionalFieldOf("force_hidden", false).forGetter(Unbaked::forceHidden),
                 ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("shadeInterval", 0).forGetter(Unbaked::shadeInterval),
                 ExtraCodecs.POSITIVE_INT.optionalFieldOf("limit", Integer.MAX_VALUE).forGetter(Unbaked::limit),
                 Codec.BOOL.optionalFieldOf("reversed", false).forGetter(Unbaked::reversed)
         ).apply(instance, Unbaked::new));
 
-        public Unbaked(Vec3 offset, int shadeInterval) {
-            this(offset, shadeInterval, Integer.MAX_VALUE, false);
+        public Unbaked(Vec3 offset, boolean forceHidden, int shadeInterval) {
+            this(offset, forceHidden, shadeInterval, Integer.MAX_VALUE, false);
         }
 
         @Override
         public SpecialModelRenderer<List<CardInstance>> bake(BakingContext context) {
             return new CardStackSpecialRenderer(
                     offset,
-                    shadeInterval,
+                    forceHidden, shadeInterval,
                     limit,
                     reversed,
                     context.sprites()

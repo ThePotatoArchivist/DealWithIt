@@ -18,6 +18,7 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.renderer.item.ClientItem;
+import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.properties.select.DisplayContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -56,14 +57,10 @@ public class ModModelProvider extends FabricModelProvider {
 
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD_STACK, select(
                 new DisplayContext(),
-                rangeSelect(new CardStackCount(),
-                        specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(4 / 16f, 0, CardStackRenderer.INTERVAL), 1)),
-                        override(specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(2 / 16f, 0, CardStackRenderer.INTERVAL), 1)), 5),
-                        override(specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(1 / 16f, 0, CardStackRenderer.INTERVAL), 1)), 9),
-                        override(specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(0, 0, CardStackRenderer.INTERVAL), 4)), 17)
-                ),
+                createFanVariants(false),
+                when(List.of(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND), createFanVariants(true)),
                 when(ItemDisplayContext.GUI, composite(
-                        specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(-2 / 16f, 0, -1), 1, 3, true)),
+                        specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(-2 / 16f, 0, -1), false, 1, 3, true)),
                         specialModel(TEMPLATE_CARD,  new CardStackCountSpecialRenderer.Unbaked())
                 ))
         ), new ClientItem.Properties(true, true, 1f));
@@ -71,5 +68,15 @@ public class ModModelProvider extends FabricModelProvider {
         var blank = plainModel(itemModelGenerators.createFlatItemModel(DealWithItItems.BLANK_CARD_BOX, ModelTemplates.FLAT_ITEM));
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.BLANK_CARD_BOX, blank);
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD_BOX, new ComponentModel.Unbaked<>(DealWithItComponents.DECK_CONTENTS, "dealwithit/card_box/", blank));
+    }
+
+    private static ItemModel.Unbaked createFanVariants(boolean forceHidden) {
+        return rangeSelect(
+                new CardStackCount(),
+                specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(4 / 16f, 0, CardStackRenderer.INTERVAL), forceHidden, 1)),
+                override(specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(2 / 16f, 0, CardStackRenderer.INTERVAL), forceHidden, 1)), 5),
+                override(specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(1 / 16f, 0, CardStackRenderer.INTERVAL), forceHidden, 1)), 9),
+                override(specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(0, 0, CardStackRenderer.INTERVAL), forceHidden, 4)), 17)
+        );
     }
 }

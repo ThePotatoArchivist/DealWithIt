@@ -4,6 +4,83 @@
     "cases": [
       {
         "model": {
+          "type": "minecraft:range_dispatch",
+          "entries": [
+            {
+              "model": {
+                "type": "minecraft:special",
+                "base": "dealwithit:item/template_card",
+                "model": {
+                  "type": "dealwithit:card_stack",
+                  "force_hidden": true,
+                  "offset": [
+                    0.125,
+                    0.0,
+                    0.0078125
+                  ],
+                  "shadeInterval": 1
+                }
+              },
+              "threshold": 5.0
+            },
+            {
+              "model": {
+                "type": "minecraft:special",
+                "base": "dealwithit:item/template_card",
+                "model": {
+                  "type": "dealwithit:card_stack",
+                  "force_hidden": true,
+                  "offset": [
+                    0.0625,
+                    0.0,
+                    0.0078125
+                  ],
+                  "shadeInterval": 1
+                }
+              },
+              "threshold": 9.0
+            },
+            {
+              "model": {
+                "type": "minecraft:special",
+                "base": "dealwithit:item/template_card",
+                "model": {
+                  "type": "dealwithit:card_stack",
+                  "force_hidden": true,
+                  "offset": [
+                    0.0,
+                    0.0,
+                    0.0078125
+                  ],
+                  "shadeInterval": 4
+                }
+              },
+              "threshold": 17.0
+            }
+          ],
+          "fallback": {
+            "type": "minecraft:special",
+            "base": "dealwithit:item/template_card",
+            "model": {
+              "type": "dealwithit:card_stack",
+              "force_hidden": true,
+              "offset": [
+                0.25,
+                0.0,
+                0.0078125
+              ],
+              "shadeInterval": 1
+            }
+          },
+          "property": "dealwithit:card_stack_count"
+        },
+        "when": [
+          "thirdperson_lefthand",
+          "thirdperson_righthand"
+        ]
+      },
+      {
+        "model": {
           "type": "minecraft:composite",
           "models": [
             {
