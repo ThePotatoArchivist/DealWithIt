@@ -1,4 +1,4 @@
-package archives.tater.dealwithit.client.render;
+package archives.tater.dealwithit.client.render.item.model;
 
 import archives.tater.dealwithit.ItemModelProviderComponent;
 

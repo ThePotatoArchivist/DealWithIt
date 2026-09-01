@@ -1,6 +1,7 @@
-package archives.tater.dealwithit.client.render;
+package archives.tater.dealwithit.client.render.block.entity;
 
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
+import archives.tater.dealwithit.client.render.item.special.CardSpecialRenderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -64,7 +65,7 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
                     sprites,
                     poseStack,
                     submitNodeCollector,
-                    getColor(i, state.cards.size()),
+                    getColor(i, state.cards.size(), 4),
                     state.lightCoords,
                     OverlayTexture.NO_OVERLAY
             );
@@ -75,8 +76,8 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
         poseStack.popPose();
     }
 
-    public static int getColor(int i, int size) {
-        return i + 1 >= size ? 0xffffffff : (i / 4) % 2 == 0 ? 0xffdddddd : 0xffbbbbbb;
+    public static int getColor(int i, int size, int interval) {
+        return i + 1 >= size ? 0xffffffff : (i / interval) % 2 == 0 ? 0xffdddddd : 0xffbbbbbb;
     }
 
     public static class CardStackRenderState extends BlockEntityRenderState {

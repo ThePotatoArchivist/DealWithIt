@@ -17,31 +17,8 @@
                   0.0,
                   -1.0
                 ],
-                "reversed": true
-              },
-              "transformation": {
-                "left_rotation": [
-                  0.0,
-                  0.0,
-                  0.0,
-                  1.0
-                ],
-                "right_rotation": [
-                  0.0,
-                  0.0,
-                  0.0,
-                  1.0
-                ],
-                "scale": [
-                  1.0,
-                  1.0,
-                  1.0
-                ],
-                "translation": [
-                  0.125,
-                  0.0,
-                  0.0
-                ]
+                "reversed": true,
+                "shadeInterval": 1
               }
             },
             {
@@ -66,7 +43,7 @@
           0.0,
           0.0078125
         ],
-        "shade": true
+        "shadeInterval": 4
       }
     },
     "property": "minecraft:display_context"

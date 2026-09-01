@@ -1,5 +1,6 @@
-package archives.tater.dealwithit.client.render;
+package archives.tater.dealwithit.client.render.item.special;
 
+import archives.tater.dealwithit.client.render.block.entity.CardStackRenderer;
 import archives.tater.dealwithit.component.CardInstance;
 import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.registry.DealWithItComponents;
@@ -22,15 +23,17 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static java.lang.Math.min;
+
 public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardInstance>> {
     private final Vec3 offset;
-    private final boolean shade;
+    private final int shadeInterval;
     private final int limit;
     private final boolean reversed;
     private final SpriteGetter sprites;
 
-    public CardStackSpecialRenderer(Vec3 offset, boolean shade, int limit, boolean reversed, SpriteGetter sprites) {
-        this.shade = shade;
+    public CardStackSpecialRenderer(Vec3 offset, int shadeInterval, int limit, boolean reversed, SpriteGetter sprites) {
+        this.shadeInterval = shadeInterval;
         this.limit = limit;
         this.reversed = reversed;
         this.sprites = sprites;
@@ -42,10 +45,21 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardI
         if (argument == null) return;
         poseStack.pushPose();
         var cardCount = argument.size();
+        poseStack.translate(offset.scale(-(min(cardCount, limit) - 1) / 2.0));
+
         for (var i = 0; i < limit && i < cardCount; i++) {
             var index = reversed ? cardCount - 1 - i : i;
             var entry = argument.get(index);
-            CardSpecialRenderer.renderCard(entry, false, sprites, poseStack, submitNodeCollector, shade ? CardStackRenderer.getColor(index, cardCount) : 0xffffffff, lightCoords, overlayCoords);
+            CardSpecialRenderer.renderCard(
+                    entry,
+                    false,
+                    sprites,
+                    poseStack,
+                    submitNodeCollector,
+                    shadeInterval == 0 ? 0xffffffff : CardStackRenderer.getColor(index, cardCount, shadeInterval),
+                    lightCoords,
+                    overlayCoords
+            );
             poseStack.translate(offset);
         }
         poseStack.popPose();
@@ -64,10 +78,10 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardI
         return stack.getOrDefault(DealWithItComponents.CARD_STACK, CardStack.EMPTY).cards();
     }
 
-    public record Unbaked(Vec3 offset, boolean shade, int limit, boolean reversed) implements SpecialModelRenderer.Unbaked<List<CardInstance>> {
+    public record Unbaked(Vec3 offset, int shadeInterval, int limit, boolean reversed) implements SpecialModelRenderer.Unbaked<List<CardInstance>> {
         public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Vec3.CODEC.fieldOf("offset").forGetter(Unbaked::offset),
-                Codec.BOOL.optionalFieldOf("shade", false).forGetter(Unbaked::shade),
+                ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("shadeInterval", 0).forGetter(Unbaked::shadeInterval),
                 ExtraCodecs.POSITIVE_INT.optionalFieldOf("limit", Integer.MAX_VALUE).forGetter(Unbaked::limit),
                 Codec.BOOL.optionalFieldOf("reversed", false).forGetter(Unbaked::reversed)
         ).apply(instance, Unbaked::new));
@@ -76,7 +90,7 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardI
         public SpecialModelRenderer<List<CardInstance>> bake(BakingContext context) {
             return new CardStackSpecialRenderer(
                     offset,
-                    shade,
+                    shadeInterval,
                     limit,
                     reversed,
                     context.sprites()

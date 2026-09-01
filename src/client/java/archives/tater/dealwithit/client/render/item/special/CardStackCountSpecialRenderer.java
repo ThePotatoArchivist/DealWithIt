@@ -1,4 +1,4 @@
-package archives.tater.dealwithit.client.render;
+package archives.tater.dealwithit.client.render.item.special;
 
 import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.registry.DealWithItComponents;
@@ -43,7 +43,7 @@ public class CardStackCountSpecialRenderer implements SpecialModelRenderer<Integ
         if (argument == null || argument < 2) return;
 
         poseStack.pushPose();
-        poseStack.translate(0, 0, 1);
+        poseStack.translate(0, 0, 10);
         poseStack.scale(1f / 16, -1f / 16, 1f / 16);
         var sequence = FormattedCharSequence.forward(argument.toString(), Style.EMPTY);
         poseStack.translate(17 - font.width(sequence), 2 - font.lineHeight, 0);

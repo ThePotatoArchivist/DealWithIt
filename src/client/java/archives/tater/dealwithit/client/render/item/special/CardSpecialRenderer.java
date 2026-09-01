@@ -1,4 +1,4 @@
-package archives.tater.dealwithit.client.render;
+package archives.tater.dealwithit.client.render.item.special;
 
 import archives.tater.dealwithit.client.DealWithItAtlases;
 import archives.tater.dealwithit.component.CardInstance;
