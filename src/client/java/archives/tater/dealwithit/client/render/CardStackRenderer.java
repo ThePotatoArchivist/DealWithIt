@@ -60,7 +60,7 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
 
             CardSpecialRenderer.renderCard(
                     instance.card(),
-                    instance.faceDown(),
+                    false,
                     sprites,
                     poseStack,
                     submitNodeCollector,

@@ -7,7 +7,6 @@ import com.mojang.serialization.Codec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.Unit;
 import net.minecraft.world.item.ItemStack;
 
 import org.jspecify.annotations.Nullable;
@@ -33,12 +32,7 @@ public record CardStack(List<CardInstance> cards) {
     public static ItemStack toStack(List<CardInstance> cards) {
         return switch (cards.size()) {
             case 0 -> ItemStack.EMPTY;
-            case 1 -> {
-                var stack = CardComponent.createStack(cards.getFirst().card());
-                if (cards.getFirst().faceDown())
-                    stack.set(DealWithItComponents.FACE_DOWN, Unit.INSTANCE);
-                yield stack;
-            }
+            case 1 -> CardInstance.createStack(cards.getFirst());
             default -> {
                 var stack = DealWithItItems.CARD_STACK.getDefaultInstance();
                 stack.set(DealWithItComponents.CARDS, new CardStack(cards));

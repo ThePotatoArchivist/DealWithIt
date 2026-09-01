@@ -15,7 +15,7 @@
             "base": "minecraft:item/generated",
             "model": {
               "type": "dealwithit:card",
-              "both_back": true
+              "force_hidden": true
             }
           },
           "when": "thirdperson_lefthand"
@@ -26,32 +26,19 @@
             "base": "minecraft:item/generated",
             "model": {
               "type": "dealwithit:card",
-              "both_back": true
+              "force_hidden": true
             }
           },
           "when": "thirdperson_righthand"
         }
       ],
       "fallback": {
-        "type": "minecraft:condition",
-        "component": "dealwithit:face_down",
-        "on_false": {
-          "type": "minecraft:special",
-          "base": "minecraft:item/generated",
-          "model": {
-            "type": "dealwithit:card",
-            "both_back": false
-          }
-        },
-        "on_true": {
-          "type": "minecraft:special",
-          "base": "minecraft:item/generated",
-          "model": {
-            "type": "dealwithit:card",
-            "both_back": true
-          }
-        },
-        "property": "minecraft:has_component"
+        "type": "minecraft:special",
+        "base": "minecraft:item/generated",
+        "model": {
+          "type": "dealwithit:card",
+          "force_hidden": false
+        }
       },
       "property": "minecraft:display_context"
     },

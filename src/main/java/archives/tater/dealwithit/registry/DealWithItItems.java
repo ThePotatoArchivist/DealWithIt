@@ -4,7 +4,6 @@ import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
 import archives.tater.dealwithit.component.CardInstance;
 import archives.tater.dealwithit.component.CardStack;
-import archives.tater.dealwithit.data.Card;
 import archives.tater.dealwithit.event.ItemStackBarCallback;
 import archives.tater.dealwithit.event.ItemStackBarCallback.BarDisplay;
 import archives.tater.dealwithit.event.ItemStackUseCallback;
@@ -52,7 +51,7 @@ public interface DealWithItItems {
     static void init() {
         ItemClickBehaviorCallback.EVENT.register((hoveredItem, hoveredSlot, itemHeldByCursor, slotHeldByCursor, clickAction, player) -> {
             if (hoveredItem.has(DealWithItComponents.CARD) && itemHeldByCursor.isEmpty() && clickAction == ClickAction.SECONDARY) {
-                Card.flip(hoveredItem, player);
+                CardInstance.flip(hoveredItem, player);
                 return EventResult.DENY;
             }
 
@@ -68,7 +67,7 @@ public interface DealWithItItems {
             var stack = player.getItemInHand(hand);
 
             if (stack.has(DealWithItComponents.CARD)) {
-                Card.flip(stack, player);
+                CardInstance.flip(stack, player);
                 return InteractionResult.SUCCESS;
             }
 
@@ -97,7 +96,7 @@ public interface DealWithItItems {
                 } else if (stack.has(DealWithItComponents.CARDS)) {
                     var card = CardStack.pop(stack);
                     if (card == null) return InteractionResult.FAIL;
-                    blockEntity.pushCard(card.card(), card.faceDown(), player.getYHeadRot());
+                    blockEntity.pushCard(card, player.getYHeadRot());
 
                 } else return InteractionResult.PASS;
 

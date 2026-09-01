@@ -67,7 +67,7 @@ public record DeckContents(
         return withCards(cards.build());
     }
 
-    public DeckContents withAdded(CardComponent card) {
+    public DeckContents withAdded(CardInstance card) {
         if (!canInsert(card)) return this;
         var cards = mutableCards();
         cards.add(card.card());
@@ -78,7 +78,7 @@ public record DeckContents(
         return CardSet.mutable(this.cards, deck.value().cards());
     }
 
-    public boolean canInsert(CardComponent card) {
+    public boolean canInsert(CardInstance card) {
         return canInsert(card, deck, cards);
     }
 
@@ -99,15 +99,15 @@ public record DeckContents(
         return stack;
     }
 
-    public static boolean canInsert(CardComponent card, Holder<Deck> deck, CardSet.Mutable cards) {
+    public static boolean canInsert(CardInstance card, Holder<Deck> deck, CardSet.Mutable cards) {
         return card.deck() == deck && cards.canAdd(card.card());
     }
 
-    public static boolean canInsert(CardComponent card, Holder<Deck> deck, CardSet cards) {
+    public static boolean canInsert(CardInstance card, Holder<Deck> deck, CardSet cards) {
         return card.deck() == deck && cards.count(card.card()) < deck.value().cards().count(card.card());
     }
 
-    public static boolean tryInsert(CardComponent card, Holder<Deck> deck, CardSet.Mutable cards) {
+    public static boolean tryInsert(CardInstance card, Holder<Deck> deck, CardSet.Mutable cards) {
         if (!canInsert(card, deck, cards)) return false;
         cards.add(card.card());
         return true;

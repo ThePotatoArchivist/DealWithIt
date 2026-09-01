@@ -45,7 +45,7 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardI
         for (var i = 0; i < limit && i < cardCount; i++) {
             var index = reversed ? cardCount - 1 - i : i;
             var entry = argument.get(index);
-            CardSpecialRenderer.renderCard(entry.card(), entry.faceDown(), sprites, poseStack, submitNodeCollector, shade ? CardStackRenderer.getColor(index, cardCount) : 0xffffffff, lightCoords, overlayCoords);
+            CardSpecialRenderer.renderCard(entry, false, sprites, poseStack, submitNodeCollector, shade ? CardStackRenderer.getColor(index, cardCount) : 0xffffffff, lightCoords, overlayCoords);
             poseStack.translate(offset);
         }
         poseStack.popPose();

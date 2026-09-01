@@ -1,7 +1,7 @@
 package archives.tater.dealwithit.client.render;
 
 import archives.tater.dealwithit.client.DealWithItAtlases;
-import archives.tater.dealwithit.component.CardComponent;
+import archives.tater.dealwithit.component.CardInstance;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -20,26 +20,26 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class CardSpecialRenderer implements SpecialModelRenderer<CardComponent> {
+public class CardSpecialRenderer implements SpecialModelRenderer<CardInstance> {
     private final SpriteGetter sprites;
-    private final boolean bothBack;
+    private final boolean forceHidden;
 
-    public CardSpecialRenderer(SpriteGetter sprites, boolean bothBack) {
+    public CardSpecialRenderer(SpriteGetter sprites, boolean forceHidden) {
         this.sprites = sprites;
-        this.bothBack = bothBack;
+        this.forceHidden = forceHidden;
     }
 
     @Override
-    public void submit(@Nullable CardComponent argument, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+    public void submit(@Nullable CardInstance argument, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         if (argument == null) return;
 
-        renderCard(argument, bothBack, sprites, poseStack, submitNodeCollector, -1, lightCoords, overlayCoords);
+        renderCard(argument, forceHidden, sprites, poseStack, submitNodeCollector, -1, lightCoords, overlayCoords);
     }
 
-    public static void renderCard(CardComponent card, boolean bothBack, SpriteGetter sprites, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int color, int lightCoords, int overlayCoords) {
+    public static void renderCard(CardInstance card, boolean forceHidden, SpriteGetter sprites, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int color, int lightCoords, int overlayCoords) {
         final var backSprite = sprites.get(DealWithItAtlases.DECK_BACK_MAPPER.apply(card.deck().unwrapKey().orElseThrow().identifier()));
         final var cardSprite = sprites.get(DealWithItAtlases.CARD_MAPPER.apply(card.card().unwrapKey().orElseThrow().identifier()));
-        final var frontSprite = bothBack ? backSprite : cardSprite;
+        final var frontSprite = forceHidden || card.faceDown() ? backSprite : cardSprite;
 
         submitNodeCollector.submitCustomGeometry(poseStack, DealWithItAtlases.CARDS_RENDER_TYPE, (pose, buffer) -> {
             vertex(buffer, pose, color, lightCoords, overlayCoords, 0, 0, frontSprite.getU0(), frontSprite.getV1(), 1);
@@ -72,22 +72,22 @@ public class CardSpecialRenderer implements SpecialModelRenderer<CardComponent> 
     }
 
     @Override
-    public @Nullable CardComponent extractArgument(ItemStack stack) {
+    public @Nullable CardInstance extractArgument(ItemStack stack) {
         return stack.get(DealWithItComponents.CARD);
     }
 
-    public record Unbaked(boolean bothBack) implements SpecialModelRenderer.Unbaked<CardComponent> {
+    public record Unbaked(boolean forceHidden) implements SpecialModelRenderer.Unbaked<CardInstance> {
         public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Codec.BOOL.fieldOf("both_back").forGetter(Unbaked::bothBack)
+                Codec.BOOL.fieldOf("force_hidden").forGetter(Unbaked::forceHidden)
         ).apply(instance, Unbaked::new));
 
         @Override
         public CardSpecialRenderer bake(BakingContext context) {
-            return new CardSpecialRenderer(context.sprites(), bothBack);
+            return new CardSpecialRenderer(context.sprites(), forceHidden);
         }
 
         @Override
-        public MapCodec<? extends SpecialModelRenderer.Unbaked<CardComponent>> type() {
+        public MapCodec<? extends SpecialModelRenderer.Unbaked<CardInstance>> type() {
             return CODEC;
         }
     }

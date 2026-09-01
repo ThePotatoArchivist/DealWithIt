@@ -13,7 +13,6 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.renderer.item.ClientItem;
-import net.minecraft.client.renderer.item.properties.conditional.HasComponent;
 import net.minecraft.client.renderer.item.properties.select.DisplayContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -39,17 +38,13 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerators itemModelGenerators) {
-        var faceDown = specialModel(TEMPLATE_GENERATED, new CardSpecialRenderer.Unbaked(true));
-        var faceUp = specialModel(TEMPLATE_GENERATED, new CardSpecialRenderer.Unbaked(false));
+        var forceHidden = specialModel(TEMPLATE_GENERATED, new CardSpecialRenderer.Unbaked(true));
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD, conditional(
                 hasComponent(DealWithItComponents.CARD),
                 select(new DisplayContext(),
-                        conditional(new HasComponent(DealWithItComponents.FACE_DOWN, false),
-                                faceDown,
-                                faceUp
-                        ),
-                        when(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, faceDown),
-                        when(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, faceDown)
+                        specialModel(TEMPLATE_GENERATED, new CardSpecialRenderer.Unbaked(false)),
+                        when(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, forceHidden),
+                        when(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, forceHidden)
                 ),
                 plainModel(itemModelGenerators.createFlatItemModel(DealWithItItems.CARD, ModelTemplates.FLAT_ITEM))
         ));
