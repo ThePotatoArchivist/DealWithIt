@@ -1,5 +1,6 @@
 package archives.tater.dealwithit.client.datagen;
 
+import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.client.render.block.entity.CardStackRenderer;
 import archives.tater.dealwithit.client.render.item.model.ComponentModel;
 import archives.tater.dealwithit.client.render.item.property.CardStackCount;
@@ -28,7 +29,7 @@ import static net.minecraft.client.data.models.model.ItemModelUtils.*;
 
 public class ModModelProvider extends FabricModelProvider {
 
-    public static final Identifier TEMPLATE_GENERATED = Identifier.withDefaultNamespace("item/generated");
+    public static final Identifier TEMPLATE_CARD = DealWithIt.id("item/template_card");
 
     public ModModelProvider(FabricPackOutput output) {
         super(output);
@@ -44,10 +45,10 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD, conditional(
                 hasComponent(DealWithItComponents.CARD),
                 select(new DisplayContext(),
-                        specialModel(TEMPLATE_GENERATED, new CardSpecialRenderer.Unbaked(false)),
+                        specialModel(TEMPLATE_CARD, new CardSpecialRenderer.Unbaked(false)),
                         when(
                                 List.of(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND),
-                                specialModel(TEMPLATE_GENERATED, new CardSpecialRenderer.Unbaked(true))
+                                specialModel(TEMPLATE_CARD, new CardSpecialRenderer.Unbaked(true))
                         )
                 ),
                 plainModel(itemModelGenerators.createFlatItemModel(DealWithItItems.CARD, ModelTemplates.FLAT_ITEM))
@@ -56,14 +57,14 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD_STACK, select(
                 new DisplayContext(),
                 rangeSelect(new CardStackCount(),
-                        specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(4 / 16f, 0, CardStackRenderer.INTERVAL), 1)),
-                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(2 / 16f, 0, CardStackRenderer.INTERVAL), 1)), 5),
-                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(1 / 16f, 0, CardStackRenderer.INTERVAL), 1)), 9),
-                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(0, 0, CardStackRenderer.INTERVAL), 4)), 17)
+                        specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(4 / 16f, 0, CardStackRenderer.INTERVAL), 1)),
+                        override(specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(2 / 16f, 0, CardStackRenderer.INTERVAL), 1)), 5),
+                        override(specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(1 / 16f, 0, CardStackRenderer.INTERVAL), 1)), 9),
+                        override(specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(0, 0, CardStackRenderer.INTERVAL), 4)), 17)
                 ),
                 when(ItemDisplayContext.GUI, composite(
-                        specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(-2 / 16f, 0, -1), 1, 3, true)),
-                        specialModel(TEMPLATE_GENERATED,  new CardStackCountSpecialRenderer.Unbaked())
+                        specialModel(TEMPLATE_CARD, new CardStackSpecialRenderer.Unbaked(new Vec3(-2 / 16f, 0, -1), 1, 3, true)),
+                        specialModel(TEMPLATE_CARD,  new CardStackCountSpecialRenderer.Unbaked())
                 ))
         ), new ClientItem.Properties(true, true, 1f));
 

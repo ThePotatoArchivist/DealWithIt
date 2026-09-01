@@ -8,7 +8,7 @@
           "models": [
             {
               "type": "minecraft:special",
-              "base": "minecraft:item/generated",
+              "base": "dealwithit:item/template_card",
               "model": {
                 "type": "dealwithit:card_stack",
                 "limit": 3,
@@ -23,7 +23,7 @@
             },
             {
               "type": "minecraft:special",
-              "base": "minecraft:item/generated",
+              "base": "dealwithit:item/template_card",
               "model": {
                 "type": "dealwithit:card_stack_count"
               }
@@ -39,7 +39,7 @@
         {
           "model": {
             "type": "minecraft:special",
-            "base": "minecraft:item/generated",
+            "base": "dealwithit:item/template_card",
             "model": {
               "type": "dealwithit:card_stack",
               "offset": [
@@ -55,7 +55,7 @@
         {
           "model": {
             "type": "minecraft:special",
-            "base": "minecraft:item/generated",
+            "base": "dealwithit:item/template_card",
             "model": {
               "type": "dealwithit:card_stack",
               "offset": [
@@ -71,7 +71,7 @@
         {
           "model": {
             "type": "minecraft:special",
-            "base": "minecraft:item/generated",
+            "base": "dealwithit:item/template_card",
             "model": {
               "type": "dealwithit:card_stack",
               "offset": [
@@ -87,7 +87,7 @@
       ],
       "fallback": {
         "type": "minecraft:special",
-        "base": "minecraft:item/generated",
+        "base": "dealwithit:item/template_card",
         "model": {
           "type": "dealwithit:card_stack",
           "offset": [
