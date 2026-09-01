@@ -69,18 +69,6 @@ public class CardStackBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        var contents = itemStack.get(DealWithItComponents.DECK_CONTENTS);
-        if (contents != null) {
-            var cards = contents.mutableCards();
-            var anyRemoved = blockEntity.removeIf(instance -> DeckContents.tryInsert(instance.card(), contents.deck(), cards));
-            if (!anyRemoved) return InteractionResult.FAIL;
-
-            itemStack.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(cards));
-            level.playSound(player, pos, DealWithItSounds.CARD_BOX_INSERT, SoundSource.BLOCKS);
-
-            return InteractionResult.SUCCESS;
-        }
-
         return InteractionResult.PASS;
     }
 
@@ -114,6 +102,21 @@ public class CardStackBlock extends BaseEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos worldPosition, BlockState blockState) {
         return new CardStackBlockEntity(worldPosition, blockState);
+    }
+
+    public static boolean tryInsertIntoBox(Player player, UseOnContext context, CardStackBlockEntity blockEntity) {
+        var stack = context.getItemInHand();
+        var contents = stack.get(DealWithItComponents.DECK_CONTENTS);
+        if (contents == null) return false;
+
+        var cards = contents.mutableCards();
+        var anyRemoved = blockEntity.removeIf(instance -> DeckContents.tryInsert(instance.card(), contents.deck(), cards));
+        if (!anyRemoved) return false;
+
+        stack.set(DealWithItComponents.DECK_CONTENTS, contents.withCards(cards));
+        context.getLevel().playSound(player, context.getClickedPos(), DealWithItSounds.CARD_BOX_INSERT, SoundSource.BLOCKS);
+
+        return true;
     }
 
     public static void placeDroppedStack(ItemEntity itemEntity) {

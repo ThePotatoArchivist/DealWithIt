@@ -88,8 +88,12 @@ public interface DealWithItItems {
 
             if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS) && !stack.has(DealWithItComponents.CARD_STACK)) return InteractionResult.PASS;
 
-            if (level.getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)
+            if (level.getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity) {
+                if (stack.has(DealWithItComponents.DECK_CONTENTS))
+                    return CardStackBlock.tryInsertIntoBox(player, context, blockEntity) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+
                 return CardStackBlock.addToStack(player, context, blockEntity) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+            }
 
             return CardStackBlock.placeStack(player, context) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         });
