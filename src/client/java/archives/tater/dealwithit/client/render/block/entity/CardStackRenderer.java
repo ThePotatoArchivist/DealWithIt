@@ -48,15 +48,15 @@ public class CardStackRenderer implements BlockEntityRenderer<CardStackBlockEnti
 
         poseStack.translate(0.5f, (state.blockPos.getX() + state.blockPos.getZ()) % 2 == 0 ? 0 : 1f / 256, 0.5f);
         poseStack.mulPose(Axis.YP.rotation(PI));
+        poseStack.mulPose(Axis.XN.rotation(HALF_PI));
 
         for (int i = 0; i < state.cards.size(); i++) {
             var instance = state.cards.get(i);
 
-            poseStack.translate(0, INTERVAL, 0);
+            poseStack.translate(0, 0, INTERVAL);
 
             poseStack.pushPose();
-            poseStack.mulPose(Axis.YN.rotationDegrees(instance.angle()));
-            poseStack.mulPose(Axis.XN.rotation(HALF_PI));
+            poseStack.mulPose(Axis.ZN.rotationDegrees(instance.angle()));
             poseStack.translate(-0.5f, -0.5f, -0.5f);
 
             CardSpecialRenderer.renderCard(
