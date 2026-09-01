@@ -78,11 +78,14 @@
   },
   "item.card.flip": {
     "sounds": [
-      "dealwithit:pickup1",
-      "dealwithit:pickup2",
-      "dealwithit:pickup3",
-      "dealwithit:pickup4",
-      "dealwithit:pickup5"
+      "dealwithit:flip1",
+      "dealwithit:flip2",
+      "dealwithit:flip3",
+      "dealwithit:flip4",
+      "dealwithit:flip5",
+      "dealwithit:flip6",
+      "dealwithit:flip7",
+      "dealwithit:flip8"
     ],
     "subtitle": "subtitles.dealwithit.item.card.flip"
   },

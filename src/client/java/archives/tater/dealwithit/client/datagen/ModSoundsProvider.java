@@ -92,11 +92,14 @@ public class ModSoundsProvider extends FabricSoundsProvider {
                 .sound(ofFile(DealWithIt.id("insert_fail4")))
         );
         exporter.add(DealWithItSounds.CARD_FLIP, SoundTypeBuilder.of(DealWithItSounds.CARD_FLIP)
-                .sound(ofFile(DealWithIt.id("pickup1")))
-                .sound(ofFile(DealWithIt.id("pickup2")))
-                .sound(ofFile(DealWithIt.id("pickup3")))
-                .sound(ofFile(DealWithIt.id("pickup4")))
-                .sound(ofFile(DealWithIt.id("pickup5")))
+                .sound(ofFile(DealWithIt.id("flip1")))
+                .sound(ofFile(DealWithIt.id("flip2")))
+                .sound(ofFile(DealWithIt.id("flip3")))
+                .sound(ofFile(DealWithIt.id("flip4")))
+                .sound(ofFile(DealWithIt.id("flip5")))
+                .sound(ofFile(DealWithIt.id("flip6")))
+                .sound(ofFile(DealWithIt.id("flip7")))
+                .sound(ofFile(DealWithIt.id("flip8")))
         );
     }
 
