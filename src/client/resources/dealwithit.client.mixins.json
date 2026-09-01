@@ -3,17 +3,14 @@
   "package": "archives.tater.dealwithit.client.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
-    "ExampleClientMixin"
+    "NativeImageAccessor",
+    "ShapedRecipeBuilderAccessor",
+    "SpriteSourcesAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "overwrites": {
     "requireAnnotations": true
-  },
-  "mixins": [
-    "NativeImageAccessor",
-    "ShapedRecipeBuilderAccessor",
-    "SpriteSourcesAccessor"
-  ]
+  }
 }

@@ -1,14 +1,15 @@
 {
-	"required": true,
-	"package": "archives.tater.dealwithit.mixin",
-	"compatibilityLevel": "JAVA_25",
-	"mixins": [
-      "ItemStackMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
+  "required": true,
+  "package": "archives.tater.dealwithit.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "EntityMixin",
+    "ItemStackMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
 	}
 }

@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.lang.Math.ceilDiv;
-import static net.minecraft.util.Mth.clamp;
-
 public class CardStackBlockEntity extends BlockEntity {
 
     public static final int FULL_HEIGHT = 128;
@@ -94,10 +91,6 @@ public class CardStackBlockEntity extends BlockEntity {
         return true;
     }
 
-    public static int getHeight(int count) {
-        return clamp(ceilDiv(count * 16, FULL_HEIGHT), 1, 16);
-    }
-
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         var level = getLevel();
@@ -107,7 +100,7 @@ public class CardStackBlockEntity extends BlockEntity {
     }
 
     public void updateHeight() {
-        getLevel().setBlockAndUpdate(getBlockPos(), cards.isEmpty() ? Blocks.AIR.defaultBlockState() : getBlockState().setValue(CardStackBlock.HEIGHT, getHeight(cards.size())));
+        getLevel().setBlockAndUpdate(getBlockPos(), cards.isEmpty() ? Blocks.AIR.defaultBlockState() : getBlockState().setValue(CardStackBlock.HEIGHT, CardStackBlock.getHeight(cards.size())));
     }
 
     private void markUpdated() {

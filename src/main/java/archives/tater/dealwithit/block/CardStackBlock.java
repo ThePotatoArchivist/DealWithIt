@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -41,6 +42,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 import static archives.tater.dealwithit.Util.toShuffledList;
+import static java.lang.Math.ceilDiv;
+import static net.minecraft.util.Mth.clamp;
 
 public class CardStackBlock extends BaseEntityBlock {
     public static final IntegerProperty HEIGHT = IntegerProperty.create("height", 1, 16);
@@ -93,6 +96,49 @@ public class CardStackBlock extends BaseEntityBlock {
                 : super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
     }
 
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(HEIGHT);
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPES[state.getValue(HEIGHT) - 1];
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos worldPosition, BlockState blockState) {
+        return new CardStackBlockEntity(worldPosition, blockState);
+    }
+
+    public static void placeDroppedStack(ItemEntity itemEntity) {
+        var cardStack = itemEntity.getItem().get(DealWithItComponents.CARD_STACK);
+        if (cardStack == null) return;
+        var cards = cardStack.cards();
+
+        if (!(itemEntity.getOwner() instanceof Player player)) return;
+
+        var level = itemEntity.level();
+        var pos = itemEntity.getOnPos().above();
+        if (!level.getBlockState(pos).canBeReplaced()) return;
+
+        var state = DealWithItBlocks.CARD_STACK.defaultBlockState().setValue(HEIGHT, getHeight(cards.size()));
+        if (!state.canSurvive(level, pos)) return;
+
+        level.setBlockAndUpdate(pos, state);
+        var angle = player.getYHeadRot();
+        if (level.getBlockEntity(pos) instanceof CardStackBlockEntity blockEntity)
+            blockEntity.setCards(cards.stream().map(card -> new WorldCardInstance(card, angle)));
+
+        level.playSound(null, pos, DealWithItSounds.CARD_STACK_PLACE, SoundSource.BLOCKS);
+        itemEntity.discard();
+    }
+
     public static boolean placeStack(Player player, UseOnContext useContext) {
         var stack = useContext.getItemInHand();
         var context = new BlockPlaceContext(useContext);
@@ -100,22 +146,23 @@ public class CardStackBlock extends BaseEntityBlock {
 
         var initialState = DealWithItBlocks.CARD_STACK.getStateForPlacement(context);
         if (initialState == null) return false;
-        if (!initialState.canSurvive(context.getLevel(), context.getClickedPos())) return false; // height shouldn't affect placement
+
+        var level = context.getLevel();
+        if (!initialState.canSurvive(level, context.getClickedPos())) return false; // height shouldn't affect placement
 
         var cards = extractCards(stack, player, useContext.getHand(), player.isSecondaryUseActive(), player.getRandom());
         if (cards.isEmpty()) return false;
 
-        var state = initialState.setValue(HEIGHT, CardStackBlockEntity.getHeight(cards.size()));
+        var state = initialState.setValue(HEIGHT, getHeight(cards.size()));
 
-        if (!context.getLevel().isClientSide()) {
-            context.getLevel().setBlock(context.getClickedPos(), state, Block.UPDATE_ALL_IMMEDIATE);
-            if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity) {
-                var angle = player.getYHeadRot();
+        if (!level.isClientSide()) {
+            level.setBlock(context.getClickedPos(), state, Block.UPDATE_ALL_IMMEDIATE);
+            var angle = player.getYHeadRot();
+            if (level.getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity)
                 blockEntity.setCards(cards.stream().map(card -> new WorldCardInstance(card, angle)));
-            }
         }
 
-        context.getLevel().playSound(player, context.getClickedPos(), cards.size() < 8 || !stack.has(DealWithItComponents.DECK_CONTENTS) ? DealWithItSounds.CARD_STACK_PLACE : DealWithItSounds.CARD_STACK_SHUFFLE, SoundSource.BLOCKS);
+        level.playSound(player, context.getClickedPos(), cards.size() < 8 || !stack.has(DealWithItComponents.DECK_CONTENTS) ? DealWithItSounds.CARD_STACK_PLACE : DealWithItSounds.CARD_STACK_SHUFFLE, SoundSource.BLOCKS);
 
         return true;
     }
@@ -160,23 +207,7 @@ public class CardStackBlock extends BaseEntityBlock {
         return List.of();
     }
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(HEIGHT);
-    }
-
-    @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPES[state.getValue(HEIGHT) - 1];
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos worldPosition, BlockState blockState) {
-        return new CardStackBlockEntity(worldPosition, blockState);
+    public static int getHeight(int cardCount) {
+        return clamp(ceilDiv(cardCount * 16, CardStackBlockEntity.FULL_HEIGHT), 1, 16);
     }
 }
