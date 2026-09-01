@@ -106,13 +106,13 @@ public class CardStackBlock extends BaseEntityBlock {
                 blockEntity.setCards(cards);
         }
 
-        context.getLevel().playSound(player, context.getClickedPos(), cards.size() < 8 ? DealWithItSounds.CARD_STACK_PLACE : DealWithItSounds.CARD_STACK_SHUFFLE, SoundSource.BLOCKS);
+        context.getLevel().playSound(player, context.getClickedPos(), cards.size() < 8 || !stack.has(DealWithItComponents.DECK_CONTENTS) ? DealWithItSounds.CARD_STACK_PLACE : DealWithItSounds.CARD_STACK_SHUFFLE, SoundSource.BLOCKS);
 
         var deck = stack.get(DealWithItComponents.DECK_CONTENTS);
         if (deck != null)
             stack.set(DealWithItComponents.DECK_CONTENTS, deck.withCards(CardSet.EMPTY));
-        else if (stack.has(DealWithItComponents.CARDS))
-            CardStack.pop(stack);
+        else if (stack.has(DealWithItComponents.CARD_STACK))
+            CardStack.pop(stack, useContext);
         else
             stack.consume(1, player);
 

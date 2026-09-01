@@ -104,7 +104,7 @@ public class CardStackBlockEntity extends BlockEntity {
                 .map(card -> new WorldCardInstance(new CardInstance(deck.deck(), card, !secondaryActive), angle))
                 .collect(toShuffledList(random));
 
-        var cardStack = stack.get(DealWithItComponents.CARDS);
+        var cardStack = stack.get(DealWithItComponents.CARD_STACK);
         if (cardStack != null && !cardStack.cards().isEmpty()) return secondaryActive
             ? cardStack.cards().stream().map(cardInstance -> new WorldCardInstance(cardInstance, angle)).toList()
             : List.of(new WorldCardInstance(cardStack.cards().getLast(), angle));

@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 public interface DealWithItComponents {
 
     DataComponentType<CardInstance> CARD = createCached("card", CardInstance.CODEC, CardInstance.STREAM_CODEC);
-    DataComponentType<CardStack> CARDS = createCached("cards", CardStack.CODEC, CardStack.STREAM_CODEC);
+    DataComponentType<CardStack> CARD_STACK = createCached("card_stack", CardStack.CODEC, CardStack.STREAM_CODEC);
     DataComponentType<DeckContents> DECK_CONTENTS = createCached("deck_contents", DeckContents.CODEC, DeckContents.STREAM_CODEC);
 
     private static <T> DataComponentType<T> create(String path, DataComponentType.Builder<T> builder) {

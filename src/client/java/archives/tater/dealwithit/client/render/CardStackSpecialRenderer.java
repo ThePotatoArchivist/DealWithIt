@@ -61,7 +61,7 @@ public class CardStackSpecialRenderer implements SpecialModelRenderer<List<CardI
 
     @Override
     public @Nullable List<CardInstance> extractArgument(ItemStack stack) {
-        return stack.getOrDefault(DealWithItComponents.CARDS, CardStack.EMPTY).cards();
+        return stack.getOrDefault(DealWithItComponents.CARD_STACK, CardStack.EMPTY).cards();
     }
 
     public record Unbaked(Vec3 offset, boolean shade, int limit, boolean reversed) implements SpecialModelRenderer.Unbaked<List<CardInstance>> {

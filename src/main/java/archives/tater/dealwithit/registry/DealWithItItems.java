@@ -26,7 +26,7 @@ import java.util.function.Function;
 public interface DealWithItItems {
 
     Item CARD = register(DealWithItItemIds.CARD, new Item.Properties().stacksTo(1));
-    Item CARD_STACK = register(DealWithItItemIds.CARD_STACK, new Item.Properties().stacksTo(1).component(DealWithItComponents.CARDS, CardStack.EMPTY));
+    Item CARD_STACK = register(DealWithItItemIds.CARD_STACK, new Item.Properties().stacksTo(1).component(DealWithItComponents.CARD_STACK, CardStack.EMPTY));
     Item CARD_BOX = register(DealWithItItemIds.CARD_BOX, new Item.Properties().stacksTo(1));
     Item BLANK_CARD_BOX = register(DealWithItItemIds.BLANK_CARD_BOX, new Item.Properties().stacksTo(1));
 
@@ -71,9 +71,9 @@ public interface DealWithItItems {
                 return InteractionResult.SUCCESS;
             }
 
-            var cardStack = stack.get(DealWithItComponents.CARDS);
+            var cardStack = stack.get(DealWithItComponents.CARD_STACK);
             if (cardStack != null) {
-                stack.set(DealWithItComponents.CARDS, new CardStack(cardStack.cards().reversed().stream().map(CardInstance::flipped).toList()));
+                stack.set(DealWithItComponents.CARD_STACK, new CardStack(cardStack.cards().reversed().stream().map(CardInstance::flipped).toList()));
                 player.playSound(DealWithItSounds.CARD_FLIP);
                 return InteractionResult.SUCCESS;
             }
@@ -93,8 +93,8 @@ public interface DealWithItItems {
                     if (!blockEntity.pushCard(stack, player.getYHeadRot(), player.isSecondaryUseActive()))
                         return InteractionResult.FAIL;
 
-                } else if (stack.has(DealWithItComponents.CARDS)) {
-                    var card = CardStack.pop(stack);
+                } else if (stack.has(DealWithItComponents.CARD_STACK)) {
+                    var card = CardStack.pop(stack, context);
                     if (card == null) return InteractionResult.FAIL;
                     blockEntity.pushCard(card, player.getYHeadRot());
 
@@ -106,7 +106,7 @@ public interface DealWithItItems {
                 return InteractionResult.SUCCESS;
             }
 
-            if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS) && !stack.has(DealWithItComponents.CARDS)) return InteractionResult.PASS;
+            if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS) && !stack.has(DealWithItComponents.CARD_STACK)) return InteractionResult.PASS;
 
             return CardStackBlock.place(player, context) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         });

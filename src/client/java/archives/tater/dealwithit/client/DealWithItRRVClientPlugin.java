@@ -21,6 +21,7 @@ public class DealWithItRRVClientPlugin implements ReliableRecipeViewerClientPlug
     public void onIntegrationInitialize() {
         ItemView.excludeItemStack(new ItemStackTemplate(DealWithItItems.CARD));
         ItemView.excludeItemStack(new ItemStackTemplate(DealWithItItems.CARD_BOX));
+        ItemView.excludeItemStack(new ItemStackTemplate(DealWithItItems.CARD_STACK));
         ItemView.addItemCheck(DealWithItComponents.CARD);
         CHECKS.add((stack1, stack2) -> Objects.equals(getDeck(stack1), getDeck(stack2)));
     }
