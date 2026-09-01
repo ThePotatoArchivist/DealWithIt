@@ -34,17 +34,71 @@
       }
     ],
     "fallback": {
-      "type": "minecraft:special",
-      "base": "minecraft:item/generated",
-      "model": {
-        "type": "dealwithit:card_stack",
-        "offset": [
-          0.0,
-          0.0,
-          0.0078125
-        ],
-        "shadeInterval": 4
-      }
+      "type": "minecraft:range_dispatch",
+      "entries": [
+        {
+          "model": {
+            "type": "minecraft:special",
+            "base": "minecraft:item/generated",
+            "model": {
+              "type": "dealwithit:card_stack",
+              "offset": [
+                0.125,
+                0.0,
+                0.0078125
+              ],
+              "shadeInterval": 1
+            }
+          },
+          "threshold": 4.0
+        },
+        {
+          "model": {
+            "type": "minecraft:special",
+            "base": "minecraft:item/generated",
+            "model": {
+              "type": "dealwithit:card_stack",
+              "offset": [
+                0.0625,
+                0.0,
+                0.0078125
+              ],
+              "shadeInterval": 1
+            }
+          },
+          "threshold": 8.0
+        },
+        {
+          "model": {
+            "type": "minecraft:special",
+            "base": "minecraft:item/generated",
+            "model": {
+              "type": "dealwithit:card_stack",
+              "offset": [
+                0.0,
+                0.0,
+                0.0078125
+              ],
+              "shadeInterval": 4
+            }
+          },
+          "threshold": 16.0
+        }
+      ],
+      "fallback": {
+        "type": "minecraft:special",
+        "base": "minecraft:item/generated",
+        "model": {
+          "type": "dealwithit:card_stack",
+          "offset": [
+            0.25,
+            0.0,
+            0.0078125
+          ],
+          "shadeInterval": 1
+        }
+      },
+      "property": "dealwithit:card_stack_count"
     },
     "property": "minecraft:display_context"
   },

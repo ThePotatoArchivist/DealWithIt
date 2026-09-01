@@ -1,10 +1,11 @@
 package archives.tater.dealwithit.client.datagen;
 
 import archives.tater.dealwithit.client.render.block.entity.CardStackRenderer;
+import archives.tater.dealwithit.client.render.item.model.ComponentModel;
+import archives.tater.dealwithit.client.render.item.property.CardStackCount;
 import archives.tater.dealwithit.client.render.item.special.CardSpecialRenderer;
 import archives.tater.dealwithit.client.render.item.special.CardStackCountSpecialRenderer;
 import archives.tater.dealwithit.client.render.item.special.CardStackSpecialRenderer;
-import archives.tater.dealwithit.client.render.item.model.ComponentModel;
 import archives.tater.dealwithit.registry.DealWithItBlocks;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 import archives.tater.dealwithit.registry.DealWithItItems;
@@ -20,6 +21,8 @@ import net.minecraft.client.renderer.item.properties.select.DisplayContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 import static net.minecraft.client.data.models.model.ItemModelUtils.*;
 
@@ -38,20 +41,26 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerators itemModelGenerators) {
-        var forceHidden = specialModel(TEMPLATE_GENERATED, new CardSpecialRenderer.Unbaked(true));
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD, conditional(
                 hasComponent(DealWithItComponents.CARD),
                 select(new DisplayContext(),
                         specialModel(TEMPLATE_GENERATED, new CardSpecialRenderer.Unbaked(false)),
-                        when(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, forceHidden),
-                        when(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, forceHidden)
+                        when(
+                                List.of(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND),
+                                specialModel(TEMPLATE_GENERATED, new CardSpecialRenderer.Unbaked(true))
+                        )
                 ),
                 plainModel(itemModelGenerators.createFlatItemModel(DealWithItItems.CARD, ModelTemplates.FLAT_ITEM))
         ));
 
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD_STACK, select(
                 new DisplayContext(),
-                specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(0, 0, CardStackRenderer.INTERVAL), 4, Integer.MAX_VALUE, false)),
+                rangeSelect(new CardStackCount(),
+                        specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(4 / 16f, 0, CardStackRenderer.INTERVAL), 1, Integer.MAX_VALUE, false)),
+                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(2 / 16f, 0, CardStackRenderer.INTERVAL), 1, Integer.MAX_VALUE, false)), 4),
+                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(1 / 16f, 0, CardStackRenderer.INTERVAL), 1, Integer.MAX_VALUE, false)), 8),
+                        override(specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(0, 0, CardStackRenderer.INTERVAL), 4, Integer.MAX_VALUE, false)), 16)
+                ),
                 when(ItemDisplayContext.GUI, composite(
                         specialModel(TEMPLATE_GENERATED, new CardStackSpecialRenderer.Unbaked(new Vec3(-2 / 16f, 0, -1), 1, 3, true)),
                         specialModel(TEMPLATE_GENERATED,  new CardStackCountSpecialRenderer.Unbaked())

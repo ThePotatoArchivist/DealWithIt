@@ -1,9 +1,9 @@
 // 26.2	-999999999-01-01T00:00:00	DealWithIt/Model Definitions
 efc6c2e02d583c9b4a8312676554484c080bf5f5 assets/dealwithit/blockstates/card_stack.json
 47c50e882cd2e1e13e5d24647274f7b874153ee6 assets/dealwithit/items/blank_card_box.json
-aed158dc3c3e325c73005574b6c8291ba034a08b assets/dealwithit/items/card.json
+7e42ed1045af258a0e1c431e61b8be7504ebc7cf assets/dealwithit/items/card.json
 9158e936d9fa8382cda16456e37ae751fd70a411 assets/dealwithit/items/card_box.json
-a873dc2b561bdcf08480ca5092f41a46cfd218e0 assets/dealwithit/items/card_stack.json
+105b861491b6294cc2bba2bcba7e32beda827e84 assets/dealwithit/items/card_stack.json
 ff452045231ba66eaf68e6d0faecf973ab1b5b6b assets/dealwithit/models/block/card_stack.json
 6121a280a2faa1c548e039c26b621980d4e192cf assets/dealwithit/models/item/blank_card_box.json
 ae27437b9be4bb2d7ebfd8fa0a791c85d9d7dc3c assets/dealwithit/models/item/card.json
