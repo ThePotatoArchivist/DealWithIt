@@ -11,12 +11,24 @@
       "cases": [
         {
           "model": {
-            "type": "minecraft:special",
-            "base": "dealwithit:item/template_card",
-            "model": {
-              "type": "dealwithit:card",
-              "force_hidden": true
-            }
+            "type": "minecraft:condition",
+            "on_false": {
+              "type": "minecraft:special",
+              "base": "dealwithit:item/template_card",
+              "model": {
+                "type": "dealwithit:card",
+                "force_hidden": true
+              }
+            },
+            "on_true": {
+              "type": "minecraft:special",
+              "base": "dealwithit:item/template_card_throwing",
+              "model": {
+                "type": "dealwithit:card",
+                "force_hidden": true
+              }
+            },
+            "property": "minecraft:using_item"
           },
           "when": [
             "thirdperson_lefthand",
@@ -25,12 +37,24 @@
         }
       ],
       "fallback": {
-        "type": "minecraft:special",
-        "base": "dealwithit:item/template_card",
-        "model": {
-          "type": "dealwithit:card",
-          "force_hidden": false
-        }
+        "type": "minecraft:condition",
+        "on_false": {
+          "type": "minecraft:special",
+          "base": "dealwithit:item/template_card",
+          "model": {
+            "type": "dealwithit:card",
+            "force_hidden": false
+          }
+        },
+        "on_true": {
+          "type": "minecraft:special",
+          "base": "dealwithit:item/template_card_throwing",
+          "model": {
+            "type": "dealwithit:card",
+            "force_hidden": false
+          }
+        },
+        "property": "minecraft:using_item"
       },
       "property": "minecraft:display_context"
     },

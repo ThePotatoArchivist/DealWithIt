@@ -19,6 +19,7 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.renderer.item.ClientItem;
 import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.renderer.item.properties.conditional.IsUsingItem;
 import net.minecraft.client.renderer.item.properties.select.DisplayContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -31,6 +32,7 @@ import static net.minecraft.client.data.models.model.ItemModelUtils.*;
 public class ModModelProvider extends FabricModelProvider {
 
     public static final Identifier TEMPLATE_CARD = DealWithIt.id("item/template_card");
+    public static final Identifier TEMPLATE_CARD_THROWING = DealWithIt.id("item/template_card_throwing");
 
     public ModModelProvider(FabricPackOutput output) {
         super(output);
@@ -46,10 +48,10 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD, conditional(
                 hasComponent(DealWithItComponents.CARD),
                 select(new DisplayContext(),
-                        specialModel(TEMPLATE_CARD, new CardSpecialRenderer.Unbaked(false)),
+                        createCard(false),
                         when(
                                 List.of(ItemDisplayContext.THIRD_PERSON_LEFT_HAND, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND),
-                                specialModel(TEMPLATE_CARD, new CardSpecialRenderer.Unbaked(true))
+                                createCard(true)
                         )
                 ),
                 plainModel(itemModelGenerators.createFlatItemModel(DealWithItItems.CARD, ModelTemplates.FLAT_ITEM))
@@ -68,6 +70,14 @@ public class ModModelProvider extends FabricModelProvider {
         var blank = plainModel(itemModelGenerators.createFlatItemModel(DealWithItItems.BLANK_CARD_BOX, ModelTemplates.FLAT_ITEM));
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.BLANK_CARD_BOX, blank);
         itemModelGenerators.itemModelOutput.accept(DealWithItItems.CARD_BOX, new ComponentModel.Unbaked<>(DealWithItComponents.DECK_CONTENTS, "dealwithit/card_box/", blank));
+    }
+
+    static ItemModel.Unbaked createCard(boolean forceHidden) {
+        return conditional(
+                new IsUsingItem(),
+                specialModel(TEMPLATE_CARD_THROWING, new CardSpecialRenderer.Unbaked(forceHidden)),
+                specialModel(TEMPLATE_CARD, new CardSpecialRenderer.Unbaked(forceHidden))
+        );
     }
 
     private static ItemModel.Unbaked createFanVariants(boolean forceHidden) {

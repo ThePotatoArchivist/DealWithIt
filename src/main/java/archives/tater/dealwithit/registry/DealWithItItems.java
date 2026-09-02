@@ -1,5 +1,6 @@
 package archives.tater.dealwithit.registry;
 
+import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.block.CardStackBlock;
 import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
 import archives.tater.dealwithit.component.CardInstance;
@@ -65,7 +66,7 @@ public interface DealWithItItems {
         ItemStackUseCallback.EVENT.register((_, player, hand) -> {
             var stack = player.getItemInHand(hand);
 
-            if (stack.has(DealWithItComponents.CARD)) {
+            if (stack.has(DealWithItComponents.CARD) && (!DealWithIt.KITCHEN_PROJECTILES_INSTALLED || !player.isSecondaryUseActive())) {
                 CardInstance.flip(stack, player);
                 return InteractionResult.SUCCESS;
             }

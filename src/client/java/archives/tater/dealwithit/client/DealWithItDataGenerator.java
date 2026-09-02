@@ -38,6 +38,7 @@ public class DealWithItDataGenerator implements DataGeneratorEntrypoint {
 
 		pack.addProvider(ModRecipeProvider::new);
 		pack.addProvider(DeckTagsProvider::new);
+		pack.addProvider(ModItemTagsProvider::new);
 
 		pack.addProvider(DeckProviders.PlayingCards.PLAYING_CARDS::clientData);
 		pack.addProvider(DeckProviders.PlayingCards.JOKERS::clientData);
