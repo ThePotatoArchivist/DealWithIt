@@ -11,6 +11,7 @@ import archives.tater.dealwithit.registry.DealWithItItems;
 import archives.tater.dealwithit.registry.DealWithItRegistries;
 
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricCodecDataProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
@@ -53,7 +54,7 @@ import java.util.stream.Stream;
 import static net.minecraft.client.data.models.model.ItemModelUtils.plainModel;
 import static net.minecraft.util.Util.makeDescriptionId;
 
-public abstract class DeckProvider {
+public abstract class DeckProvider implements FabricDataGenerator.Pack.RegistryDependentFactory<DataProvider> {
     private final List<UnbakedCard> cards = new ArrayList<>();
     private final List<UnbakedDeckType> deckTypes = new ArrayList<>();
     private final List<UnbakedDeck> decks = new ArrayList<>();
@@ -120,88 +121,119 @@ public abstract class DeckProvider {
             registry.register(deck.key, deck.bake(deckTypeRegistry));
     }
 
+    @Override
+    public DataProvider create(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+        return new MultiDataProvider(
+                getName(),
+                registryData(output, registriesFuture),
+                recipes(output, registriesFuture),
+                models(output),
+                deckModels(output, registriesFuture)
+        );
+    }
+
     public DataProvider serverData(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         return new MultiDataProvider(
                 getName(),
-                new FabricDynamicRegistryProvider(output, registriesFuture) {
-                    @Override
-                    protected void configure(HolderLookup.Provider registries, Entries entries) {
-                        for (var card : cards)
-                            entries.add(registries.getOrThrow(card.key));
-                        for (var deckType : deckTypes)
-                            entries.add(registries.getOrThrow(deckType.key));
-                        for (var deck : decks)
-                            entries.add(registries.getOrThrow(deck.key));
-                    }
-
-                    @Override
-                    public String getName() {
-                        return DeckProvider.this.getName() + " Registries";
-                    }
-                },
-                new FabricRecipeProvider(output, registriesFuture) {
-                    @Override
-                    protected RecipeProvider createRecipeProvider(HolderLookup.Provider registries, RecipeOutput output) {
-                        return new RecipeProvider(registries, output) {
-                            @Override
-                            public void buildRecipes() {
-                                for (var deck : decks) {
-                                    if (deck.recipe == null) continue;
-                                    deck.recipe
-                                            .createRecipe(this, registries, new ItemStackTemplate(DealWithItItems.CARD_BOX, DataComponentPatch.builder()
-                                                .set(DealWithItComponents.DECK_CONTENTS, new DeckContents(registries.getOrThrow(deck.key)))
-                                                .build()))
-                                            .unlockedBy(getHasName(DealWithItItems.BLANK_CARD_BOX), has(DealWithItItems.BLANK_CARD_BOX))
-                                            .save(output, ResourceKey.create(Registries.RECIPE, deck.key.identifier()));
-                                }
-                            }
-                        };
-                    }
-
-                    @Override
-                    public String getName() {
-                        return "";
-                    }
-                }
+                registryData(output, registriesFuture),
+                recipes(output, registriesFuture)
         );
     }
 
     public DataProvider clientData(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         return new MultiDataProvider(getName(),
-                new FabricModelProvider(output) {
-                    @Override
-                    public void generateBlockStateModels(BlockModelGenerators blockModelGenerators) {
-
-                    }
-
-                    @Override
-                    public void generateItemModels(ItemModelGenerators itemModelGenerators) {
-                        for (var deck : decks) {
-                            var id = deck.key.identifier().withPrefix("item/" + DealWithIt.MOD_ID + "/card_box/");
-                            ModelTemplates.FLAT_ITEM.create(id, TextureMapping.layer0(new Material(id)), itemModelGenerators.modelOutput);
-                        }
-                    }
-
-                    @Override
-                    public String getName() {
-                        return DeckProvider.this.getName() + " " + super.getName();
-                    }
-                },
-                new FabricCodecDataProvider<>(output, registriesFuture, PackOutput.Target.RESOURCE_PACK, "items", ClientItem.CODEC) {
-                    @Override
-                    public String getName() {
-                        return DeckProvider.this.getName() + " Item Models";
-                    }
-
-                    @Override
-                    protected void configure(BiConsumer<Identifier, ClientItem> provider, HolderLookup.Provider registryLookup) {
-                        for (var deck : decks) {
-                            var id = deck.key.identifier().withPrefix(DealWithIt.MOD_ID + "/card_box/");
-                            provider.accept(id, new ClientItem(plainModel(id.withPrefix("item/")), ClientItem.Properties.DEFAULT));
-                        }
-                    }
-                }
+                models(output),
+                deckModels(output, registriesFuture)
         );
+    }
+
+    private FabricRecipeProvider recipes(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+        return new FabricRecipeProvider(output, registriesFuture) {
+            @Override
+            protected RecipeProvider createRecipeProvider(HolderLookup.Provider registries, RecipeOutput output) {
+                return new RecipeProvider(registries, output) {
+                    @Override
+                    public void buildRecipes() {
+                        for (var deck : decks) {
+                            if (deck.recipe == null) continue;
+                            deck.recipe
+                                    .createRecipe(
+                                            this, registries, new ItemStackTemplate(
+                                                    DealWithItItems.CARD_BOX, DataComponentPatch.builder()
+                                                    .set(DealWithItComponents.DECK_CONTENTS, new DeckContents(registries.getOrThrow(deck.key)))
+                                                    .build()
+                                            )
+                                    )
+                                    .unlockedBy(getHasName(DealWithItItems.BLANK_CARD_BOX), has(DealWithItItems.BLANK_CARD_BOX))
+                                    .save(output, ResourceKey.create(Registries.RECIPE, deck.key.identifier()));
+                        }
+                    }
+                };
+            }
+
+            @Override
+            public String getName() {
+                return DeckProvider.this.getName() + " Recipes";
+            }
+        };
+    }
+
+    private FabricDynamicRegistryProvider registryData(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+        return new FabricDynamicRegistryProvider(output, registriesFuture) {
+            @Override
+            protected void configure(HolderLookup.Provider registries, Entries entries) {
+                for (var card : cards)
+                    entries.add(registries.getOrThrow(card.key));
+                for (var deckType : deckTypes)
+                    entries.add(registries.getOrThrow(deckType.key));
+                for (var deck : decks)
+                    entries.add(registries.getOrThrow(deck.key));
+            }
+
+            @Override
+            public String getName() {
+                return DeckProvider.this.getName() + " Registries";
+            }
+        };
+    }
+
+    private FabricCodecDataProvider<ClientItem> deckModels(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+        return new FabricCodecDataProvider<>(output, registriesFuture, PackOutput.Target.RESOURCE_PACK, "items", ClientItem.CODEC) {
+            @Override
+            protected void configure(BiConsumer<Identifier, ClientItem> provider, HolderLookup.Provider registryLookup) {
+                for (var deck : decks) {
+                    var id = deck.key.identifier().withPrefix(DealWithIt.MOD_ID + "/card_box/");
+                    provider.accept(id, new ClientItem(plainModel(id.withPrefix("item/")), ClientItem.Properties.DEFAULT));
+                }
+            }
+
+            @Override
+            public String getName() {
+                return DeckProvider.this.getName() + " Item Models";
+            }
+        };
+    }
+
+    private FabricModelProvider models(FabricPackOutput output) {
+        return new FabricModelProvider(output) {
+            @Override
+            public void generateBlockStateModels(BlockModelGenerators blockModelGenerators) {
+
+            }
+
+            @Override
+            public void generateItemModels(ItemModelGenerators itemModelGenerators) {
+                for (var deck : decks) {
+                    var id = deck.key.identifier().withPrefix("item/" + DealWithIt.MOD_ID + "/card_box/");
+                    ModelTemplates.FLAT_ITEM.create(id, TextureMapping.layer0(new Material(id)), itemModelGenerators.modelOutput);
+                }
+            }
+
+            @Override
+            public String getName() {
+                return DeckProvider.this.getName() + " " + super.getName();
+            }
+        };
     }
 
     public void generateTranslations(TranslationBuilder translationBuilder) {
