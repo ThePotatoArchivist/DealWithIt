@@ -8,9 +8,8 @@ import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.component.DeckContents;
 import archives.tater.dealwithit.event.ItemStackBarCallback;
 import archives.tater.dealwithit.event.ItemStackBarCallback.BarDisplay;
-import archives.tater.dealwithit.event.ItemStackUseCallback;
-import archives.tater.dealwithit.event.ItemStackUseOnCallback;
 
+import net.fabricmc.fabric.api.event.player.ItemEvents;
 import net.fabricmc.fabric.api.item.v1.ItemClickBehaviorCallback;
 import net.fabricmc.fabric.api.util.EventResult;
 
@@ -63,7 +62,7 @@ public interface DealWithItItems {
             return EventResult.PASS;
         });
 
-        ItemStackUseCallback.EVENT.register((_, player, hand) -> {
+        ItemEvents.USE.register((_, player, hand) -> {
             var stack = player.getItemInHand(hand);
 
             if (stack.has(DealWithItComponents.CARD) && (!DealWithIt.KITCHEN_PROJECTILES_INSTALLED || !player.isSecondaryUseActive())) {
@@ -78,16 +77,16 @@ public interface DealWithItItems {
                 return InteractionResult.SUCCESS;
             }
 
-            return InteractionResult.PASS;
+            return null;
         });
 
-        ItemStackUseOnCallback.EVENT.register(context -> {
+        ItemEvents.USE_ON.register(context -> {
             var level = context.getLevel();
             var player = context.getPlayer();
-            if (player == null) return InteractionResult.PASS;
+            if (player == null) return null;
             var stack = context.getItemInHand();
 
-            if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS) && !stack.has(DealWithItComponents.CARD_STACK)) return InteractionResult.PASS;
+            if (!stack.has(DealWithItComponents.CARD) && !stack.has(DealWithItComponents.DECK_CONTENTS) && !stack.has(DealWithItComponents.CARD_STACK)) return null;
 
             if (level.getBlockEntity(context.getClickedPos()) instanceof CardStackBlockEntity blockEntity) {
                 if (stack.has(DealWithItComponents.DECK_CONTENTS))
