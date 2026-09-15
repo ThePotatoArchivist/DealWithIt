@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "dealwithit:playing_cards_yellow"
+        "recipes": "dealwithit:playing_cards_yellow"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

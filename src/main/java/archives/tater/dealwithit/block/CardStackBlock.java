@@ -10,7 +10,6 @@ import archives.tater.dealwithit.registry.DealWithItBlocks;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 import archives.tater.dealwithit.registry.DealWithItSounds;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -92,11 +91,6 @@ public class CardStackBlock extends BaseEntityBlock {
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES[state.getValue(HEIGHT) - 1];
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        throw new UnsupportedOperationException();
     }
 
     @Override

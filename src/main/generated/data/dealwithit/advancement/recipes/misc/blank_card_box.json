@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "dealwithit:blank_card_box"
+        "recipes": "dealwithit:blank_card_box"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -1,7 +1,7 @@
-// 26.2	-999999999-01-01T00:00:00	dealwithit:colored/Colored
-8e15b2625edc0baa3b6153f36189b7d954fed185 resourcepacks/colored/data/dealwithit/advancement/recipes/misc/playing_cards_blue.json
-f1a845491f3c39fcd8818f2958e8a0620c4f66b6 resourcepacks/colored/data/dealwithit/advancement/recipes/misc/playing_cards_green.json
-63e76ef6b8f084abd5d4100949f50c261c3e384e resourcepacks/colored/data/dealwithit/advancement/recipes/misc/playing_cards_yellow.json
+// 26.3-rc-3	-999999999-01-01T00:00:00	dealwithit:colored/Colored
+cb2742f2a57f4fe19a0f6ee71feb1985ef7f4df8 resourcepacks/colored/data/dealwithit/advancement/recipes/misc/playing_cards_blue.json
+43119e21fe2c575ae49b5ca4efb620f2fb8bbc05 resourcepacks/colored/data/dealwithit/advancement/recipes/misc/playing_cards_green.json
+f3ba1833f76a865a5f807bf2aad1adac6ec8f034 resourcepacks/colored/data/dealwithit/advancement/recipes/misc/playing_cards_yellow.json
 30b3f9339d71f6facecca4ce0c33c0b8333ffeaa resourcepacks/colored/data/dealwithit/dealwithit/deck/playing_cards_blue.json
 acd474ce0d9b65950423aaafbbcaedda9f73128c resourcepacks/colored/data/dealwithit/dealwithit/deck/playing_cards_green.json
 de503181ef2b8db4812f0d1c64e19f82d8fe7793 resourcepacks/colored/data/dealwithit/dealwithit/deck/playing_cards_yellow.json
