@@ -10,11 +10,11 @@ import archives.tater.dealwithit.registry.DealWithItItems;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -91,8 +91,8 @@ public record DeckContents(
 
     @Override
     public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
-        consumer.accept(deck.value().description().copy().withColor(TextColor.GRAY));
-        consumer.accept(Component.translatable(FILL, cardCount(), deck.value().size()).withColor(TextColor.GRAY));
+        consumer.accept(deck.value().description().copy().withStyle(ChatFormatting.GRAY));
+        consumer.accept(Component.translatable(FILL, cardCount(), deck.value().size()).withStyle(ChatFormatting.GRAY));
     }
 
     public static ItemStack createStack(Holder<Deck> deck) {

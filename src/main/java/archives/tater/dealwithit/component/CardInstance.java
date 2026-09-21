@@ -10,11 +10,11 @@ import archives.tater.dealwithit.registry.DealWithItSounds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
@@ -49,7 +49,7 @@ public record CardInstance(Holder<Deck> deck, Holder<Card> card, boolean faceDow
 
     @Override
     public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
-        consumer.accept((faceDown ? deck.value().description() : card.value().description()).copy().withColor(TextColor.GRAY));
+        consumer.accept((faceDown ? deck.value().description() : card.value().description()).copy().withStyle(ChatFormatting.GRAY));
     }
 
     public static void flip(ItemStack stack, Player player) {

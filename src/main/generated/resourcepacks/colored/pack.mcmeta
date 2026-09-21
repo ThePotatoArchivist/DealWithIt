@@ -4,9 +4,12 @@
       "translate": "dataPack.dealwithit.colored.description"
     },
     "max_format": [
-      121,
-      0
+      101,
+      1
     ],
-    "min_format": 121
+    "min_format": [
+      101,
+      1
+    ]
   }
 }

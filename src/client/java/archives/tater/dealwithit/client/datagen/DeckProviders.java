@@ -87,7 +87,7 @@ public interface DeckProviders {
                         ).flatMap(identity()))
                         .build();
 
-                output.deck(Decks.PLAYING_CARDS, "Playing Cards", NORMAL_TYPE, dyeBox(Items.DYE.red()));
+                output.deck(Decks.PLAYING_CARDS, "Playing Cards", NORMAL_TYPE, dyeBox(Items.RED_DYE));
             }
 
             @Override
@@ -119,9 +119,9 @@ public interface DeckProviders {
         DeckProvider COLORED = new DeckProvider() {
             @Override
             protected void generate(DeckOutput output) {
-                output.deck(Decks.GREEN_PLAYING_CARDS, "Playing Cards (Green)", NORMAL_TYPE, dyeBox(Items.DYE.green()));
-                output.deck(Decks.BLUE_PLAYING_CARDS, "Playing Cards (Blue)", NORMAL_TYPE, dyeBox(Items.DYE.blue()));
-                output.deck(Decks.YELLOW_PLAYING_CARDS, "Playing Cards (Yellow)", NORMAL_TYPE, dyeBox(Items.DYE.yellow()));
+                output.deck(Decks.GREEN_PLAYING_CARDS, "Playing Cards (Green)", NORMAL_TYPE, dyeBox(Items.GREEN_DYE));
+                output.deck(Decks.BLUE_PLAYING_CARDS, "Playing Cards (Blue)", NORMAL_TYPE, dyeBox(Items.BLUE_DYE));
+                output.deck(Decks.YELLOW_PLAYING_CARDS, "Playing Cards (Yellow)", NORMAL_TYPE, dyeBox(Items.YELLOW_DYE));
             }
 
             @Override
@@ -164,10 +164,10 @@ public interface DeckProviders {
                             .pattern(" R ")
                             .pattern("Y#G")
                             .pattern(" B ")
-                            .define('R', Items.DYE.red())
-                            .define('G', Items.DYE.green())
-                            .define('B', Items.DYE.blue())
-                            .define('Y', Items.DYE.yellow())
+                            .define('R', Items.RED_DYE)
+                            .define('G', Items.GREEN_DYE)
+                            .define('B', Items.BLUE_DYE)
+                            .define('Y', Items.YELLOW_DYE)
                             .define('#', DealWithItItems.BLANK_CARD_BOX)
             );
         }

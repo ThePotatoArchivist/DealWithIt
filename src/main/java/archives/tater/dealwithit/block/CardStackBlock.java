@@ -10,6 +10,7 @@ import archives.tater.dealwithit.registry.DealWithItBlocks;
 import archives.tater.dealwithit.registry.DealWithItComponents;
 import archives.tater.dealwithit.registry.DealWithItSounds;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -206,5 +207,10 @@ public class CardStackBlock extends BaseEntityBlock {
 
     public static int getHeight(int cardCount) {
         return clamp(ceilDiv(cardCount * 16, CardStackBlockEntity.FULL_HEIGHT), 1, 16);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        throw new UnsupportedOperationException();
     }
 }

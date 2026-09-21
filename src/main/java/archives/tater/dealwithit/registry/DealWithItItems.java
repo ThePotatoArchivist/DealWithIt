@@ -6,11 +6,11 @@ import archives.tater.dealwithit.block.entity.CardStackBlockEntity;
 import archives.tater.dealwithit.component.CardInstance;
 import archives.tater.dealwithit.component.CardStack;
 import archives.tater.dealwithit.component.DeckContents;
+import archives.tater.dealwithit.event.ItemClickBehaviorCallback;
 import archives.tater.dealwithit.event.ItemStackBarCallback;
 import archives.tater.dealwithit.event.ItemStackBarCallback.BarDisplay;
 
 import net.fabricmc.fabric.api.event.player.ItemEvents;
-import net.fabricmc.fabric.api.item.v1.ItemClickBehaviorCallback;
 import net.fabricmc.fabric.api.util.EventResult;
 
 import net.minecraft.core.Registry;

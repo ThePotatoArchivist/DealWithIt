@@ -3,6 +3,7 @@
   "package": "archives.tater.dealwithit.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "AbstractContainerMenuMixin",
     "EntityMixin",
     "ItemStackMixin"
   ],

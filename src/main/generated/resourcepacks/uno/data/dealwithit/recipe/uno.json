@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "#": "dealwithit:blank_card_box",
     "B": "minecraft:blue_dye",

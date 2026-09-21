@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "dealwithit:uno"
+        "recipe": "dealwithit:uno"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

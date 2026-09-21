@@ -1,5 +1,5 @@
-// 26.3-rc-3	-999999999-01-01T00:00:00	dealwithit:uno/Uno
-4681e91832d5535b66e4374de4bf733df4c4c383 resourcepacks/uno/data/dealwithit/advancement/recipes/misc/uno.json
+// 26.1.2	-999999999-01-01T00:00:00	dealwithit:uno/Uno
+d580057387ecc9526696af66ba83aa31440ce2f6 resourcepacks/uno/data/dealwithit/advancement/recipes/misc/uno.json
 f2fc213bc65c211b254291e2c18a55d1bc9aa3d2 resourcepacks/uno/data/dealwithit/dealwithit/card/uno/blue_draw_two.json
 2fe8f2add069e1699ad8e4746acf04f57575fccd resourcepacks/uno/data/dealwithit/dealwithit/card/uno/blue_eight.json
 f1d8a45db640e054cc2861383a167394c1e0ad7a resourcepacks/uno/data/dealwithit/dealwithit/card/uno/blue_five.json
@@ -56,4 +56,4 @@ a5937b61ea6c5177ecd34e327c5b42717f4114f3 resourcepacks/uno/data/dealwithit/dealw
 e7267733ba55953dd870a2598a3b20c7f69d4866 resourcepacks/uno/data/dealwithit/dealwithit/card/uno/yellow_zero.json
 2f1f5a4f57e6c56bb74d882e4c891c72dac42319 resourcepacks/uno/data/dealwithit/dealwithit/deck/uno.json
 5b9e75285a54ddd97c1cbb7ad620ef687eaf9870 resourcepacks/uno/data/dealwithit/dealwithit/deck_type/uno.json
-728ce4275ef99ec3439d28df6714353675f404db resourcepacks/uno/data/dealwithit/recipe/uno.json
+2a3c05599bfa5a6841c968bd1bea43194ab50001 resourcepacks/uno/data/dealwithit/recipe/uno.json
