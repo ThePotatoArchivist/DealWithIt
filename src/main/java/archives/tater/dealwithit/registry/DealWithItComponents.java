@@ -17,8 +17,8 @@ import java.util.function.Consumer;
 public interface DealWithItComponents {
 
     DataComponentType<CardInstance> CARD = createCached("card", CardInstance.CODEC, CardInstance.STREAM_CODEC);
-    DataComponentType<CardStack> CARD_STACK = createCached("card_stack", CardStack.CODEC, CardStack.STREAM_CODEC);
-    DataComponentType<DeckContents> DECK_CONTENTS = createCached("deck_contents", DeckContents.CODEC, DeckContents.STREAM_CODEC);
+    DataComponentType<CardStack> CARD_STACK = createCachedIgnoreSwap("card_stack", CardStack.CODEC, CardStack.STREAM_CODEC);
+    DataComponentType<DeckContents> DECK_CONTENTS = createCachedIgnoreSwap("deck_contents", DeckContents.CODEC, DeckContents.STREAM_CODEC);
 
     private static <T> DataComponentType<T> create(String path, DataComponentType.Builder<T> builder) {
         return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, DealWithIt.id(path), builder.build());
@@ -42,6 +42,15 @@ public interface DealWithItComponents {
                 .persistent(codec)
                 .networkSynchronized(streamCodec)
                 .cacheEncoding()
+        );
+    }
+
+    private static <T> DataComponentType<T> createCachedIgnoreSwap(String path, Codec<T> codec, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec) {
+        return create(path, DataComponentType.<T>builder()
+                .persistent(codec)
+                .networkSynchronized(streamCodec)
+                .cacheEncoding()
+                .ignoreSwapAnimation()
         );
     }
 
