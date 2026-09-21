@@ -2,6 +2,7 @@ package archives.tater.dealwithit.client;
 
 import archives.tater.dealwithit.DealWithIt;
 import archives.tater.dealwithit.client.atlas.CartesianComposite;
+import archives.tater.dealwithit.client.event.ItemSlotMouseActionRegistry;
 import archives.tater.dealwithit.client.mixin.SpriteSourcesAccessor;
 import archives.tater.dealwithit.client.render.block.entity.CardStackRenderer;
 import archives.tater.dealwithit.client.render.item.special.CardSpecialRenderer;
@@ -38,5 +39,6 @@ public class DealWithItClient implements ClientModInitializer {
 		ItemComponentTooltipProviderRegistry.addFirst(DealWithItComponents.DECK_CONTENTS);
 		ItemComponentTooltipProviderRegistry.addFirst(DealWithItComponents.CARD);
 
+		ItemSlotMouseActionRegistry.register(CardStackMouseAction::new);
 	}
 }

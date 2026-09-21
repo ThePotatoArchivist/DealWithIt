@@ -1,8 +1,12 @@
 package archives.tater.dealwithit;
 
+import archives.tater.dealwithit.component.CardStack;
+import archives.tater.dealwithit.network.ServerboundCycleCardStackPayload;
 import archives.tater.dealwithit.registry.*;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.minecraft.resources.Identifier;
@@ -34,6 +38,12 @@ public class DealWithIt implements ModInitializer {
 		DealWithItItems.init();
 		DealWithItCreativeTabs.init();
 		DealWithItDataPacks.init();
+
+		PayloadTypeRegistry.serverboundPlay().register(ServerboundCycleCardStackPayload.TYPE, ServerboundCycleCardStackPayload.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(ServerboundCycleCardStackPayload.TYPE, (payload, context) -> {
+            if (payload.slotIndex() < 0) return;
+            CardStack.cycle(context.player().containerMenu.slots.get(payload.slotIndex()).getItem(), payload.amount());
+        });
 	}
 
 	public static Identifier id(String path) {

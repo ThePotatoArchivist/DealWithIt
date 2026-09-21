@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 
 import org.jspecify.annotations.Nullable;
 
+@FunctionalInterface
 public interface ItemStackBarCallback {
     Event<ItemStackBarCallback> EVENT = EventFactory.createArrayBacked(ItemStackBarCallback.class, listeners -> stack -> {
         for (var listener : listeners) {

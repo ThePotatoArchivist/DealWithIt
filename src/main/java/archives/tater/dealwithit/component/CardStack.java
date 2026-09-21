@@ -12,12 +12,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 
+import com.google.common.collect.ImmutableList;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static java.lang.Math.floorMod;
 import static java.util.Objects.requireNonNull;
 
 public record CardStack(List<CardInstance> cards) {
@@ -25,8 +27,21 @@ public record CardStack(List<CardInstance> cards) {
     public static final StreamCodec<RegistryFriendlyByteBuf, CardStack> STREAM_CODEC = CardInstance.STREAM_CODEC.apply(ByteBufCodecs.list()).map(CardStack::new, CardStack::cards);
     public static final CardStack EMPTY = new CardStack(List.of());
 
+    public int size() {
+        return cards().size();
+    }
+
     public CardStack flipped() {
         return new CardStack(cards.reversed().stream().map(CardInstance::flipped).toList());
+    }
+
+    public CardStack cycled(int amount) {
+        if (size() <= 1) return this;
+        var adjustedAmount = floorMod(amount, size());
+        var builder = ImmutableList.<CardInstance>builderWithExpectedSize(size());
+        builder.addAll(cards.subList(adjustedAmount, size()));
+        builder.addAll(cards.subList(0, adjustedAmount));
+        return new CardStack(builder.build());
     }
 
     public static @Nullable CardInstance pop(ItemStack stack, UseOnContext context) {
@@ -60,6 +75,12 @@ public record CardStack(List<CardInstance> cards) {
         setCardStack(cards, target, setTarget);
         setAdditional.accept(ItemStack.EMPTY);
         return true;
+    }
+
+    public static void cycle(ItemStack target, int amount) {
+        var cards = target.get(DealWithItComponents.CARD_STACK);
+        if (cards == null) return;
+        target.set(DealWithItComponents.CARD_STACK, cards.cycled(amount));
     }
 
     public static @Nullable Stream<CardInstance> getCards(ItemStack stack) {
