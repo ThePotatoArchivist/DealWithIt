@@ -16,7 +16,7 @@ public record CardStackCount() implements RangeSelectItemModelProperty {
 
     @Override
     public float get(ItemStack itemStack, @Nullable ClientLevel level, @Nullable ItemOwner owner, int seed) {
-        return itemStack.getOrDefault(DealWithItComponents.CARD_STACK, CardStack.EMPTY).cards().size();
+        return itemStack.getOrDefault(DealWithItComponents.CARD_STACK, CardStack.EMPTY).size();
     }
 
     @Override

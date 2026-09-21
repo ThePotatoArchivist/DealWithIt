@@ -93,7 +93,7 @@ public sealed interface CardSet {
 
         public static final Codec<Multi> CODEC = Codec.unboundedMap(Card.CODEC, ExtraCodecs.NON_NEGATIVE_INT).xmap(map -> new Multi(new Object2IntOpenHashMap<>(map)), multi -> multi.cards);
 
-        private static final StreamCodec<RegistryFriendlyByteBuf, Object2IntMap<Holder<Card>>> CARD_MAP_CODEC = ByteBufCodecs.map(Object2IntOpenHashMap::new, Card.STREAM_CODEC, ByteBufCodecs.INT);
+        private static final StreamCodec<RegistryFriendlyByteBuf, Object2IntMap<Holder<Card>>> CARD_MAP_CODEC = ByteBufCodecs.map(Object2IntOpenHashMap::new, Card.STREAM_CODEC, ByteBufCodecs.VAR_INT);
         public static final StreamCodec<RegistryFriendlyByteBuf, Multi> STREAM_CODEC = CARD_MAP_CODEC.map(CardSet.Multi::new, CardSet.Multi::cards);
 
         @Override

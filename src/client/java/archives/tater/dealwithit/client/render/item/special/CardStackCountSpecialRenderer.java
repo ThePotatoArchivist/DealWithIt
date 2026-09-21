@@ -61,7 +61,7 @@ public class CardStackCountSpecialRenderer implements SpecialModelRenderer<Integ
 
     @Override
     public @Nullable Integer extractArgument(ItemStack stack) {
-        return stack.getOrDefault(DealWithItComponents.CARD_STACK, CardStack.EMPTY).cards().size();
+        return stack.getOrDefault(DealWithItComponents.CARD_STACK, CardStack.EMPTY).size();
     }
 
     public record Unbaked(
